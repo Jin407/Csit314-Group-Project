@@ -4,9 +4,13 @@ class User:
     def __init__(self, username, password):
         self.username = username
         self.password = password
+        
+    def __repr__(self) -> str:
+        pass
 
     def login():
-        pass#to be filled in later
+        pass#to be filled in later 
+        
 
     def logout():
         pass#to be filled in later
