@@ -21,7 +21,7 @@ function Login(){
                         <p className="loginPasswordText">Password:</p>
                         <input type="text" name="password" placeholder="password" className="loginTextBox"/>
                     </div>
-                    <label>login</label>
+                    <label>createacc</label>
                     <input type="submit" value="Login" />
                 </form>
             </div>

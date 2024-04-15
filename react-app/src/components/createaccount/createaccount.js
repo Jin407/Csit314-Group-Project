@@ -21,7 +21,7 @@ function CreateAccount(){
                         <p className="caCPasswordText">Confirm Password:</p>
                         <input type="text" name="cpassword" placeholder="cpassword" className="caTextBox"/>
                     </div>
-                    <label>createacc</label>
+                    <label>login</label>
                     <input type="submit" value="createAccount" />
                 </form>
             </div>

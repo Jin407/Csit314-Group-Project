@@ -1,0 +1,53 @@
+.tableOfProfiles{
+    width: 70vw;
+    margin-left: auto;
+    margin-right: auto;
+    text-align: center;
+    margin-top: 3vw;
+    margin-bottom: 3vw;
+    background-color: rgba(0,255,255,100);
+    padding-top: 3vw;
+    padding-bottom: 3vw;
+    font-size:1.4vw;
+}
+
+.profilesTable{
+    width:100%;
+    text-align: left;
+    justify-content: left;
+}
+
+table, th ,tr{
+    border: 0px solid black;
+}
+
+.profileTableColumn1{
+    width:30%;
+}
+
+.profileTableColumn2{
+    width:25%;
+}
+
+.profileTableColumn3{
+    width:30%;
+}
+
+.profileTableColumn4{
+    width:15%;
+}
+
+.hr2px{
+    border:none;
+    height:2px;
+    background-color: darkgray;
+}
+
+.hr1px{
+    border:none;
+    height:1px;
+    background-color: lightgray;
+    width:95%;
+    margin-left: auto;
+    margin-right:auto;
+}

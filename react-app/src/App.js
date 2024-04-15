@@ -3,6 +3,7 @@ import Headerbanner from './components//header/header.js';
 import Footer from './components/footer/footer.js';
 import Login from './components/login/login.js';
 import CreateAccount from './components/createaccount/createaccount.js';
+import ProfileTable from './components/profiletable/profiletable.js';
 
 function App() {
   return (
@@ -11,9 +12,9 @@ function App() {
       <header className="App-header">
         <Login/>
         <CreateAccount/>
+        <ProfileTable/>
       </header>
       <Footer/>
-      <br/>
     </div>
   );
 }
