@@ -13,6 +13,7 @@ function App() {
         <CreateAccount/>
       </header>
       <Footer/>
+      <br/>
     </div>
   );
 }
