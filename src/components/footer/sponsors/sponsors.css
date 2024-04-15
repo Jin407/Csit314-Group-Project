@@ -1,0 +1,44 @@
+.sponsorbanner{
+    background-color: white;
+    text-align:center;
+    padding:1vw;
+    padding-bottom: 0.5vw;
+    margin-top:0;
+}
+
+.footertable{
+    width:100%;
+}
+
+.privatelimited{
+    font-size: 1vw;
+    bottom: 0px;
+    margin-top: 2vw;
+}
+
+.footerrow1{
+    text-align: left;
+    font-size:1.1vw;
+    height: 1.3vw;
+}
+
+.footerrow2{
+    height:5vw;
+    background-color: rgba(255,255,0,0);
+}
+
+.sponsorcontainer{
+    display:flex;
+    flex-direction: row;
+    background-color: rgba(255,0,255,0);
+    justify-content: space-between;
+}
+
+.sponsorelement{
+    flex-grow:1;
+}
+
+.logosponsor{
+    margin-top:1vw;
+    height:4.2vw;
+}
