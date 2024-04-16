@@ -1,7 +1,7 @@
 from Users import User, System_Admin, Real_Estate_Agent, Buyer, Seller
 
-# the connector doesnt work for me but im just leaving this here for now
-# import mysql.connector
+# install the connector in terminal: pip install mysql-connector-python
+import mysql.connector
 
 # import sql into dictionaries/arrays/lists
 # can be split into multiple import methods if its better but for now just 1 massive import for efficiency(assuming sql data is all in 1 file)
@@ -10,7 +10,7 @@ def importSQL():
 
 # method to authenticate login, idk if it will clash with the class methods
 def authenticateUser(userType, username, password) -> bool:
-    pass
+    return True
 
 def main():
     while True:
@@ -36,6 +36,7 @@ def main():
         password = input("Enter password: ")
         
         if authenticateUser(choice, username, password):
+            print()
             print("Welcome, " + username)
             break  # Exit the loop if login successful
         else:
@@ -44,5 +45,5 @@ def main():
     
 # remove comment for main if want to test
 if __name__ == "__main__":
-    #main()
+    main()
     pass
