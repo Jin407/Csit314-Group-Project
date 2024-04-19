@@ -62,7 +62,7 @@ class CreateAccount extends Component{
                         <p className="caPasswordText">Password:</p>
                         <input type="password" value={this.state.password} onChange={this.handleInputChange} name="password" placeholder="Password" className="caTextBox"/>
                         <p className="caCPasswordText">Confirm Password:</p>
-                        <input type="text" value={this.state.cpassword} onChange={this.handleInputChange} name="cpassword" placeholder="Confirm Password" className="caTextBox"/>
+                        <input type="password" value={this.state.cpassword} onChange={this.handleInputChange} name="cpassword" placeholder="Confirm Password" className="caTextBox"/>
                     </div>
                     <label>login</label>
                     <input type="submit" value="Create Account" />
