@@ -18,8 +18,8 @@ class User:
 #System admin class
 class System_Admin(User):
     #default constructor for System admin class
-    def __init__(self, username,password):
-        User.__init__(self,username,password)
+    def __init__(self, username ,password):
+        super().__init__(self,username,password)
 
     #method for system admin to view user details
     def viewUserDetails():
@@ -44,7 +44,7 @@ class System_Admin(User):
 class Real_Estate_Agent(User):
     #default constructor for Real Estate Agent
     def __init__(self, username,password):
-        User.__init__(self,username,password)
+        super().__init__(self,username,password)
 
     #method for Real estate agent to create property listing
     def createPropertyListings():
@@ -75,7 +75,11 @@ class Real_Estate_Agent(User):
          pass#to be filled in later
     
 class Buyer(User):
-    #method for Buyer to remove property listing
+    #default constructor for Buyer
+    def __init__(self, username,password):
+        super().__init__(self,username,password)
+
+    #method for Buyer to search for property listing
     def searchPropertyListings():
          pass#to be filled in later
     
@@ -101,6 +105,9 @@ class Buyer(User):
 
 
 class Seller(User):
+    #default constructor for Seller
+    def __init__(self, username,password):
+        super().__init__(self,username,password)
 
     # view the number of times property has been shortlisted/viewed
     def viewPropertyListingsDetails():
