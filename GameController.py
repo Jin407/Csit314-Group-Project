@@ -42,19 +42,65 @@ class AppController:
                 return jsonify({'error': 'Method not allowed'}), 405
             
     
-    # import sql into dictionaries/arrays/lists
-    # can be split into multiple import methods if its better but for now just 1 massive import for efficiency(assuming sql data is all in 1 file)
-    def importSQL(): 
-        pass
+    # import UserDatabase SQL into dictionary
+    def importUserDatabase(self): 
+        # Connect to the MySQL database
+        connection = mysql.connector.connect(
+            host="darrenhkx",
+            user="username",
+            password="password",
+            database="UserDatabase"
+        )
 
-    # method to authenticate login, idk if it will clash with the class methods
-    def authenticateUser(userType, username, password) -> bool:
-        return True
+        # Create a cursor object
+        cursor = connection.cursor()
+
+        # SQL query to retrieve user information
+        query = "SELECT UserType, Username, Password FROM csit314.Users"
+
+        # Execute the SQL query
+        cursor.execute(query)
+
+        # Fetch all rows
+        rows = cursor.fetchall()
+
+        # Create a dictionary to store user information
+        users = {}
+        for row in rows:
+            usertype, username, password = row
+            if usertype not in users:
+                users[usertype] = []
+            users[usertype].append((username, password))
+
+        # Close cursor and connection
+        cursor.close()
+        connection.close()
+
+        # return dictionary with user info
+        return users
+    
+    ''' To test if users loaded
+    users = importUserDatabase()
+    for user in users.items():
+        print(user)
+    '''
+    # method to authenticate login
+    def authenticateUser(self, uType, uName, uPass) -> bool:
+        # retrieve user info
+        users = controller.importUserDatabase()
+
+        for userType, userList in users.items():                # iterate through all users
+            if userType == uType:                               # checks if userType matches selected option
+                for username, password in userList:             # iterates through users of matched type
+                    if username == uName and password == uPass:
+                        return True                             # authentication successful if username and password matches
+        return False                              
     
     def run(self):
         self.app.run(debug=True)
 
-    def main():
+    # for testing purposes
+    def main(self):
         while True:
             print()
             print("Choose account type")
@@ -63,31 +109,40 @@ class AppController:
             print("2. Real estate agent")
             print("3. Buyer")
             print("4. Seller")
+            print("5. Quit")
             try:
                 choice = int(input())
-                if choice < 1 or choice > 4:
+                if choice < 1 or choice > 5:
                     raise ValueError
+                if choice == 5:
+                    exit()
             except ValueError:
-                print("Invalid input. Please enter a number between 1 and 4.")
+                print("Invalid input. Please enter a number between 1 and 5.")
                 continue
-            
             print()
             print("Enter login credentials")
             print("-------------------------")
             username = input("Enter username: ")
             password = input("Enter password: ")
             
-            """
-            if authenticateUser(choice, username, password):
+            # convert choice into user types
+            if choice == 1:
+                userType = 'Admin'
+            elif choice == 2:
+                userType = 'REA'
+            elif choice == 3:
+                userType = 'Buyer'
+            elif choice == 4:
+                userType = 'Seller'
+
+            if controller.authenticateUser(userType, username, password):
                 print()
                 print("Welcome, " + username)
                 break  # Exit the loop if login successful
             else:
                 print("Invalid credentials, please try again")
-            """
-
         
-# remove comment for main if want to test
 if __name__ == '__main__':
     controller = AppController()
+    #controller.main()
     controller.run()
