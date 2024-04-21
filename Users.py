@@ -1,15 +1,17 @@
+from flask import Flask,request,jsonify
 #base class
 class User:
     #default constructor for base class
     def __init__(self, username, password):
         self.username = username
         self.password = password
-        
-    def __repr__(self) -> str:
-        pass
 
-    def login():
-        pass#to be filled in later 
+    def __repr__(self) -> str:
+        return self.username
+    
+    def authLogin(self,username, password):
+        return username == self.username and password == self.password
+        
         
 
     def logout():

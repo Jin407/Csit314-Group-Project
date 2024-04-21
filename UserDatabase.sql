@@ -1,9 +1,9 @@
 DROP DATABASE UserDatabase;
 CREATE DATABASE UserDatabase;
 USE UserDatabase;
-DROP TABLE csit314.Users;
 
-CREATE TABLE csit314.Users (
+
+CREATE TABLE UserDatabase.Users (
     UserID INT PRIMARY KEY AUTO_INCREMENT,
     Username VARCHAR(50) UNIQUE NOT NULL,
     Password VARCHAR(100) NOT NULL,

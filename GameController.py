@@ -1,5 +1,4 @@
 from Users import User, System_Admin, Real_Estate_Agent, Buyer, Seller
-
 # install the connector in terminal: pip install mysql-connector-python
 import mysql.connector
 #pip install flask
@@ -9,11 +8,16 @@ from flask_cors import CORS
 
 #control class in BCE framework
 class AppController:
+
+    
     #constructor for control class
     def __init__(self):
         self.app = Flask(__name__)
         CORS(self.app)
         self.register_routes()
+        #list of users
+        self.users = {}
+        
 
     def register_routes(self):
         #dummy method to return data to front end can be removed later on
@@ -30,14 +34,27 @@ class AppController:
                 # Assuming data contains username and password
                 username = data.get('username')
                 password = data.get('password')
+                userType = data.get('userType')
+                #user type is Buyer, Seller or REA only got 1 Admin
 
-                # This logic can be moved to User's login method
-                if username == "username" and password == "password":
-                    # Authentication successful
-                    return jsonify({'message': 'Authentication successful'})
+                #loop through users dict to authenticate user
+                for user in self.users[userType]:
+                    if(user.authLogin(username,password)):
+                        return jsonify({'message': 'Authentication successful'})
+                    else:
+                        return jsonify({'message': 'Invalid username or password'})
+
+                """
+                for userType, userList in users.items():                # iterate through all users
+                    if userType == uType:                               # checks if userType matches selected option
+                        for username, password in userList:             # iterates through users of matched type
+                            if username == uName and password == uPass:
+                                return jsonify({'message': 'Authentication successful'})                            # authentication successful if username and password matches
                 else:
-                    # Authentication failed
                     return jsonify({'message': 'Invalid username or password'})
+                """
+                    
+                
             else:
                 return jsonify({'error': 'Method not allowed'}), 405
             
@@ -46,7 +63,8 @@ class AppController:
     def importUserDatabase(self): 
         # Connect to the MySQL database
         connection = mysql.connector.connect(
-            host="darrenhkx",
+            host="127.0.0.1",
+            #host="darrenhkx",
             user="username",
             password="password",
             database="UserDatabase"
@@ -56,7 +74,8 @@ class AppController:
         cursor = connection.cursor()
 
         # SQL query to retrieve user information
-        query = "SELECT UserType, Username, Password FROM csit314.Users"
+        #had to change database name to UserDatabase from csit314
+        query = "SELECT UserType, Username, Password FROM UserDatabase.Users"
 
         # Execute the SQL query
         cursor.execute(query)
@@ -65,19 +84,19 @@ class AppController:
         rows = cursor.fetchall()
 
         # Create a dictionary to store user information
-        users = {}
         for row in rows:
             usertype, username, password = row
-            if usertype not in users:
-                users[usertype] = []
-            users[usertype].append((username, password))
+            user = User(username,password)
+            if usertype not in self.users:
+                self.users[usertype] = []
+            self.users[usertype].append(user)
 
         # Close cursor and connection
         cursor.close()
         connection.close()
 
         # return dictionary with user info
-        return users
+        return self.users
     
     ''' To test if users loaded
     users = importUserDatabase()
@@ -88,7 +107,6 @@ class AppController:
     def authenticateUser(self, uType, uName, uPass) -> bool:
         # retrieve user info
         users = controller.importUserDatabase()
-
         for userType, userList in users.items():                # iterate through all users
             if userType == uType:                               # checks if userType matches selected option
                 for username, password in userList:             # iterates through users of matched type
@@ -97,7 +115,11 @@ class AppController:
         return False                              
     
     def run(self):
+        self.importUserDatabase()
+        #run flask server
         self.app.run(debug=True)
+        
+        
 
     # for testing purposes
     def main(self):

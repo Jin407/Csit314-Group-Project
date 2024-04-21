@@ -51,9 +51,9 @@ class Login extends Component{
                     <form className="loginTextArea" onSubmit={this.handleSubmit}>
                         Select account type: 
                         <div className="loginFlexBox">
-                            <label className="loginFlexItem"><input type="radio" name="userType" value="buyer" checked={this.state.userType === 'buyer'} onChange={this.handleInputChange}/>Buyer</label>
-                            <label className="loginFlexItem"><input type="radio" name="userType" value="seller" checked={this.state.userType === 'seller'} onChange={this.handleInputChange}/>Seller</label> 
-                            <label className="loginFlexItem"><input type="radio" name="userType" value="agent" checked={this.state.userType === 'agent'} onChange={this.handleInputChange}/>REA</label>
+                            <label className="loginFlexItem"><input type="radio" name="userType" value="Buyer" checked={this.state.userType === 'Buyer'} onChange={this.handleInputChange}/>Buyer</label>
+                            <label className="loginFlexItem"><input type="radio" name="userType" value="Seller" checked={this.state.userType === 'Seller'} onChange={this.handleInputChange}/>Seller</label> 
+                            <label className="loginFlexItem"><input type="radio" name="userType" value="REA" checked={this.state.userType === 'REA'} onChange={this.handleInputChange}/>REA</label>
                         </div>
                         <div className="loginTextBoxes">
                             <p className="loginUsernameText">Username:</p>
