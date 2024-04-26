@@ -15,8 +15,6 @@ class AppController:
         self.app = Flask(__name__)
         CORS(self.app)
         self.register_routes()
-        #list of users
-        self.users = {}
         
 
     def register_routes(self):
@@ -36,90 +34,52 @@ class AppController:
                 password = data.get('password')
                 userType = data.get('userType')
                 #user type is Buyer, Seller or REA only got 1 Admin
-
-                #loop through users dict to authenticate user
-                for user in self.users[userType]:
-                    if(user.authLogin(username,password)):
-                        return jsonify({'message': 'Authentication successful'})
-                    else:
-                        return jsonify({'message': 'Invalid username or password'})
-
-                """
-                for userType, userList in users.items():                # iterate through all users
-                    if userType == uType:                               # checks if userType matches selected option
-                        for username, password in userList:             # iterates through users of matched type
-                            if username == uName and password == uPass:
-                                return jsonify({'message': 'Authentication successful'})                            # authentication successful if username and password matches
-                else:
-                    return jsonify({'message': 'Invalid username or password'})
-                """
-                    
-                
+    
             else:
                 return jsonify({'error': 'Method not allowed'}), 405
             
-    
-    # import UserDatabase SQL into dictionary
-    def importUserDatabase(self): 
-        # Connect to the MySQL database
-        connection = mysql.connector.connect(
-            host="127.0.0.1",
-            #host="darrenhkx",
-            user="username",
-            password="password",
-            database="UserDatabase"
-        )
+    # try to use sqldump to import csit314database to use stored procedures
+    # open cmd prompt, cd to mysql bin and use: mysql -u [username] -p [database_name] < csit314Database.sql
+    # if it doesnt work lmk, i'll try to move everything here instead
+    # Method to authenticate user
+    def authenticateUser(self, uName, uType, uPass):
+        try:
+            # Connect to the MySQL database (change according to your settings)
+            connection = mysql.connector.connect(
+                host="darrenhkx",
+                user="username",
+                password="password",
+                database="csit314"
+            )
 
-        # Create a cursor object
-        cursor = connection.cursor()
+            # Create a cursor object
+            cursor = connection.cursor()
 
-        # SQL query to retrieve user information
-        #had to change database name to UserDatabase from csit314
-        query = "SELECT UserType, Username, Password FROM UserDatabase.Users"
+            # SQL query to call the stored procedure
+            query = """
+                CALL AuthenticateUser(%s, %s, %s, @success);
+            """
 
-        # Execute the SQL query
-        cursor.execute(query)
+            # Execute query
+            cursor.execute(query, (uName, uType, uPass))
 
-        # Fetch all rows
-        rows = cursor.fetchall()
+            # Fetch output of procedure
+            cursor.execute("SELECT @success;")
+            success = bool(cursor.fetchone()[0])
 
-        # Create a dictionary to store user information
-        for row in rows:
-            usertype, username, password = row
-            user = User(username,password)
-            if usertype not in self.users:
-                self.users[usertype] = []
-            self.users[usertype].append(user)
+            # Close cursor and connection
+            cursor.close()
+            connection.close()
 
-        # Close cursor and connection
-        cursor.close()
-        connection.close()
+            return success
 
-        # return dictionary with user info
-        return self.users
-    
-    ''' To test if users loaded
-    users = importUserDatabase()
-    for user in users.items():
-        print(user)
-    '''
-    # method to authenticate login
-    def authenticateUser(self, uType, uName, uPass) -> bool:
-        # retrieve user info
-        users = controller.importUserDatabase()
-        for userType, userList in users.items():                # iterate through all users
-            if userType == uType:                               # checks if userType matches selected option
-                for username, password in userList:             # iterates through users of matched type
-                    if username == uName and password == uPass:
-                        return True                             # authentication successful if username and password matches
-        return False                              
+        except mysql.connector.Error as error:
+            print("Error while authenticating user:", error)
+            return False
     
     def run(self):
-        self.importUserDatabase()
         #run flask server
-        self.app.run(debug=True)
-        
-        
+        self.app.run(debug=True)    
 
     # for testing purposes
     def main(self):
@@ -139,6 +99,7 @@ class AppController:
                 if choice == 5:
                     exit()
             except ValueError:
+                print()
                 print("Invalid input. Please enter a number between 1 and 5.")
                 continue
             print()
@@ -157,11 +118,12 @@ class AppController:
             elif choice == 4:
                 userType = 'Seller'
 
-            if controller.authenticateUser(userType, username, password):
+            if controller.authenticateUser(username, userType, password):
                 print()
                 print("Welcome, " + username)
                 break  # Exit the loop if login successful
             else:
+                print()
                 print("Invalid credentials, please try again")
         
 if __name__ == '__main__':
