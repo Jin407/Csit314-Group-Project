@@ -2,6 +2,8 @@ import './login.css';
 import { Component } from 'react';
 import loginController from './loginController.js';
 
+
+//class name needs to change to login view
 class Login extends Component{
 
     constructor(props) {

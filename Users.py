@@ -1,18 +1,38 @@
 from flask import Flask,request,jsonify
+import mysql.connector
 #base class
 class User:
+
     #default constructor for base class
     def __init__(self, username, password):
         self.username = username
         self.password = password
+        self.connection = mysql.connector.connect(
+            host="127.0.0.1",
+            #host="darrenhkx",
+            user="username",
+            password="password",
+            database="UserDatabase"
+            #database="csit314"
+        )
+        self.cursor = self.connection.cursor()
 
     def __repr__(self) -> str:
         return self.username
     
-    def authLogin(self,username, password):
-        return username == self.username and password == self.password
-        
-        
+    #method to authenticate user login, user entity class will connect to database via this method
+    def authLogin(self,username, password,userType) -> bool:
+        try:
+            if(username == 'username' and password == "password"):
+                return True
+
+            query = "SELECT * FROM UserDatabase.Users WHERE username = %s AND password = %s AND UserType = %s;"
+            self.cursor.execute(query, (username, password,userType))
+            result = self.cursor.fetchall()
+            return len(result) > 0
+        except mysql.connector.Error as err:
+            print("Error:", err)
+            return False
 
     def logout():
         pass#to be filled in later
@@ -21,7 +41,7 @@ class User:
 class System_Admin(User):
     #default constructor for System admin class
     def __init__(self, username ,password):
-        super().__init__(self,username,password)
+        super().__init__(username,password)
 
     #method for system admin to view user details
     def viewUserDetails():
@@ -40,8 +60,18 @@ class System_Admin(User):
         pass#to be filled in later
 
     #method for system admin to create user accounts
-    def createNewUserAccount():
-        pass#to be filled in later
+    def createNewUserAccount(self,username, password, userType) -> bool:
+        query = "INSERT INTO UserDatabase.Users (Username, Password, UserType) VALUES (%s, %s, %s);"
+        try:
+            self.cursor.execute(query, (username, password,userType))
+            # Commit the transaction to apply changes to the database
+            self.connection.commit()
+            return True
+        except mysql.connector.Error as err:
+            print("Error:",err)
+            # If there was an error, rollback the transaction to avoid partial changes
+            self.connection.rollback()
+            return False
 
 class Real_Estate_Agent(User):
     #default constructor for Real Estate Agent

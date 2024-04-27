@@ -2,6 +2,7 @@ import './createaccount.css';
 import { Component } from 'react';
 import createAccountController from './createAccountController.js';
 
+//class name needs to be change to create Account view
 class CreateAccount extends Component{
     
     constructor(props) {
@@ -54,7 +55,7 @@ class CreateAccount extends Component{
                     <div className="caFlexBox">
                         <label className="loginFlexItem"><input type="radio" name="userType" value="buyer" checked={this.state.userType === 'buyer'} onChange={this.handleInputChange}/>Buyer</label>
                         <label className="loginFlexItem"><input type="radio" name="userType" value="seller" checked={this.state.userType === 'seller'} onChange={this.handleInputChange}/>Seller</label> 
-                        <label className="loginFlexItem"><input type="radio" name="userType" value="agent" checked={this.state.userType === 'agent'} onChange={this.handleInputChange}/>REA</label>
+                        <label className="loginFlexItem"><input type="radio" name="userType" value="REA" checked={this.state.userType === 'REA'} onChange={this.handleInputChange}/>REA</label>
                     </div>
                     <div className="caTextBoxes">
                         <p className="caUsernameText">Username:</p>

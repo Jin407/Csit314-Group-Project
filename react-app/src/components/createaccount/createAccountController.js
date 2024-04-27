@@ -12,15 +12,15 @@ class createAccountController {
             return null;
         }
     };
-
-    login = async (username, password) => {
+    //method name need to change to create account, remember to change for createaccount.js when calling this method as well
+    login = async (userType, username, password, cpassword) => {
         try {
-            const response = await fetch('http://127.0.0.1:5000/api/login', {
+            const response = await fetch('http://127.0.0.1:5000/api/create-account', {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json'
                 },
-                body: JSON.stringify({ username, password })
+                body: JSON.stringify({userType, username, password, cpassword})
             });
             if (!response.ok) {
                 throw new Error('Network response was not ok');
