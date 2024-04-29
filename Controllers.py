@@ -2,7 +2,7 @@ from Users import User, System_Admin, Real_Estate_Agent, Buyer, Seller
 # install the connector in terminal: pip install mysql-connector-python
 import mysql.connector
 #pip install flask
-from flask import Flask,request,jsonify
+from flask import Flask,request,jsonify,redirect,url_for
 #pip install flask-cors
 from flask_cors import CORS
 
@@ -37,14 +37,14 @@ class LoginController(BaseController):
                 password = data.get('password')
                 userType = data.get('userType')
                 #user type is Buyer, Seller or REA only got 1 Admin
-
+                
                 user = User(username,password)
 
                 if(user.authLogin(username,password,userType)):
-                    return jsonify({'message': 'Authentication Successful'})
+                    return jsonify({'message': 'Authentication successful'})
                 else:
                     return jsonify({'message': 'Incorrect Username or Password'})
-    
+                
             else:
                 return jsonify({'error': 'Method not allowed'}), 405
             
@@ -154,11 +154,12 @@ class CreateAccountController(BaseController):
                     return jsonify({'message': 'The password confirmation does not match'})
 
                 admin = System_Admin(username,password)
-
+                            
                 if(admin.createNewUserAccount(username,password,userType)):
                     return jsonify({'message': 'Account successfully created'})
                 else:
                     return jsonify({'message': 'Username already taken'})
+                
     
             else:
                 return jsonify({'error': 'Method not allowed'}), 405
