@@ -140,7 +140,7 @@ class CreateAccountController(BaseController):
         
         #method to receive what user entered for username and password in frontend
         @self.app.route('/api/create-account', methods=['POST'])
-        def create_account():
+        def createAccount():
             if request.method == 'POST':
                 data = request.json
                 # Assuming data contains username and password
@@ -153,7 +153,7 @@ class CreateAccountController(BaseController):
                 if (password != cpassword):
                     return jsonify({'message': 'The password confirmation does not match'})
 
-                admin = System_Admin(username,password)
+                admin = System_Admin("username","password")
                             
                 if(admin.createNewUserAccount(username,password,userType)):
                     return jsonify({'message': 'Account successfully created'})
@@ -164,6 +164,69 @@ class CreateAccountController(BaseController):
             else:
                 return jsonify({'error': 'Method not allowed'}), 405
 
+
+class ViewUserDetailsController:
+
+    def register_routes(self):    
+        #method to receive what user entered for username and password in frontend
+        @self.app.route('/api/view-user-details', methods=['POST'])
+        def updateUserDetails():
+            if request.method == 'POST':
+                data = request.json
+                # Assuming data contains username and password
+                username = data.get('username')
+
+                admin = System_Admin("username","password")
+
+                return jsonify({'message': admin.viewUserDetails(username)})
+            
+            else:
+                return jsonify({'error': 'Method not allowed'}), 405
+            
+
+class UpdateUserDetailsController:
+     def register_routes(self):    
+        #method to receive what user entered for username and password in frontend
+        @self.app.route('/api/update-user-details', methods=['POST'])
+        def displayUserDetails():
+            if request.method == 'POST':
+                data = request.json
+                # Assuming data contains username and password
+                username = data.get('username')
+                password = data.get('password')
+                userType = data.get('userType')
+
+                admin = System_Admin("username","password")
+
+                if(admin.updateUserDetails(password,userType,username)):
+                     return jsonify({'message': 'Account successfully updated'})
+                else:
+                    return jsonify({'message': 'User not found'})
+            
+            else:
+                return jsonify({'error': 'Method not allowed'}), 405
+            
+
+class SuspendUserAccountController:
+    def register_routes(self):    
+        #method to receive what user entered for username and password in frontend
+        @self.app.route('/api/suspend-user-account', methods=['POST'])
+        def updateUserDetails():
+            if request.method == 'POST':
+                data = request.json
+                # Assuming data contains username and password
+                username = data.get('username')
+
+                admin = System_Admin("username","password")
+
+                if(admin.suspendUserAccount(username)):
+                     return jsonify({'message': 'Account successfully suspended'})
+                else:
+                    return jsonify({'message': 'User not found'})
+            
+            else:
+                return jsonify({'error': 'Method not allowed'}), 405
+    
 
 if __name__ == '__main__':
     app = Flask(__name__)
