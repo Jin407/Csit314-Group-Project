@@ -1,7 +1,7 @@
 import './profiletable.css';
 import { DownOutlined } from '@ant-design/icons';
 import { Link } from 'react-router-dom';
-import { Dropdown, Space } from 'antd';
+import { Dropdown, Menu, Space } from 'antd';
 import { useState, useEffect } from 'react';
 
 const ProfileTable = ({ userType }) => {
@@ -42,12 +42,14 @@ const ProfileTable = ({ userType }) => {
     <Link to={`/profilepage/${username}`}>View account</Link>
   );
 
+  const renderUpdateAccountLink = (username) => (
+    <Link to={`/editprofile/${username}`}>Update account</Link>
+  )
+
   const renderMenu = (username) => (
     <Menu>
       <Menu.Item key={`view-${username}`}>{renderViewAccountLink(username)}</Menu.Item>
-      <Menu.Item key={`update-${username}`}>
-        <a target="_blank" rel="noopener noreferrer" href="https://www.aliyun.com">Update account</a>
-      </Menu.Item>
+      <Menu.Item key={`update-${username}`}>{renderUpdateAccountLink(username)}</Menu.Item>
       <Menu.Item key={`suspend-${username}`}>
         <a target="_blank" rel="noopener noreferrer" href="https://www.luohanacademy.com">Suspend account</a>
       </Menu.Item>
@@ -96,6 +98,18 @@ const ProfileTable = ({ userType }) => {
                 </td>
               </tr>
             ))}
+            <tr>
+                <td>userAcc1</td>
+                <td>12 Mar 2024</td>
+                <td>Active</td>
+                <td>
+                  <Dropdown overlay={renderMenu("userAcc1")}>
+                    <a className="ant-dropdown-link" onClick={e => e.preventDefault()}>
+                      Actions <DownOutlined />
+                    </a>
+                  </Dropdown>
+                </td>
+              </tr>
           </tbody>
         </table>
       </div>

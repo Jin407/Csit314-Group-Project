@@ -33,6 +33,8 @@
     border-radius: 15px;
     background-color: rgb(149, 149, 149);
     box-shadow: 3px 3px 3px rgb(128, 128, 128);
+    padding-bottom:1vw;
+    padding-top:1vw;
 }
 
 .loginText{
