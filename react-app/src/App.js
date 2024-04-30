@@ -16,7 +16,7 @@ class App extends Component{
           <Routes>
             <Route path='/' exact element={ <LoginPage /> } />
             <Route path='/createaccountpage' element={ <CreateAccountPage /> } />
-            <Route path='/profilepage' element={ <ProfilePage /> } />
+            <Route path='/profilepage/:user' element={ <ProfilePage /> } />
             <Route path='/sahomepage' element={ <SAHomePage /> } />
             <Route path='/sacreateaccountpage/:userType' element = { <CreateDynamicAccount /> } />
           </Routes>

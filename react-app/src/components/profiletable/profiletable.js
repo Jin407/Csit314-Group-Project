@@ -6,6 +6,7 @@ import { useState, useEffect } from 'react';
 
 const ProfileTable = ({ userType }) => {
   const [submitType, setSubmitType] = useState('');
+  const [users, setUsers] = useState([]);
 
   const handleInputChange = () => {
     if (userType === 'Buyers') setSubmitType('buyer');
@@ -18,6 +19,47 @@ const ProfileTable = ({ userType }) => {
     handleInputChange();
   }, []); // Run once on component mount to set the submitType
 
+  useEffect(() => {
+    fetchUsers(); // Fetch data when component mounts
+  }, []);
+
+  const fetchUsers = async () => {
+    try {
+      // Make API call to fetch user data
+      const response = await fetch('your-api-endpoint');
+      if (!response.ok) {
+        throw new Error('Failed to fetch user data');
+      }
+      const userData = await response.json();
+      // Update state with the fetched user data
+      setUsers(userData);
+    } catch (error) {
+      console.error('Error fetching user data:', error);
+    }
+  };
+
+  const renderViewAccountLink = (username) => (
+    <Link to={`/profilepage/${username}`}>View account</Link>
+  );
+
+  const renderMenu = (username) => (
+    <Menu>
+      <Menu.Item key={`view-${username}`}>{renderViewAccountLink(username)}</Menu.Item>
+      <Menu.Item key={`update-${username}`}>
+        <a target="_blank" rel="noopener noreferrer" href="https://www.aliyun.com">Update account</a>
+      </Menu.Item>
+      <Menu.Item key={`suspend-${username}`}>
+        <a target="_blank" rel="noopener noreferrer" href="https://www.luohanacademy.com">Suspend account</a>
+      </Menu.Item>
+      <Menu.Item key={`reactivate-${username}`} disabled>
+        Reactivate account (disabled)
+      </Menu.Item>
+      <Menu.Item key={`delete-${username}`} danger>
+        Delete account
+      </Menu.Item>
+    </Menu>
+  );
+
   return (
     <>
       <div className="tableOfProfiles">
@@ -28,80 +70,37 @@ const ProfileTable = ({ userType }) => {
           </Link>
         </h2>
         <table className="profilesTable">
-          <tr>
-            <th className="profileTableColumn1">Username</th>
-            <th className="profileTableColumn2">Register Date</th>
-            <th className="profileTableColumn3">Status</th>
-            <th className="profileTableColumn4">Actions</th>
-          </tr>
-          <td colSpan={4}>
-            <hr className="hr2px" />
-          </td>
-          <tr>
-            <td>Account1 Name</td>
-            <td>23/04/2024</td>
-            <td>Active</td>
-            <td>
-              <Dropdown menu={{ items }}>
-                <a onClick={(e) => e.preventDefault()}>
-                  <Space>
-                    Hover me <DownOutlined />
-                  </Space>
-                </a>
-              </Dropdown>
+          <thead>
+            <tr>
+              <th className="profileTableColumn1">Username</th>
+              <th className="profileTableColumn2">Register Date</th>
+              <th className="profileTableColumn3">Status</th>
+              <th className="profileTableColumn4">Actions</th>
+            </tr>
+          </thead>
+          <tbody>
+            <td colSpan={4}>
+              <hr className="hr2px" />
             </td>
-          </tr>
-          <td colSpan={4}>
-            <hr className="hr1px" />
-          </td>
+            {users.map((user, index) => (
+              <tr key={index}>
+                <td>{user.username}</td>
+                <td>{user.registerDate}</td>
+                <td>{user.status}</td>
+                <td>
+                  <Dropdown overlay={renderMenu(user.username)}>
+                    <a className="ant-dropdown-link" onClick={e => e.preventDefault()}>
+                      Actions <DownOutlined />
+                    </a>
+                  </Dropdown>
+                </td>
+              </tr>
+            ))}
+          </tbody>
         </table>
       </div>
     </>
   );
 };
-
-const items = [
-  {
-    key: '1',
-    label: (
-      <a target="_blank" rel="noopener noreferrer" href="https://www.antgroup.com">
-        View account
-      </a>
-    ),
-    disabled: false,
-  },
-  {
-    key: '2',
-    label: (
-      <a target="_blank" rel="noopener noreferrer" href="https://www.aliyun.com">
-        Update account
-      </a>
-    ),
-    disabled: false,
-  },
-  {
-    key: '3',
-    label: (
-      <a target="_blank" rel="noopener noreferrer" href="https://www.luohanacademy.com">
-        Suspend account
-      </a>
-    ),
-    disabled: false,
-  },
-  {
-    key: '4',
-    label: (
-      <a target="_blank" rel="noopener noreferrer" href="https://www.luohanacademy.com">
-        Reactivate account (disabled)
-      </a>
-    ),
-    disabled: true,
-  },
-  {
-    key: '5',
-    danger: true,
-    label: 'Delete account',
-  },
-];
 
 export default ProfileTable;

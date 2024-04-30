@@ -63,7 +63,7 @@ const CreateDynamicAccount = () => {
             <div className="caModule">
                 <p className="preLoginHeader">CREATE ACCOUNT</p>
                 <form className="caTextArea" onSubmit={handleSubmit}>
-                    Select account type:
+                    Selected account type: {userType}
                     <div className="caTextBoxes">
                         <p className="caText">Username:</p>
                         <input type="text" value={username} onChange={handleInputChange} name="username" placeholder="Username" className="caTextBox"/>
