@@ -8,8 +8,8 @@ class User:
         self.username = username
         self.password = password
         self.connection = mysql.connector.connect(
-            host="127.0.0.1",
-            #host="darrenhkx",
+            #host="127.0.0.1",
+            host="darrenhkx",
             user="username",
             password="password",
             database="csit314"
@@ -49,7 +49,7 @@ class System_Admin(User):
     def viewUserDetails(self,username) -> str:
         query = "SELECT * FROM csit314.Users WHERE username = %s;"
         try:
-            self.cursor.execute(query, (username,))
+            self.cursor.execute(query, (username))
             result = self.cursor.fetchall()
             #check if any user found
             if(len(result) > 0):
@@ -119,15 +119,33 @@ class System_Admin(User):
 class Real_Estate_Agent(User):
     #default constructor for Real Estate Agent
     def __init__(self, username,password):
-        super().__init__(self,username,password)
+        super().__init__(username,password)
 
     #method for Real estate agent to create property listing
-    def createPropertyListings():
-         pass#to be filled in later
+    def createPropertyListings(self, propertyAddress, price):
+        query = "INSERT INTO csit314.PropertyListings (address, price) VALUES (%s, %s);"
+        try:
+            self.cursor.execute(query, (propertyAddress, price))
+            # Commit the transaction to apply changes to the database
+            self.connection.commit()
+            return True
+        except mysql.connector.Error as err:
+            print("Error:",err)
+            # If there was an error, rollback the transaction to avoid partial changes
+            self.connection.rollback()
+            return False
     
-    #method for Real estate agent to search for property listing
-    def searchPropertyListings():
-         pass#to be filled in later
+    def searchPropertyListings(self, searched):
+        query = "SELECT address FROM csit314.PropertyListings WHERE address LIKE %s;"
+        try:
+            self.cursor.execute(query, (f"%{searched}%",))  # Wrap the search string with % and pass it as a tuple
+            result = self.cursor.fetchall()
+            if len(result) > 0:
+                return result  # Return tuples of all matches (can extract them as strings into a list but idk if thats ok)
+            else:
+                return "No listings match"  # No rows returned
+        except mysql.connector.Error as err:
+            print("Error:", err)
     
     #method for Real estate agent to update property listing
     def updatePropertyListings():
@@ -152,7 +170,7 @@ class Real_Estate_Agent(User):
 class Buyer(User):
     #default constructor for Buyer
     def __init__(self, username,password):
-        super().__init__(self,username,password)
+        super().__init__(username,password)
 
     #method for Buyer to search for property listing
     def searchPropertyListings():
@@ -182,7 +200,7 @@ class Buyer(User):
 class Seller(User):
     #default constructor for Seller
     def __init__(self, username,password):
-        super().__init__(self,username,password)
+        super().__init__(username,password)
 
     # view the number of times property has been shortlisted/viewed
     def viewPropertyListingsDetails():
@@ -195,4 +213,11 @@ class Seller(User):
     #method for Seller to review agent
     def reviewAgent():
         pass#to be filled in later
-        
+
+''' test
+rea = Real_Estate_Agent("user1", "password1")
+#rea.createPropertyListings("Hougang ave 10","9999999")
+#rea.createPropertyListings("Lorong 1 Toa Payoh","282828")
+results = rea.searchPropertyListings('Hougang')
+print(results)
+'''
