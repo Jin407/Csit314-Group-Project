@@ -20,6 +20,7 @@ class User:
         return self.username
     
     #method to authenticate user login, user entity class will connect to database via this method
+    #need to change to return bool
     def authLogin(self,username, password,userType) -> bool:
         try:
             #for admin login
@@ -119,7 +120,7 @@ class System_Admin(User):
 class Real_Estate_Agent(User):
     #default constructor for Real Estate Agent
     def __init__(self, username,password):
-        super().__init__(self,username,password)
+        super().__init__(username,password)
 
     #method for Real estate agent to create property listing
     def createPropertyListings():
@@ -152,7 +153,7 @@ class Real_Estate_Agent(User):
 class Buyer(User):
     #default constructor for Buyer
     def __init__(self, username,password):
-        super().__init__(self,username,password)
+        super().__init__(username,password)
 
     #method for Buyer to search for property listing
     def searchPropertyListings():
@@ -182,7 +183,7 @@ class Buyer(User):
 class Seller(User):
     #default constructor for Seller
     def __init__(self, username,password):
-        super().__init__(self,username,password)
+        super().__init__(username,password)
 
     # view the number of times property has been shortlisted/viewed
     def viewPropertyListingsDetails():
