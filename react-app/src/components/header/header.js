@@ -7,13 +7,13 @@ function Headerbanner(){
     <>
       <p className="headerbanner">
         <p className="companylogo"><img src={houselogo} alt="logo" className="compLogo"/></p>
-        <p className="companyname">Big Guy</p>
+        <p className="companyname">BIG GUY</p>
         <p className="filler"/>
         <p className="flushedright">
-          <p className="header-flex">Search</p>
-          <p className="header-flex">Listings</p>
-          <p className="header-flex">Favourite</p>
-          <p className="header-flex4"><p className="profileName">Tam Zhi Wen</p><img src={profilepic} alt="logo" className="profilePic"/></p>
+          <p className="header-flex">SEARCH</p>
+          <p className="header-flex">LISTINGS</p>
+          <p className="header-flex">FAVOURITE</p>
+          <p className="header-flex4"><p className="profileName">TAM ZHI WEN</p><img src={profilepic} alt="logo" className="profilePic"/></p>
         </p>
       </p>
     </>

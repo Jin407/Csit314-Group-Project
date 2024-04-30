@@ -1,5 +1,6 @@
 import './createaccount.css';
 import { Component } from 'react';
+import { Link } from 'react-router-dom';
 import createAccountController from './createAccountController.js';
 
 class CreateAccount extends Component{
@@ -48,7 +49,6 @@ class CreateAccount extends Component{
         <div className="caArea">
             <div className="caModule">
                 <p className="preLoginHeader">CREATE ACCOUNT</p>
-                <h2>{this.state.data}</h2>
                 <form className="caTextArea" onSubmit={this.handleSubmit}>
                     Select account type:
                     <div className="caFlexBox">
@@ -57,15 +57,17 @@ class CreateAccount extends Component{
                         <label className="loginFlexItem"><input type="radio" name="userType" value="agent" checked={this.state.userType === 'agent'} onChange={this.handleInputChange}/>REA</label>
                     </div>
                     <div className="caTextBoxes">
-                        <p className="caUsernameText">Username:</p>
+                        <p className="caText">Username:</p>
                         <input type="text" value={this.state.username} onChange={this.handleInputChange} name="username" placeholder="Username" className="caTextBox"/>
-                        <p className="caPasswordText">Password:</p>
+                        <p className="caText">Password:</p>
                         <input type="password" value={this.state.password} onChange={this.handleInputChange} name="password" placeholder="Password" className="caTextBox"/>
-                        <p className="caCPasswordText">Confirm Password:</p>
+                        <p className="caText">Confirm Password:</p>
                         <input type="password" value={this.state.cpassword} onChange={this.handleInputChange} name="cpassword" placeholder="Confirm Password" className="caTextBox"/>
                     </div>
-                    <label>login</label>
-                    <input type="submit" value="Create Account" />
+                    <div className="preLoginAdditionalFunctions">
+                        <Link to='/' className='loginlink'>Login</Link>
+                        <Link to='/ProfilePage'><input type="submit" value="Create Account" className="caSubmit"/></Link>
+                    </div>
                 </form>
             </div>
         </div>

@@ -1,6 +1,7 @@
 import './login.css';
 import { Component } from 'react';
 import loginController from './loginController.js';
+import { Link } from 'react-router-dom';
 
 class Login extends Component{
 
@@ -10,7 +11,7 @@ class Login extends Component{
             data: '',
             username: '',
             password: '',
-            userType: 'buyer',
+            userType: 'sysadmin',
         };
         this.loginController = new loginController(); // Create an instance of loginController
     }
@@ -30,7 +31,7 @@ class Login extends Component{
         event.preventDefault();
         const { userType, username, password } = this.state;
         const message = await this.loginController.login(userType, username, password);
-        console.log("1) username: " + username + "    2) password: " + password + "    3) userType: " + userType)
+        //console.log("1) username: " + username + "    2) password: " + password + "    3) userType: " + userType)
         if (message) {
             this.setState({ data: message });
         }
@@ -47,7 +48,6 @@ class Login extends Component{
             <div className="loginArea">
                 <div className="loginModule">
                     <p className="preLoginHeader">LOG IN</p>
-                    <h2>{this.state.data}</h2>
                     <form className="loginTextArea" onSubmit={this.handleSubmit}>
                         Select account type: 
                         <div className="loginFlexBox">
@@ -56,13 +56,15 @@ class Login extends Component{
                             <label className="loginFlexItem"><input type="radio" name="userType" value="agent" checked={this.state.userType === 'agent'} onChange={this.handleInputChange}/>REA</label>
                         </div>
                         <div className="loginTextBoxes">
-                            <p className="loginUsernameText">Username:</p>
+                            <p className="loginText">Username:</p>
                             <input type="text" name="username" value={this.state.username} placeholder="Username" className="loginTextBox" onChange={this.handleInputChange}/>
-                            <p className="loginPasswordText">Password:</p>
+                            <p className="loginText">Password:</p>
                             <input type="password" name="password" value={this.state.password} placeholder="Password" className="loginTextBox" onChange={this.handleInputChange}/>
                         </div>
-                        <label>createacc</label>
-                        <input type="submit" value="Login" />
+                        <div className="preLoginAdditionalFunctions">
+                            <Link to='/createaccountpage' className="calink">Create Account</Link>
+                            <input type="submit" value="Login" className="loginSubmit"/>
+                        </div>
                     </form>
                 </div>
             </div>
