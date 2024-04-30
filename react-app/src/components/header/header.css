@@ -1,8 +1,8 @@
 .flushedright {
     text-align: right;
-    background-color: rgba(255, 255, 224, 000);
+    background-color: rgba(255, 255, 224, 00);
     width:60%;
-    font-size: 2vw;
+    font-size: 1.5vw;
     display: flex;
     flex-direction: row;
     justify-content: end;
@@ -59,6 +59,7 @@
     flex-direction: row;
     display: flex;
     height:6vw;
+    font-weight: bold;
 }
 
 .compLogo{
@@ -80,4 +81,5 @@
 
 .profileName{
     flex-grow:1;
+    padding-top:5px;
 }

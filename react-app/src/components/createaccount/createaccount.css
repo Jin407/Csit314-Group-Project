@@ -5,15 +5,15 @@
     text-align: center;
     margin-top: 3vw;
     margin-bottom: 3vw;
-    background-color: rgba(0,255,255,100);
+    background-color: rgba(0,255,255,0);
     padding-top: 3vw;
     padding-bottom: 3vw;
     font-size:2.5vw;
 }
 
 .caArea{
-    width: 100%;
-    background-color: rgba(255,255,0,100);
+    width:100%;
+    background-color: rgba(255,255,0,0);
 }
 
 .preLoginHeader{
@@ -23,18 +23,24 @@
 
 .caTextBox{
     width: 100%;
+    height: 2vw;
 }
 
 .caTextArea{
     width: 60%;
-    background-color: gray;
+    border-radius: 15px;
+    background-color: rgb(149, 149, 149);
+    box-shadow: 3px 3px 3px rgb(128, 128, 128);
     margin-left: auto;
     margin-right: auto;
+    padding-bottom:1vw;
+    padding-top:1vw;
 }
 
 .caFlexBox{
     display: flex;
     flex-direction: row;
+    margin-bottom: 2vw;
 }
 
 .caFlexItem{
@@ -45,4 +51,39 @@
     text-align: left;
     margin-left:20%;
     margin-right:20%;
+}
+
+.caText{
+    font-size: 2vw;
+}
+
+.caTextBox{
+    height: 2vw;
+}
+
+.loginlink{
+    font-size:1.5vw;
+    margin-top:1vw;
+    margin-bottom: 1vw;
+    color: rgba(0,0,166,100);
+}
+
+.caSubmit{
+    height: 1.5vw;
+    margin-top:1vw;
+    font-size:1vw;
+    text-decoration:none;
+    border:0;
+    background: none;
+    background-color: rgb(48, 194, 31);
+}
+
+.preLoginAdditionalFunctions{
+    width:60%;
+    margin-left:auto;
+    margin-right: auto;
+    text-align: left;
+    display:flex;
+    flex-direction: left;
+    justify-content: space-between;
 }

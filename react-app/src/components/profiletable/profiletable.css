@@ -3,12 +3,27 @@
     margin-left: auto;
     margin-right: auto;
     text-align: center;
-    margin-top: 3vw;
-    margin-bottom: 3vw;
-    background-color: rgba(0,255,255,100);
-    padding-top: 3vw;
-    padding-bottom: 3vw;
+    margin-top: 2vw;
+    margin-bottom: 2vw;
+    background-color: rgba(149,149,149,100);
+    padding-top: 1vw;
+    padding-bottom: 1vw;
+    padding-left:2vw;
+    padding-right:2vw;
     font-size:1.4vw;
+    border-radius: 15px;
+}
+
+.PTCreateAccButton {
+    border-radius: 100%;
+    border-color: rgba(0,0,0,0);
+    font-size:1.3vw;
+}
+
+.PTCreateAccButton:hover {
+    border-radius: 100%;
+    border-color: rgba(200,200,200,100);
+
 }
 
 .profilesTable{

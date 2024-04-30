@@ -20,6 +20,7 @@ class User:
         return self.username
     
     #method to authenticate user login, user entity class will connect to database via this method
+    #need to change to return bool
     def authLogin(self,username, password,userType) -> bool:
         try:
             #for admin login
