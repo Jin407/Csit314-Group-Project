@@ -136,6 +136,7 @@ class Real_Estate_Agent(User):
             self.connection.rollback()
             return False
     
+    # Method to search for property listings 
     def searchPropertyListings(self, searched):
         query = "SELECT address FROM csit314.PropertyListings WHERE address LIKE %s;"
         try:
@@ -148,13 +149,21 @@ class Real_Estate_Agent(User):
         except mysql.connector.Error as err:
             print("Error:", err)
     
-    #method for Real estate agent to update property listing
-    def updatePropertyListings():
-         pass#to be filled in later
+    #method for Real estate agent to update property listing           (have not tested yet, might add more things)
+    def updatePropertyListings(self, newprice, id):
+        query = "UPDATE csit314.PropertyListings SET price = %s WHERE address = %s;" # only updating price as of now
+        try:
+            self.cursor.execute(query, (newprice, id)) 
+        except mysql.connector.Error as err:
+            print("Error:", err)
     
     #method for Real estate agent to remove property listing
-    def removePropertyListings():
-         pass#to be filled in later
+    def removePropertyListings(self, id):
+        query = "DELETE FROM csit314.PropertyListings WHERE id = %s"
+        try:
+            self.cursor.execute(query, id) 
+        except mysql.connector.Error as err:
+            print("Error:", err)
     
     #method for Real estate agent to view property listing
     def viewPropertyListings():
