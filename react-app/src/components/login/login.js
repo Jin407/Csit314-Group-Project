@@ -1,6 +1,5 @@
 import './login.css';
 import { Component } from 'react';
-import loginController from './loginController.js';
 import { Link } from 'react-router-dom';
 
 
@@ -15,19 +14,45 @@ class Login extends Component{
             password: '',
             userType: 'sysadmin',
         };
-        this.loginController = new loginController(); // Create an instance of loginController
     }
+
+    fetchData = async () => {
+        try {
+            const response = await fetch('http://127.0.0.1:5000/api/data');
+            if (!response.ok) {
+                throw new Error('Network response was not ok');
+            }
+            const responseData = await response.json();
+            return responseData.message;
+        } catch (error) {
+            console.error('Error fetching data:', error);
+            return null;
+        }
+    };
+
+    login = async (userType, username, password) => {
+        try {
+            const response = await fetch('http://127.0.0.1:5000/api/login', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({ userType, username, password })
+            });
+            if (!response.ok) {
+                throw new Error('Network response was not ok');
+            }
+            const responseData = await response.json();
+            return responseData.message;
+        } catch (error) {
+            console.error('Error logging in:', error);
+            return null;
+        }
+    };
 
     componentDidMount() {
         this.fetchData();
     }
-
-    fetchData = async () => {
-        const data = await this.loginController.fetchData();
-        if (data) {
-            this.setState({ data });
-        }
-    };
 
     handleSubmit = async (event) => {
         event.preventDefault();
@@ -65,7 +90,7 @@ class Login extends Component{
                         </div>
                         <div className="preLoginAdditionalFunctions">
                             <Link to='/createaccountpage' className="calink">Create Account</Link>
-                            <input type="submit" value="Login" className="loginSubmit"/>
+                            <Link to='/sahomepage'><input type="submit" value="Login" className="loginSubmit"/></Link>
                         </div>
                     </form>
                 </div>

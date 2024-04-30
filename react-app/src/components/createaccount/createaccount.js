@@ -1,7 +1,6 @@
 import './createaccount.css';
 import { Component } from 'react';
 import { Link } from 'react-router-dom';
-import createAccountController from './createAccountController.js';
 
 //class name needs to be change to create Account view
 class CreateAccount extends Component{
@@ -15,19 +14,45 @@ class CreateAccount extends Component{
             cpassword: '',
             userType: 'buyer',
         };
-        this.createAccountController = new createAccountController(); // Create an instance of createAccountController
     }
+
+    fetchData = async () => {
+        try {
+            const response = await fetch('http://127.0.0.1:5000/api/data');
+            if (!response.ok) {
+                throw new Error('Network response was not ok');
+            }
+            const responseData = await response.json();
+            return responseData.message;
+        } catch (error) {
+            console.error('Error fetching data:', error);
+            return null;
+        }
+    };
+    //method name need to change to create account, remember to change for createaccount.js when calling this method as well
+    login = async (userType, username, password, cpassword) => {
+        try {
+            const response = await fetch('http://127.0.0.1:5000/api/create-account', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({userType, username, password, cpassword})
+            });
+            if (!response.ok) {
+                throw new Error('Network response was not ok');
+            }
+            const responseData = await response.json();
+            return responseData.message;
+        } catch (error) {
+            console.error('Error logging in:', error);
+            return null;
+        }
+    };
 
     componentDidMount() {
         this.fetchData();
     }
-
-    fetchData = async () => {
-        const data = await this.createAccountController.fetchData();
-        if (data) {
-            this.setState({ data });
-        }
-    };
 
     handleSubmit = async (event) => {
         event.preventDefault();

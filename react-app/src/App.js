@@ -1,16 +1,11 @@
 import './App.css';
-import Headerbanner from './components//header/header.js';
-import Footer from './components/footer/footer.js';
-import Login from './components/login/login.js';
-import CreateAccount from './components/createaccount/createaccount.js';
-import ProfileTable from './components/profiletable/profiletable.js';
-import AccountDetails from './components/accountdetails/accountdetails.js';
 import {BrowserRouter as Router,  Route, Routes } from 'react-router-dom';
 import LoginPage from './pages/loginpage.js';
 import CreateAccountPage from './pages/createaccpage.js';
 import { Component } from 'react';
 import ProfilePage from './pages/profilepage.js';
 import SAHomePage from './pages/sahomepage.js';
+import CreateDynamicAccount from './components/createdynamicaccount/createdynamicaccount.js';
 
 class App extends Component{
   render(){
@@ -23,6 +18,7 @@ class App extends Component{
             <Route path='/createaccountpage' element={ <CreateAccountPage /> } />
             <Route path='/profilepage' element={ <ProfilePage /> } />
             <Route path='/sahomepage' element={ <SAHomePage /> } />
+            <Route path='/sacreateaccountpage/:userType' element = { <CreateDynamicAccount /> } />
           </Routes>
         </header>
       </div>
