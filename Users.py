@@ -121,6 +121,7 @@ class Real_Estate_Agent(User):
     #default constructor for Real Estate Agent
     def __init__(self, username,password):
         super().__init__(username,password)
+        self.rating = 0
 
     #method for Real estate agent to create property listing
     def createPropertyListings(self, propertyAddress, price)->bool:
@@ -191,12 +192,21 @@ class Real_Estate_Agent(User):
             print("Error:", err)
 
     #method for Real estate agent to view their ratings
-    def viewRatings():
-         pass#to be filled in later
+    def viewRatings(self):
+        return self.rating
 
     #method for Real estate agent to view Reviews
-    def viewReviews():
-         pass#to be filled in later
+    def viewReviews(self):
+        query = "SELECT  FROM csit314.reviews WHERE agentUser = %s;" # for now it returns a tuple of the entire row
+        try:
+            self.cursor.execute(query, (self.username,))
+            result = self.cursor.fetchall()
+            if len(result) > 0:
+                return result 
+            else:
+                return "No reviews found"  # No rows returned
+        except mysql.connector.Error as err:
+            print("Error:", err)
     
 class Buyer(User):
     #default constructor for Buyer
@@ -245,9 +255,9 @@ class Seller(User):
     def reviewAgent():
         pass#to be filled in later
 
-'''test
-#rea = Real_Estate_Agent("REA1", "password")
+''' test
+rea = Real_Estate_Agent("REA1", "password")
 #rea.createPropertyListings("Hougang ave 9","9999999")
-results = rea.viewPropertyListings()
-#print(results)
+results = rea.viewReviews()
+print(results)
 '''
