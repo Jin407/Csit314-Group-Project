@@ -123,10 +123,10 @@ class Real_Estate_Agent(User):
         super().__init__(username,password)
 
     #method for Real estate agent to create property listing
-    def createPropertyListings(self, propertyAddress, price):
-        query = "INSERT INTO csit314.PropertyListings (address, price) VALUES (%s, %s);"
+    def createPropertyListings(self, propertyAddress, price)->bool:
+        query = "INSERT INTO csit314.PropertyListings (address, price, agentUser) VALUES (%s, %s, %s);"
         try:
-            self.cursor.execute(query, (propertyAddress, price))
+            self.cursor.execute(query, (propertyAddress, price, self.username))
             # Commit the transaction to apply changes to the database
             self.connection.commit()
             return True
@@ -149,25 +149,46 @@ class Real_Estate_Agent(User):
         except mysql.connector.Error as err:
             print("Error:", err)
     
-    #method for Real estate agent to update property listing           (have not tested yet, might add more things)
-    def updatePropertyListings(self, newprice, id):
-        query = "UPDATE csit314.PropertyListings SET price = %s WHERE address = %s;" # only updating price as of now
+    #method for Real estate agent to update property listing
+    def updatePropertyListings(self, newprice, id)->bool:
+        query = "UPDATE csit314.PropertyListings SET price = %s WHERE ListingId = %s;" # only updates price as of now
         try:
-            self.cursor.execute(query, (newprice, id)) 
+            self.cursor.execute(query, (newprice, id))
+            if self.cursor.rowcount == 0:
+                print("No listing found with ID:", id)
+                return False
+            self.connection.commit()
+            return True
         except mysql.connector.Error as err:
             print("Error:", err)
+            return False
     
     #method for Real estate agent to remove property listing
     def removePropertyListings(self, id):
-        query = "DELETE FROM csit314.PropertyListings WHERE id = %s"
+        query = "DELETE FROM csit314.PropertyListings WHERE ListingId = %s;"
         try:
-            self.cursor.execute(query, id) 
+            self.cursor.execute(query, (id,))
+            if self.cursor.rowcount == 0:
+                print("No listing found with ID:", id)
+                return False
+            self.connection.commit()
+            return True 
         except mysql.connector.Error as err:
             print("Error:", err)
+            return False
     
     #method for Real estate agent to view property listing
-    def viewPropertyListings():
-         pass#to be filled in later
+    def viewPropertyListings(self):
+        query = "SELECT * FROM csit314.PropertyListings WHERE agentUser = %s;" # for now it returns a tuple of the entire row
+        try:
+            self.cursor.execute(query, (self.username,))
+            result = self.cursor.fetchall()
+            if len(result) > 0:
+                return result 
+            else:
+                return "No listings found"  # No rows returned
+        except mysql.connector.Error as err:
+            print("Error:", err)
 
     #method for Real estate agent to view their ratings
     def viewRatings():
@@ -224,10 +245,9 @@ class Seller(User):
     def reviewAgent():
         pass#to be filled in later
 
-''' test
-rea = Real_Estate_Agent("user1", "password1")
-#rea.createPropertyListings("Hougang ave 10","9999999")
-#rea.createPropertyListings("Lorong 1 Toa Payoh","282828")
-results = rea.searchPropertyListings('Hougang')
-print(results)
+'''test
+#rea = Real_Estate_Agent("REA1", "password")
+#rea.createPropertyListings("Hougang ave 9","9999999")
+results = rea.viewPropertyListings()
+#print(results)
 '''

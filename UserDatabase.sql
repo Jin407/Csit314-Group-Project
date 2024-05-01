@@ -1,12 +1,12 @@
-DROP DATABASE UserDatabase;
-CREATE DATABASE UserDatabase;
-USE UserDatabase;
+DROP DATABASE csit314;
+CREATE DATABASE csit314;
+USE csit314;
 
-
-CREATE TABLE UserDatabase.Users (
+CREATE TABLE csit314.users (
     UserID INT PRIMARY KEY AUTO_INCREMENT,
     Username VARCHAR(50) UNIQUE NOT NULL,
     Password VARCHAR(100) NOT NULL,
     UserType VARCHAR(50) NOT NULL,
+    Status ENUM('Active','Suspended') default 'Active',
     CreatedAt TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 );
