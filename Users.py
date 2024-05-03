@@ -8,8 +8,8 @@ class User:
         self.username = username
         self.password = password
         self.connection = mysql.connector.connect(
-            #host="127.0.0.1",
-            host="darrenhkx",
+            host="127.0.0.1",
+            #host="darrenhkx",
             user="username",
             password="password",
             database="csit314"
@@ -49,6 +49,25 @@ class System_Admin(User):
     #method for system admin to view user details
     def viewUserDetails(self,username) -> str:
         query = "SELECT * FROM csit314.Users WHERE username = %s;"
+        try:
+            self.cursor.execute(query, (username))
+            result = self.cursor.fetchall()
+            #check if any user found
+            if(len(result) > 0):
+                #format user's info
+                message = f"User ID: {result[0][0]}\nUsername: {result[0][1]}\nPassword: {result[0][2]}\nUser Type: {result[0][3]}\nCreated at: {result[0][4]}"
+
+                return message
+            else:
+                return "Username not found" #no rows returned
+            
+        except mysql.connector.Error as err:
+            print("Error:",err)
+            return False
+    
+    #method for system admin to view user details
+    def displayUserDetails(self,username) -> str:
+        query = "SELECT * FROM csit314.Users WHERE userType='Buyer' Limit 5;"
         try:
             self.cursor.execute(query, (username))
             result = self.cursor.fetchall()
@@ -260,4 +279,13 @@ rea = Real_Estate_Agent("REA1", "password")
 #rea.createPropertyListings("Hougang ave 9","9999999")
 results = rea.viewReviews()
 print(results)
+
+if __name__ == '__main__':
+ admin = System_Admin("username","password")
+ count = 0
+ for x in range(10):
+     username = "seller" + str(count)
+     password = "sellerpass" + str(count)
+     admin.createNewUserAccount(username,password,"seller")
+     count += 1
 '''

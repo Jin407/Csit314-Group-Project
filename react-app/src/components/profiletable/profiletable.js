@@ -26,7 +26,7 @@ const ProfileTable = ({ userType }) => {
   const fetchUsers = async () => {
     try {
       // Make API call to fetch user data
-      const response = await fetch('your-api-endpoint');
+      const response = await fetch('http://127.0.0.1:5000/api/view-user-details');
       if (!response.ok) {
         throw new Error('Failed to fetch user data');
       }

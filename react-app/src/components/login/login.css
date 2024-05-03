@@ -83,3 +83,7 @@
     flex-direction: left;
     justify-content: space-between;
 }
+
+.errorMessage {
+    color: red; /* Set the text color to red */
+}

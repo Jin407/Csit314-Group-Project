@@ -42,11 +42,11 @@ class Login extends Component{
             if (!response.ok) {
                 throw new Error('Network response was not ok');
             }
-            const responseData = await response.json();
-            return responseData.message;
+            const jsonresponse = await response.json(); // Assuming the server returns a boolean value
+            return jsonresponse.success;
         } catch (error) {
             console.error('Error logging in:', error);
-            return null;
+            return false;
         }
     };
 
@@ -57,10 +57,12 @@ class Login extends Component{
     handleSubmit = async (event) => {
         event.preventDefault();
         const { userType, username, password } = this.state;
-        const message = await this.loginController.login(userType, username, password);
+        const success= await this.login(userType, username, password);
         //console.log("1) username: " + username + "    2) password: " + password + "    3) userType: " + userType)
-        if (message) {
-            this.setState({ data: message });
+        if (success) {
+            window.location.href = '/sahomepage';
+        }else{
+            this.setState({ errorMessage: "Login failed. Please try again." });
         }
     };
 
@@ -90,9 +92,11 @@ class Login extends Component{
                         </div>
                         <div className="preLoginAdditionalFunctions">
                             <Link to='/createaccountpage' className="calink">Create Account</Link>
-                            <Link to='/sahomepage'><input type="submit" value="Login" className="loginSubmit"/></Link>
+                            <input type="submit" value="Login" className="loginSubmit"/>
                         </div>
+                        <p className="errorMessage">{this.state.errorMessage}</p>
                     </form>
+                    
                 </div>
             </div>
             </>

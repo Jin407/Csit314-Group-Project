@@ -29,8 +29,8 @@ class CreateAccount extends Component{
             return null;
         }
     };
-    //method name need to change to create account, remember to change for createaccount.js when calling this method as well
-    login = async (userType, username, password, cpassword) => {
+
+    createAccount = async (userType, username, password, cpassword) => {
         try {
             const response = await fetch('http://127.0.0.1:5000/api/create-account', {
                 method: 'POST',
@@ -43,10 +43,10 @@ class CreateAccount extends Component{
                 throw new Error('Network response was not ok');
             }
             const responseData = await response.json();
-            return responseData.message;
+            return responseData.success;
         } catch (error) {
             console.error('Error logging in:', error);
-            return null;
+            return false;
         }
     };
 
@@ -57,10 +57,17 @@ class CreateAccount extends Component{
     handleSubmit = async (event) => {
         event.preventDefault();
         const { userType, username, password, cpassword } = this.state;
-        const message = await this.createAccountController.login(userType, username, password, cpassword);
+        if(password != cpassword){
+            this.setState({ createAccountmessage: "Passwords do not match"});
+            return;
+        }
+
+        const success = await this.createAccount(userType, username, password, cpassword);
         console.log("1) username: " + username + "    2) password: " + password + "    3) cpassword: " + cpassword + "    4) userType: " + userType)
-        if (message) {
-            this.setState({ data: message });
+        if (success) {
+            this.setState({ createAccountmessage: "Account successfully created" });
+        }else{
+            this.setState({ createAccountmessage: "Username taken" });
         }
     };
 
@@ -92,8 +99,10 @@ class CreateAccount extends Component{
                     </div>
                     <div className="preLoginAdditionalFunctions">
                         <Link to='/' className='loginlink'>Login</Link>
-                        <Link to='/ProfilePage'><input type="submit" value="Create Account" className="caSubmit"/></Link>
+                        <input type="submit" value="Create Account" className="caSubmit"/>
+                        {/* <Link to='/ProfilePage'></Link> */}
                     </div>
+                    <p className="createAccountmessage">{this.state.createAccountmessage}</p>
                 </form>
             </div>
         </div>

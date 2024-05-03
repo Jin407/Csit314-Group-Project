@@ -40,10 +40,10 @@ class LoginController(BaseController):
                 
                 user = User(username,password)
 
-                if(user.authLogin(username,password,userType)):
-                    return jsonify({'message': 'Authentication successful'})
-                else:
-                    return jsonify({'message': 'Incorrect Username or Password'})
+                login_success = user.authLogin(username,password,userType)
+                
+                return jsonify({'success': login_success})
+            
                 
             else:
                 return jsonify({'error': 'Method not allowed'}), 405
@@ -69,10 +69,9 @@ class CreateAccountController(BaseController):
 
                 admin = System_Admin("username","password")
                             
-                if(admin.createNewUserAccount(username,password,userType)):
-                    return jsonify({'message': 'Account successfully created'})
-                else:
-                    return jsonify({'message': 'Username already taken'})
+                createAccount_success = admin.createNewUserAccount(username,password,userType)
+                
+                return jsonify({'success': createAccount_success})
                 
     
             else:
@@ -81,10 +80,26 @@ class CreateAccountController(BaseController):
 
 class ViewUserDetailsController:
 
-    def register_routes(self):    
+    def register_routes(self):
+        #method to preview users in system admin page
+        @self.app.route('/api/display-user-details', methods=['POST'])
+        def displayUserDetails():
+            if request.method == 'POST':
+                data = request.json
+                # Assuming data contains username and password
+                username = data.get('username')
+
+                admin = System_Admin("username","password")
+
+                return jsonify({'message': admin.viewUserDetails(username)})
+            
+            else:
+                return jsonify({'error': 'Method not allowed'}), 405
+
+
         #method to receive what user entered for username and password in frontend
         @self.app.route('/api/view-user-details', methods=['POST'])
-        def updateUserDetails():
+        def viewUserDetails():
             if request.method == 'POST':
                 data = request.json
                 # Assuming data contains username and password
@@ -102,7 +117,7 @@ class UpdateUserDetailsController:
      def register_routes(self):    
         #method to receive what user entered for username and password in frontend
         @self.app.route('/api/update-user-details', methods=['POST'])
-        def displayUserDetails():
+        def updateUserDetails():
             if request.method == 'POST':
                 data = request.json
                 # Assuming data contains username and password
@@ -146,4 +161,4 @@ if __name__ == '__main__':
     app = Flask(__name__)
     LoginController(app)
     CreateAccountController(app)
-    #app.run(debug=True)
+    app.run(debug=True)
