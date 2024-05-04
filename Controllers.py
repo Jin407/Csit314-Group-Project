@@ -2,7 +2,7 @@ from Users import User, System_Admin, Real_Estate_Agent, Buyer, Seller
 # install the connector in terminal: pip install mysql-connector-python
 import mysql.connector
 #pip install flask
-from flask import Flask,request,jsonify,redirect,url_for
+from flask import Flask,request,jsonify,make_response
 #pip install flask-cors
 from flask_cors import CORS
 
@@ -78,21 +78,24 @@ class CreateAccountController(BaseController):
                 return jsonify({'error': 'Method not allowed'}), 405
 
 
-class ViewUserDetailsController:
+class ViewUserDetailsController(BaseController):
 
     def register_routes(self):
         #method to preview users in system admin page
-        @self.app.route('/api/display-user-details', methods=['POST'])
+        @self.app.route('/api/display-users', methods=['POST'])
         def displayUserDetails():
             if request.method == 'POST':
                 data = request.json
                 # Assuming data contains username and password
-                username = data.get('username')
+                usertype = data.get('usertype')
 
                 admin = System_Admin("username","password")
+                user_details = admin.displayUserDetails(usertype)
 
-                return jsonify({'message': admin.viewUserDetails(username)})
-            
+                if user_details:
+                    return jsonify(user_details)
+                else:
+                    return jsonify({'error': 'No user details found'})
             else:
                 return jsonify({'error': 'Method not allowed'}), 405
 
@@ -113,7 +116,7 @@ class ViewUserDetailsController:
                 return jsonify({'error': 'Method not allowed'}), 405
             
 
-class UpdateUserDetailsController:
+class UpdateUserDetailsController(BaseController):
      def register_routes(self):    
         #method to receive what user entered for username and password in frontend
         @self.app.route('/api/update-user-details', methods=['POST'])
@@ -136,7 +139,7 @@ class UpdateUserDetailsController:
                 return jsonify({'error': 'Method not allowed'}), 405
             
 
-class SuspendUserAccountController:
+class SuspendUserAccountController(BaseController):
     def register_routes(self):    
         #method to receive what user entered for username and password in frontend
         @self.app.route('/api/suspend-user-account', methods=['POST'])
@@ -161,4 +164,5 @@ if __name__ == '__main__':
     app = Flask(__name__)
     LoginController(app)
     CreateAccountController(app)
+    ViewUserDetailsController(app)
     app.run(debug=True)

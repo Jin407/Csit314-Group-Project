@@ -7,6 +7,7 @@ class User:
     def __init__(self, username, password):
         self.username = username
         self.password = password
+        self.status = "active"
         self.connection = mysql.connector.connect(
             host="127.0.0.1",
             #host="darrenhkx",
@@ -50,7 +51,7 @@ class System_Admin(User):
     def viewUserDetails(self,username) -> str:
         query = "SELECT * FROM csit314.Users WHERE username = %s;"
         try:
-            self.cursor.execute(query, (username))
+            self.cursor.execute(query, (username,))
             result = self.cursor.fetchall()
             #check if any user found
             if(len(result) > 0):
@@ -66,19 +67,19 @@ class System_Admin(User):
             return False
     
     #method for system admin to view user details
-    def displayUserDetails(self,username) -> str:
-        query = "SELECT * FROM csit314.Users WHERE userType='Buyer' Limit 5;"
+    def displayUserDetails(self,usertype):
+        query = "SELECT * FROM csit314.Users WHERE userType = %s Limit 5;"
         try:
-            self.cursor.execute(query, (username))
-            result = self.cursor.fetchall()
-            #check if any user found
-            if(len(result) > 0):
-                #format user's info
-                message = f"User ID: {result[0][0]}\nUsername: {result[0][1]}\nPassword: {result[0][2]}\nUser Type: {result[0][3]}\nCreated at: {result[0][4]}"
-
-                return message
-            else:
-                return "Username not found" #no rows returned
+            self.cursor.execute(query,(usertype,))
+            results = self.cursor.fetchall()
+            user_details = []
+            for result in results:
+                username = result[1]
+                status = result[4]
+                createdAt = result[5]
+                user_details.append((username, createdAt, status))
+            return user_details  # Return list of user details
+            #message = f"Username: {result[0][1]}\nCreated at: {result[0][4]}
             
         except mysql.connector.Error as err:
             print("Error:",err)
@@ -289,3 +290,10 @@ if __name__ == '__main__':
      admin.createNewUserAccount(username,password,"seller")
      count += 1
 '''
+if __name__ == '__main__':
+    admin = System_Admin("username","password")
+    # Assuming you have an instance of the class containing the `displayUserDetails` method
+    # For example, if your instance is named `instance`:
+    user_details = admin.displayUserDetails("buyer")
+    print(user_details)
+

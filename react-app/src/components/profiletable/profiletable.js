@@ -9,10 +9,12 @@ const ProfileTable = ({ userType }) => {
   const [users, setUsers] = useState([]);
 
   const handleInputChange = () => {
+    
     if (userType === 'Buyers') setSubmitType('buyer');
     else if (userType === 'Sellers') setSubmitType('seller');
     else if (userType === 'Real Estate Agents') setSubmitType('REA');
     else setSubmitType(userType);
+    
   };
 
   useEffect(() => {
@@ -21,18 +23,32 @@ const ProfileTable = ({ userType }) => {
 
   useEffect(() => {
     fetchUsers(); // Fetch data when component mounts
-  }, []);
+  }, [submitType]);
 
   const fetchUsers = async () => {
     try {
       // Make API call to fetch user data
-      const response = await fetch('http://127.0.0.1:5000/api/view-user-details');
+      const response = await fetch('http://127.0.0.1:5000/api/display-users', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({ usertype: submitType })
+      });
+  
       if (!response.ok) {
         throw new Error('Failed to fetch user data');
       }
+  
       const userData = await response.json();
-      // Update state with the fetched user data
-      setUsers(userData);
+      console.log('Received user data:', userData);
+      // Map the received user data to user objects
+      // Directly set the state of users with the mapped user data
+      setUsers(userData.map(user => ({
+        username: user[0],
+        createdAt: new Date(user[1]).toLocaleString(),
+        status: user[2]
+      })));
     } catch (error) {
       console.error('Error fetching user data:', error);
     }
@@ -62,6 +78,42 @@ const ProfileTable = ({ userType }) => {
     </Menu>
   );
 
+  const renderTable = (start, end) => {
+    return (
+      <table className="profilesTable">
+        <thead>
+          <tr>
+            <th className="profileTableColumn1">Username</th>
+            <th className="profileTableColumn2">Register Date</th>
+            <th className="profileTableColumn3">Status</th>
+            <th className="profileTableColumn4">Actions</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td colSpan={4}>
+              <hr className="hr2px" />
+            </td>
+          </tr>
+          {users.slice(start, end).map((user, index) => (
+            <tr key={index}>
+              <td>{user.username}</td>
+              <td>{user.createdAt}</td>
+              <td>{user.status}</td>
+              <td>
+                <Dropdown overlay={renderMenu(user.username)}>
+                  <a className="ant-dropdown-link" onClick={(e) => e.preventDefault()}>
+                    Actions <DownOutlined />
+                  </a>
+                </Dropdown>
+              </td>
+            </tr>
+          ))}
+        </tbody>
+      </table>
+    );
+  };
+
   return (
     <>
       <div className="tableOfProfiles">
@@ -80,6 +132,7 @@ const ProfileTable = ({ userType }) => {
               <th className="profileTableColumn4">Actions</th>
             </tr>
           </thead>
+          
           <tbody>
             <td colSpan={4}>
               <hr className="hr2px" />
@@ -87,7 +140,7 @@ const ProfileTable = ({ userType }) => {
             {users.map((user, index) => (
               <tr key={index}>
                 <td>{user.username}</td>
-                <td>{user.registerDate}</td>
+                <td>{user.createdAt}</td>
                 <td>{user.status}</td>
                 <td>
                   <Dropdown overlay={renderMenu(user.username)}>
@@ -98,10 +151,8 @@ const ProfileTable = ({ userType }) => {
                 </td>
               </tr>
             ))}
+            {/*
             <tr>
-                <td>userAcc1</td>
-                <td>12 Mar 2024</td>
-                <td>Active</td>
                 <td>
                   <Dropdown overlay={renderMenu("userAcc1")}>
                     <a className="ant-dropdown-link" onClick={e => e.preventDefault()}>
@@ -110,8 +161,11 @@ const ProfileTable = ({ userType }) => {
                   </Dropdown>
                 </td>
               </tr>
+          */}
+          
           </tbody>
         </table>
+        
       </div>
     </>
   );
