@@ -3,6 +3,8 @@ import React from "react";
 import { Link, useParams } from "react-router-dom";
 import './editprofile.css';
 
+//should be placed in a class
+
 const EditProfile = () => {
 
     const { username } = useParams();

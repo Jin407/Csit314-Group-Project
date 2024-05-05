@@ -63,9 +63,6 @@ class CreateAccountController(BaseController):
                 userType = data.get('userType')
                 cpassword = data.get('cpassword')
                 #user type is Buyer, Seller or REA only got 1 Admin
-                #check if password and cpassword match before creating account
-                if (password != cpassword):
-                    return jsonify({'message': 'The password confirmation does not match'})
 
                 admin = System_Admin("username","password")
                             
@@ -143,7 +140,7 @@ class SuspendUserAccountController(BaseController):
     def register_routes(self):    
         #method to receive what user entered for username and password in frontend
         @self.app.route('/api/suspend-user-account', methods=['POST'])
-        def updateUserDetails():
+        def suspendUserAccount():
             if request.method == 'POST':
                 data = request.json
                 # Assuming data contains username and password
