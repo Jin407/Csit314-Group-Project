@@ -2,7 +2,7 @@ import './createaccount.css';
 import { Component } from 'react';
 import { Link } from 'react-router-dom';
 
-//class name needs to be change to create Account view
+
 class CreateAccount extends Component{
     
     constructor(props) {
@@ -12,7 +12,7 @@ class CreateAccount extends Component{
             username: '',
             password: '',
             cpassword: '',
-            userType: 'buyer',
+            userType: '',
         };
     }
 
@@ -75,6 +75,8 @@ class CreateAccount extends Component{
         const { name, value } = event.target;
         this.setState({ [name]: value });
     };
+
+    
     
     render(){
         return(

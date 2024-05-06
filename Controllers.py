@@ -106,8 +106,32 @@ class ViewUserDetailsController(BaseController):
                 username = data.get('username')
 
                 admin = System_Admin("username","password")
+               
+                user_details = admin.viewUserDetails(username)
 
-                return jsonify({'message': admin.viewUserDetails(username)})
+                if user_details:
+                    return jsonify(user_details)
+                else:
+                    return jsonify({'error': 'No user details found'})
+            
+            else:
+                return jsonify({'error': 'Method not allowed'}), 405
+            
+        @self.app.route('/api/view-user-actions', methods=['POST'])
+        def viewUserActions():
+            if request.method == 'POST':
+                data = request.json
+                # Assuming data contains username and password
+                username = data.get('username')
+
+                admin = System_Admin("username","password")
+               
+                user_details = admin.viewUserActions(username)
+
+                if user_details:
+                    return jsonify(user_details)
+                else:
+                    return jsonify({'error': 'No user details found'})
             
             else:
                 return jsonify({'error': 'Method not allowed'}), 405
@@ -122,15 +146,33 @@ class UpdateUserDetailsController(BaseController):
                 data = request.json
                 # Assuming data contains username and password
                 username = data.get('username')
-                password = data.get('password')
-                userType = data.get('userType')
+                newPassword = data.get('newPassword')
+                cnewPassword = data.get('cnewPassword')
+                newUsername = data.get('newUsername')
+                newUserType = data.get('newUserType')
+
+                admin = System_Admin("username","password")
+                
+                updateAccount_success = admin.updateUserDetails(newUsername,newPassword,newUserType,username)
+                
+                return jsonify({'success': updateAccount_success})
+                
+            
+            else:
+                return jsonify({'error': 'Method not allowed'}), 405
+            
+        @self.app.route('/api/reactivate-user-account', methods=['POST'])
+        def reactivateUserAccount():
+            if request.method == 'POST':
+                data = request.json
+                # Assuming data contains username and password
+                username = data.get('username')
 
                 admin = System_Admin("username","password")
 
-                if(admin.updateUserDetails(password,userType,username)):
-                     return jsonify({'message': 'Account successfully updated'})
-                else:
-                    return jsonify({'message': 'User not found'})
+                reactivateAccount_success = admin.reactivateUserAccount(username)
+                
+                return jsonify({'success': reactivateAccount_success})
             
             else:
                 return jsonify({'error': 'Method not allowed'}), 405
@@ -148,10 +190,25 @@ class SuspendUserAccountController(BaseController):
 
                 admin = System_Admin("username","password")
 
-                if(admin.suspendUserAccount(username)):
-                     return jsonify({'message': 'Account successfully suspended'})
-                else:
-                    return jsonify({'message': 'User not found'})
+                suspendAccount_success = admin.suspendUserAccount(username)
+                
+                return jsonify({'success': suspendAccount_success})
+            
+            else:
+                return jsonify({'error': 'Method not allowed'}), 405
+        
+        @self.app.route('/api/delete-user-account', methods=['POST'])
+        def deleteUserAccount():
+            if request.method == 'POST':
+                data = request.json
+                # Assuming data contains username and password
+                username = data.get('username')
+
+                admin = System_Admin("username","password")
+
+                deleteAccount_success = admin.deleteUserAccount(username)
+                
+                return jsonify({'success': deleteAccount_success})
             
             else:
                 return jsonify({'error': 'Method not allowed'}), 405
@@ -162,4 +219,6 @@ if __name__ == '__main__':
     LoginController(app)
     CreateAccountController(app)
     ViewUserDetailsController(app)
+    UpdateUserDetailsController(app)
+    SuspendUserAccountController(app)
     app.run(debug=True)

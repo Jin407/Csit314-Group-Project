@@ -4,7 +4,7 @@ import { Link, useParams } from "react-router-dom";
 import './editprofile.css';
 
 //should be placed in a class
-
+/*
 const EditProfile = () => {
 
     const { username } = useParams();
@@ -30,7 +30,7 @@ const EditProfile = () => {
 
     const updatePassword = async () => {
         try {
-            const response = await fetch('http://127.0.0.1:5000/api/create-account', {
+            const response = await fetch('http://127.0.0.1:5000/api/update-user-details', {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json'
@@ -75,6 +75,107 @@ const EditProfile = () => {
             </>
         )
     
+}
+*/
+
+class EditProfile extends Component{
+
+    constructor(props) {
+        super(props);
+        this.state = {
+            username: '',
+            newPassword: '',
+            cnewPassword: '',
+            newUsername: '',
+            newUserType: ''
+        };
+    }
+
+    componentDidMount() {
+        const username = window.location.href.split('/')[4];
+        this.setState({ username });
+    }
+
+    updateAccount = async (username,newPassword,cnewPassword,newUsername,newUserType) => {
+        try {
+            const response = await fetch('http://127.0.0.1:5000/api/update-user-details', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({username, newPassword,cnewPassword,newUsername,newUserType})
+            });
+            if (!response.ok) {
+                throw new Error('Network response was not ok');
+            }
+            const responseData = await response.json();
+            return responseData.success;
+        } catch (error) {
+            console.error('Error updating account:', error);
+            return null;
+        }
+    }
+
+    handleSubmit = async (event) => {
+        event.preventDefault();
+        const { username, newPassword, cnewPassword,newUsername,newUserType } = this.state;
+        if(newPassword != cnewPassword){
+            this.setState({ createAccountmessage: "Passwords do not match"});
+            return;
+        }
+
+        const success = await this.updateAccount(username,newPassword, cnewPassword, newUsername, newUserType);
+        console.log("1) username: " + username + "    2) password: " + newPassword + "    3) cpassword: " + cnewPassword + "    4) userType: " + newUserType)
+
+        if (success) {
+            this.setState({ createAccountmessage: "Account successfully updated" });
+        }else{
+            this.setState({ createAccountmessage: "Error updating account" });
+        }
+    };
+
+    handleInputChange = (event) => {
+        const { name, value } = event.target;
+        console.log("Selected value:", value);
+        this.setState({ [name]: value });
+    };
+
+    render(){
+        return(
+            <>
+                <div>
+                    <form className="updateAccTextArea" onSubmit={this.handleSubmit}>
+                        <div className="loginTextBoxes">
+                            <p className="loginText">New Username:</p>
+                            <input type="text" name="newUsername" value={this.state.newUsername} placeholder="Username" className="loginTextBox" onChange={this.handleInputChange}/>
+                        </div>
+                        <div className="loginTextBoxes">
+                            <p className="loginText">New Password:</p>
+                            <input type="password" name="newPassword" value={this.state.newPassword} placeholder="Password" className="loginTextBox" onChange={this.handleInputChange}/>
+                        </div>
+                        <div className="loginTextBoxes">
+                            <p className="loginText">Confirm New Password:</p>
+                            <input type="password" name="cnewPassword" value={this.state.cnewPassword} placeholder="Password" className="loginTextBox" onChange={this.handleInputChange}/>
+                        </div>
+                        <div className="loginTextBoxes">
+                            <p className="loginText">New User Type:</p>
+                            <select id="dropdown" name="newUserType" value ={this.state.newUserType} onChange={this.handleInputChange}>
+                                <option value="REA">REA</option>
+                                <option value="buyer">Buyer</option>
+                                <option value="seller">Seller</option>
+                            </select>
+                        </div>
+                        <div className="preLoginAdditionalFunctions">
+                            <Link to='/sahomepage'></Link><input type="submit" value="Update" className="loginSubmit"/>
+                        </div>
+                        <p className="createAccountmessage">{this.state.createAccountmessage}</p>
+                    </form>
+                </div>
+            </>
+        )
+    }
+
+
 }
 
 export default EditProfile;
