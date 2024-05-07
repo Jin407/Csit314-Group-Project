@@ -1,7 +1,7 @@
 import { Component } from "react";
 import { Link } from "react-router-dom";
 import Listing from "./realisting";
-//import ListingTestbox from "./listingtestbox";
+//import ListingTestbox from "./@@testlistingtbox";
 import './realistings.css';
 
 class REAMyListings extends Component{
@@ -22,9 +22,15 @@ class REAMyListings extends Component{
         this.setState({
             username: window.location.href.split('/')[4]
         });
+    
         fetch('http://127.0.0.1:5000/api/login')
           .then(response => response.json())
-          .then(data => this.setState({ listings: data, filteredListings: data }))
+          .then(data => {
+              this.setState({ 
+                  listings: data || [], // Ensure data is an array or default to empty array
+                  filteredListings: data || [] // Ensure data is an array or default to empty array
+              });
+          })
           .catch(error => console.error('Error fetching listings:', error));
     }
 
