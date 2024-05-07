@@ -1,7 +1,7 @@
 import { Component } from "react";
 import MFListing from "./myfavouriteslisting";
 import './myfavourites.css';
-import TestMFListing from "./@@testmflisting";
+//import TestMFListing from "./@@testmflisting";
 
 class MyFavourites extends Component{
     constructor(props) {
@@ -15,13 +15,13 @@ class MyFavourites extends Component{
         favouriteListings: [], // Initially an empty array, will be populated with data
     };
 
-    componentDidMount() {
+    componentDidMount() { //use this to get array of Favourited Listing's IDs
         this.setState({username: window.location.href.split('/')[4]});
-        fetch('http://127.0.0.1:5000/api/login')
+        fetch('http://127.0.0.1:5000/api/favourite-listing')
           .then(response => response.json())
-          .then(data => {
+          .then(listing => {
             this.setState({ 
-              favouriteListings: data || [], // Ensure data is an array or default to empty array
+              favouriteListings: listing || [], // Ensure data is an array or default to empty array
             });
           }).catch(error => console.error('Error fetching listings:', error));
     }

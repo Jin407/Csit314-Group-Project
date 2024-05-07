@@ -1,0 +1,9 @@
+.searchPageFlexBox{
+    display: flex;
+    flex-direction: row;
+    margin-bottom: 2vw;
+}
+
+.searchPageFlexItem{
+    flex-grow: 1;
+}
