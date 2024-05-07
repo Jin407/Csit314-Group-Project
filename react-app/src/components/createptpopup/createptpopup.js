@@ -6,8 +6,30 @@ import './createptpopup.css';
 const PopupForm = ({ onSubmit, onClose }) => {
   const [profileName, setProfileName] = useState('');
 
+  const createProfile = async (profileName) => {
+    console.log(profileName)
+    try {
+        const response = await fetch('http://127.0.0.1:5000/api/create-profile', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({profileName})
+        });
+        if (!response.ok) {
+            throw new Error('Network response was not ok');
+        }
+        const responseData = await response.json();
+        return responseData.success;
+    } catch (error) {
+        console.error('Error logging in:', error);
+        return false;
+    }
+  };
+
   const handleSubmit = (e) => {
     e.preventDefault();
+    createProfile(profileName)
     onSubmit(profileName);
     setProfileName(''); // Clear input after submission
   };
