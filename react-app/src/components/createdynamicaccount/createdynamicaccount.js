@@ -9,6 +9,7 @@ const CreateDynamicAccount = () => {
     const [username, setUsername] = useState('');
     const [password, setPassword] = useState('');
     const [cpassword, setCpassword] = useState('');
+    const [createAccountMessage, setCreateAccountMessage] = useState('');
 
     useEffect(() => {
         fetchData();
@@ -27,29 +28,39 @@ const CreateDynamicAccount = () => {
         }
     };
 
-    const login = async () => {
+    const createAccount = async (userType, username, password, cpassword) => {
         try {
             const response = await fetch('http://127.0.0.1:5000/api/create-account', {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json'
                 },
-                body: JSON.stringify({ userType, username, password, cpassword })
+                body: JSON.stringify({userType, username, password, cpassword})
             });
             if (!response.ok) {
                 throw new Error('Network response was not ok');
             }
             const responseData = await response.json();
-            setData(responseData.message);
+            return responseData.success;
         } catch (error) {
             console.error('Error logging in:', error);
+            return false;
         }
     };
 
     const handleSubmit = async (event) => {
         event.preventDefault();
-        await login();
-        console.log("1) username: " + username + "    2) password: " + password + "    3) cpassword: " + cpassword + "    4) userType: " + userType);
+        if (password !== cpassword) {
+            setCreateAccountMessage("Passwords do not match");
+            return;
+        }
+        const success = await createAccount(userType, username, password, cpassword);
+        console.log("1) username: " + username + "    2) password: " + password + "    3) cpassword: " + cpassword + "    4) userType: " + userType)
+        if (success) {
+            setCreateAccountMessage("Account successfully created");
+        } else {
+            setCreateAccountMessage("Username taken");
+        }
     };
 
     const handleInputChange = (event) => {
@@ -76,6 +87,8 @@ const CreateDynamicAccount = () => {
                     <div className="preLoginAdditionalFunctions">
                         <input type="submit" value="Create Account" className="caSubmit"/>
                     </div>
+                    <p className="createAccountmessage">{createAccountMessage}</p>
+                    
                 </form>
             </div>
         </div>
