@@ -7,6 +7,7 @@ import { useState, useEffect } from 'react';
 const ProfileTable = ({ userType }) => {
   const [submitType, setSubmitType] = useState('');
   const [users, setUsers] = useState([]);
+  const [searchInput, setSearchInput] = useState('');
 
   const handleInputChange = () => {
     
@@ -24,6 +25,14 @@ const ProfileTable = ({ userType }) => {
   useEffect(() => {
     fetchUsers(); // Fetch data when component mounts
   }, [submitType]);
+
+  const handleSearchChange = (e) => {
+    setSearchInput(e.target.value); // Update searchInput state with the typed value
+  };
+
+  const filteredUsers = users.filter(user =>
+    user.username.toLowerCase().includes(searchInput.toLowerCase())
+  );
 
   const fetchUsers = async () => {
     try {
@@ -194,6 +203,14 @@ const ProfileTable = ({ userType }) => {
             <button className="PTCreateAccButton">+</button>
           </Link>
         </h2>
+        <div className="searchBarContainer">
+        <input
+          type="text"
+          value={searchInput}
+          onChange={handleSearchChange}
+          placeholder="Search by username..."
+        />
+      </div>
         <table className="profilesTable">
           <thead>
             <tr>
