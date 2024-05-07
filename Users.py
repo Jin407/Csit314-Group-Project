@@ -107,10 +107,27 @@ class System_Admin(User):
             return False
 
     #method for system admin to update user details
-    def updateUserDetails(self,newUsername, newPassword, newUserType,username)->bool:
-        query = "UPDATE csit314.users SET Username = %s, Password = %s,UserType=%s WHERE Username = %s;"
+    def updateUserDetails(self,newPassword,username)->bool:
+        query = "UPDATE csit314.users SET  Password = %s WHERE Username = %s;"
         try:
-            self.cursor.execute(query, (newUsername,newPassword,newUserType,username))
+            self.cursor.execute(query, (newPassword,username))
+            self.connection.commit() # Ensure change is committed and reflected in database
+            #check if any rows were affected by the update
+            if(self.cursor.rowcount > 0):
+                return True # User successfully updated
+            else:
+                return False # No rows were affected, user not found
+            
+        except mysql.connector.Error as err:
+            print("Error:",err)
+            self.connection.rollback()
+            return False # Deletion failed due to an error
+        
+    #method for system admin to update user details
+    def updateUserProfile(self,newprofileName, profileName)->bool:
+        query = "UPDATE csit314.user_types SET type = %s WHERE type = %s;"
+        try:
+            self.cursor.execute(query, (newprofileName,profileName))
             self.connection.commit() # Ensure change is committed and reflected in database
             #check if any rows were affected by the update
             if(self.cursor.rowcount > 0):

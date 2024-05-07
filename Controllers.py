@@ -88,9 +88,9 @@ class CreateProfileController(BaseController):
 
                 admin = System_Admin("username","password")
                             
-                createAccount_success = admin.createNewUserProfile(profileName)
+                createProfile_success = admin.createNewUserProfile(profileName)
                 
-                return jsonify({'success': createAccount_success})
+                return jsonify({'success': createProfile_success})
                 
     
             else:
@@ -169,13 +169,11 @@ class UpdateUserDetailsController(BaseController):
                 # Assuming data contains username and password
                 username = data.get('username')
                 newPassword = data.get('newPassword')
-                cnewPassword = data.get('cnewPassword')
-                newUsername = data.get('newUsername')
-                newUserType = data.get('newUserType')
+                
 
                 admin = System_Admin("username","password")
                 
-                updateAccount_success = admin.updateUserDetails(newUsername,newPassword,newUserType,username)
+                updateAccount_success = admin.updateUserDetails(newPassword,username)
                 
                 return jsonify({'success': updateAccount_success})
                 
@@ -198,7 +196,27 @@ class UpdateUserDetailsController(BaseController):
             
             else:
                 return jsonify({'error': 'Method not allowed'}), 405
+
+class UpdateUserProfileController(BaseController):
+     def register_routes(self):    
+        #method to receive what user entered for username and password in frontend
+        @self.app.route('/api/update-user-profile', methods=['POST'])
+        def updateUserProfile():
+            if request.method == 'POST':
+                data = request.json
+                # Assuming data contains username and password
+                profileName = data.get('userType')
+                newprofileName = data.get('profileName')
+                
+                admin = System_Admin("username","password")
+                
+                updateProfile_success = admin.updateUserProfile(newprofileName,profileName)
+                
+                return jsonify({'success': updateProfile_success})
+                
             
+            else:
+                return jsonify({'error': 'Method not allowed'}), 405        
 
 class SuspendUserAccountController(BaseController):
     def register_routes(self):    
@@ -227,5 +245,6 @@ if __name__ == '__main__':
     CreateProfileController(app)
     ViewUserDetailsController(app)
     UpdateUserDetailsController(app)
+    UpdateUserProfileController(app)
     SuspendUserAccountController(app)
     app.run(debug=True)

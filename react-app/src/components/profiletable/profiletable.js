@@ -193,6 +193,10 @@ const ProfileTable = ({ userType }) => {
           <Link to={`/sacreateaccountpage/${submitType}`}>
             <button className="PTCreateAccButton">+</button>
           </Link>
+          <Link to={`/saupdateprofilepage/${submitType}`}>
+            <button className="PTCreateAccButton">✎</button>
+          </Link>
+
         </h2>
         <table className="profilesTable">
           <thead>

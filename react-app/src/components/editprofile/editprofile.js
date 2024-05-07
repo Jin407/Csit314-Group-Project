@@ -86,8 +86,6 @@ class EditProfile extends Component{
             username: '',
             newPassword: '',
             cnewPassword: '',
-            newUsername: '',
-            newUserType: ''
         };
     }
 
@@ -96,14 +94,14 @@ class EditProfile extends Component{
         this.setState({ username });
     }
 
-    updateAccount = async (username,newPassword,cnewPassword,newUsername,newUserType) => {
+    updateAccount = async (username,newPassword,cnewPassword) => {
         try {
             const response = await fetch('http://127.0.0.1:5000/api/update-user-details', {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json'
                 },
-                body: JSON.stringify({username, newPassword,cnewPassword,newUsername,newUserType})
+                body: JSON.stringify({username, newPassword,cnewPassword})
             });
             if (!response.ok) {
                 throw new Error('Network response was not ok');
@@ -118,14 +116,14 @@ class EditProfile extends Component{
 
     handleSubmit = async (event) => {
         event.preventDefault();
-        const { username, newPassword, cnewPassword,newUsername,newUserType } = this.state;
+        const { username, newPassword, cnewPassword } = this.state;
         if(newPassword != cnewPassword){
             this.setState({ createAccountmessage: "Passwords do not match"});
             return;
         }
 
-        const success = await this.updateAccount(username,newPassword, cnewPassword, newUsername, newUserType);
-        console.log("1) username: " + username + "    2) password: " + newPassword + "    3) cpassword: " + cnewPassword + "    4) userType: " + newUserType)
+        const success = await this.updateAccount(username,newPassword, cnewPassword);
+        console.log("1) username: " + username + "    2) password: " + newPassword + "    3) cpassword: " + cnewPassword)
 
         if (success) {
             this.setState({ createAccountmessage: "Account successfully updated" });
@@ -146,24 +144,12 @@ class EditProfile extends Component{
                 <div>
                     <form className="updateAccTextArea" onSubmit={this.handleSubmit}>
                         <div className="loginTextBoxes">
-                            <p className="loginText">New Username:</p>
-                            <input type="text" name="newUsername" value={this.state.newUsername} placeholder="Username" className="loginTextBox" onChange={this.handleInputChange}/>
-                        </div>
-                        <div className="loginTextBoxes">
                             <p className="loginText">New Password:</p>
                             <input type="password" name="newPassword" value={this.state.newPassword} placeholder="Password" className="loginTextBox" onChange={this.handleInputChange}/>
                         </div>
                         <div className="loginTextBoxes">
                             <p className="loginText">Confirm New Password:</p>
                             <input type="password" name="cnewPassword" value={this.state.cnewPassword} placeholder="Password" className="loginTextBox" onChange={this.handleInputChange}/>
-                        </div>
-                        <div className="loginTextBoxes">
-                            <p className="loginText">New User Type:</p>
-                            <select id="dropdown" name="newUserType" value ={this.state.newUserType} onChange={this.handleInputChange}>
-                                <option value="REA">REA</option>
-                                <option value="buyer">Buyer</option>
-                                <option value="seller">Seller</option>
-                            </select>
                         </div>
                         <div className="preLoginAdditionalFunctions">
                             <Link to='/sahomepage'></Link><input type="submit" value="Update" className="loginSubmit"/>
