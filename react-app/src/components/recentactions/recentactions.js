@@ -58,12 +58,25 @@ class RecentActions extends Component {
 
         const { username, address, userType, createdAt, agentname } = this.state;
         let recentAction;
+        let leaveReviewLink;
         if (userType === 'buyerUser') {
-            recentAction = 'Purchase';
+            recentAction = 'Purchased';
         } else if(userType == 'sellerUser'){
-            recentAction = 'Sold';
+            recentAction = 'Selling';
         }else if(userType == 'agentUser'){
-            recentAction = 'Managed';
+            recentAction = 'Managing';
+        }
+
+        if (userType === 'agentUser') {
+            // If userType is 'agentUser', set leaveReviewLink to null (no content)
+            leaveReviewLink = null;
+        } else {
+            // For other user types, set leaveReviewLink to the JSX for the link
+            leaveReviewLink = (
+                <Link to={`/rateandreview/${username}/${agentname}`} className="leavereviewlink">
+                    Leave Review
+                </Link>
+            );
         }
         return(
             <>
@@ -80,9 +93,7 @@ class RecentActions extends Component {
                             <td className="recentActionCol2">{recentAction}</td>
                             <td className="recentActionCol3">{createdAt}</td>
                             <td className="recentActionCol4">
-                                <Link to={`/rateandreview/${username}/${agentname}`} className="leavereviewlink">
-                                    Leave Review
-                                </Link></td>
+                            {leaveReviewLink}</td>
                         </tr>
                     </table>
                 </div>

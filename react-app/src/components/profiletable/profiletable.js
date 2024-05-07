@@ -7,7 +7,6 @@ import { useState, useEffect } from 'react';
 const ProfileTable = ({ userType }) => {
   const [submitType, setSubmitType] = useState('');
   const [users, setUsers] = useState([]);
-  const [searchInput, setSearchInput] = useState('');
 
   const handleInputChange = () => {
     
@@ -26,13 +25,6 @@ const ProfileTable = ({ userType }) => {
     fetchUsers(); // Fetch data when component mounts
   }, [submitType]);
 
-  const handleSearchChange = (e) => {
-    setSearchInput(e.target.value); // Update searchInput state with the typed value
-  };
-
-  const filteredUsers = users.filter(user =>
-    user.username.toLowerCase().includes(searchInput.toLowerCase())
-  );
 
   const fetchUsers = async () => {
     try {
@@ -62,6 +54,7 @@ const ProfileTable = ({ userType }) => {
       console.error('Error fetching user data:', error);
     }
   };
+
 
   const suspendAccount = async (username) => {
     try {
@@ -195,41 +188,6 @@ const ProfileTable = ({ userType }) => {
     </Menu>
   );
 
-  const renderTable = (start, end) => {
-    return (
-      <table className="profilesTable">
-        <thead>
-          <tr>
-            <th className="profileTableColumn1">Username</th>
-            <th className="profileTableColumn2">Register Date</th>
-            <th className="profileTableColumn3">Status</th>
-            <th className="profileTableColumn4">Actions</th>
-          </tr>
-        </thead>
-        <tbody>
-          <tr>
-            <td colSpan={4}>
-              <hr className="hr2px" />
-            </td>
-          </tr>
-          {users.slice(start, end).map((user, index) => (
-            <tr key={index}>
-              <td>{user.username}</td>
-              <td>{user.createdAt}</td>
-              <td>{user.status}</td>
-              <td>
-                <Dropdown overlay={renderMenu(user.username)}>
-                  <a className="ant-dropdown-link" onClick={(e) => e.preventDefault()}>
-                    Actions <DownOutlined />
-                  </a>
-                </Dropdown>
-              </td>
-            </tr>
-          ))}
-        </tbody>
-      </table>
-    );
-  };
 
   return (
     <>
@@ -246,14 +204,6 @@ const ProfileTable = ({ userType }) => {
           <button className="PTCreateAccButton"  onClick={(e) => handleSuspendProfile(e, submitType)}>🗑️</button>
           
         </h2>
-        <div className="searchBarContainer">
-        <input
-          type="text"
-          value={searchInput}
-          onChange={handleSearchChange}
-          placeholder="Search by username..."
-        />
-      </div>
         <table className="profilesTable">
           <thead>
             <tr>

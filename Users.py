@@ -55,9 +55,9 @@ class System_Admin(User):
             results = self.cursor.fetchall()
             user_details = []
             for result in results:
-                ratings = result[6]
-                createdAt = result[5]
-                userType = result[3]
+                ratings = result[5]
+                createdAt = result[4]
+                userType = result[6]
                 user_details.append((ratings,userType,createdAt))
         
             return user_details
@@ -108,7 +108,7 @@ class System_Admin(User):
         
     #method for system admin to view user details
     def displayUserTypes(self):
-        query = "SELECT * FROM csit314.user_types;"
+        query = "SELECT * FROM csit314.user_types where type != 'admin' order by id;"
         try:
             self.cursor.execute(query)
             results = self.cursor.fetchall()
@@ -116,8 +116,6 @@ class System_Admin(User):
             for result in results:
                 usertype = result[1]
                 usertype_details.append((usertype))
-            
-            print(usertype_details)
 
             return usertype_details  # Return list of user details
             #message = f"Username: {result[0][1]}\nCreated at: {result[0][4]}
@@ -145,9 +143,13 @@ class System_Admin(User):
         
     #method for system admin to update user details
     def updateUserProfile(self,newprofileName, profileName)->bool:
-        query = "UPDATE csit314.user_types SET type = %s WHERE type = %s;"
+        query = "INSERT INTO csit314.user_types (type) VALUES (%s);"
+        query1 = "UPDATE csit314.users SET userType = %s WHERE userType = %s;"
+        query2 = "DELETE FROM csit314.user_types WHERE type = %s;"
         try:
-            self.cursor.execute(query, (newprofileName,profileName))
+            self.cursor.execute(query, (newprofileName,))
+            self.cursor.execute(query1, (newprofileName,profileName))
+            self.cursor.execute(query2, (profileName,))
             self.connection.commit() # Ensure change is committed and reflected in database
             #check if any rows were affected by the update
             if(self.cursor.rowcount > 0):
@@ -210,19 +212,15 @@ class System_Admin(User):
             return False  # Deletion failed due to an error
 
     #method for system admin to search user accounts
-    def searchUserAccount(self,username):
+    def searchUserAccount(self,username) -> bool:
         query = "SELECT * FROM csit314.Users WHERE username = %s;"
         try:
             self.cursor.execute(query, (username,))
-            results = self.cursor.fetchall()
-            user_details = []
-            for result in results:
-                ratings = result[6]
-                createdAt = result[5]
-                userType = result[3]
-                user_details.append((ratings,userType,createdAt))
-        
-            return user_details
+            result = self.cursor.fetchall()
+            if(result):
+                return True
+            else:
+                return False
            
             
         except mysql.connector.Error as err:
@@ -414,6 +412,6 @@ if __name__ == '__main__':
     admin = System_Admin("username","password")
     # Assuming you have an instance of the class containing the `displayUserDetails` method
     # For example, if your instance is named `instance`:
-    user_details = admin.displayUserTypes()
+    user_details = admin.viewUserDetails("James")
     print(user_details)
 

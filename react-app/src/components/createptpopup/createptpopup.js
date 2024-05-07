@@ -7,7 +7,6 @@ const PopupForm = ({ onSubmit, onClose }) => {
   const [profileName, setProfileName] = useState('');
 
   const createProfile = async (profileName) => {
-    console.log(profileName)
     try {
         const response = await fetch('http://127.0.0.1:5000/api/create-profile', {
             method: 'POST',
@@ -60,6 +59,7 @@ const PTPopup = () => {
   const [userType, setUserType] = useState('');
   const [profileTables, setProfileTables] = useState([]);
   const [searchInput, setSearchInput] = useState('');
+  const [message, setMessage] = useState('');
 
   useEffect(() => {
     fetchUserTypes(); // Fetch user types when component mounts
@@ -100,18 +100,21 @@ const PTPopup = () => {
 
   const handleSearchChange = (e) => {
     setSearchInput(e.target.value); // Update searchInput state with the typed value
+    setMessage(''); 
   };
 
   return (
     <div>
-      {/* Render the search bar */}
-      <input
-        type="text"
-        value={searchInput}
-        onChange={handleSearchChange}
-        placeholder="Search profile tables..."
-      />
-
+      <div className="searchWrapper">
+        <div className="searchBarContainer">
+          <input
+            type="text"
+            value={searchInput}
+            onChange={handleSearchChange}
+            placeholder="Search by profile..."
+          />
+        </div>
+      </div>
       {/* Render the ProfileTables */}
       {profileTables.filter(table => table.props.userType.toLowerCase().includes(searchInput.toLowerCase())).map((table, index) => (
         <div key={index}>{table}</div>
@@ -122,6 +125,8 @@ const PTPopup = () => {
       
       {/* Button to open the popup form */}
       <button className="createProfileTableButton"onClick={openPopup}>Create Profile Table</button>
+      {/* Render the search bar */}
+      
     </div>
   );
 };

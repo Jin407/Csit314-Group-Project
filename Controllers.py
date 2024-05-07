@@ -119,10 +119,10 @@ class ViewUserDetailsController(BaseController):
                 return jsonify({'error': 'Method not allowed'}), 405
             
         #method to display usertypes in system admin page
-        @self.app.route('/api/display-user-types', methods=['POST'])
+        @self.app.route('/api/display-user-types', methods=['GET'])
         def displayUserTypes():
-            if request.method == 'POST':
-                data = request.json
+            if request.method == 'GET':
+                
                 # Assuming data contains username and password
 
                 admin = System_Admin("username","password")
@@ -148,6 +148,7 @@ class ViewUserDetailsController(BaseController):
                 admin = System_Admin("username","password")
                
                 user_details = admin.viewUserDetails(username)
+                print(user_details)
 
                 if user_details:
                     return jsonify(user_details)
@@ -176,6 +177,27 @@ class ViewUserDetailsController(BaseController):
             else:
                 return jsonify({'error': 'Method not allowed'}), 405
             
+class SearchUserAccountController(BaseController):
+    def register_routes(self):    
+        #method to receive what user entered for username and password in frontend
+        @self.app.route('/api/search-user-account', methods=['POST'])
+        def searchAccount():
+            if request.method == 'POST':
+                data = request.json
+                # Assuming data contains username and password
+                username = data.get('username')
+                
+                admin = System_Admin("username","password")
+                
+                searchAccount_success = admin.searchUserAccount(username)
+                
+                return jsonify({'success': searchAccount_success})
+                
+            
+            else:
+                return jsonify({'error': 'Method not allowed'}), 405
+
+
 
 class UpdateUserDetailsController(BaseController):
      def register_routes(self):    
@@ -225,6 +247,7 @@ class UpdateUserProfileController(BaseController):
                 # Assuming data contains username and password
                 profileName = data.get('userType')
                 newprofileName = data.get('profileName')
+                print(newprofileName)
                 
                 admin = System_Admin("username","password")
                 
@@ -281,6 +304,7 @@ if __name__ == '__main__':
     CreateAccountController(app)
     CreateProfileController(app)
     ViewUserDetailsController(app)
+    SearchUserAccountController(app)
     UpdateUserDetailsController(app)
     UpdateUserProfileController(app)
     SuspendUserAccountController(app)
