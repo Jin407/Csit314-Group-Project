@@ -7,8 +7,11 @@ import ProfilePage from './pages/profilepage.js';
 import SAHomePage from './pages/sahomepage.js';
 import CreateDynamicAccount from './components/createdynamicaccount/createdynamicaccount.js';
 import EditProfilePage from './pages/editprofilepage.js';
-import SearchPage from './pages/searchpage.js';
 import RateAndReviewPage from './pages/rateandreviewpage.js';
+import REAHomePage from './pages/reahomepage.js';
+import REACreateListingPage from './pages/reacreatelistingpage.js';
+import ViewListingPage from './pages/viewlistingpage.js';
+import UpdateListingPage from './pages/updatelistingpage.js';
 
 class App extends Component{
   render(){
@@ -21,9 +24,14 @@ class App extends Component{
             <Route path='/createaccountpage' element={ <CreateAccountPage /> } />
             <Route path='/profilepage/:user' element={ <ProfilePage /> } />
             <Route path='/sahomepage' element={ <SAHomePage /> } />
+            <Route path='/reahomepage/:username' element={ <REAHomePage /> } />
             <Route path='/sacreateaccountpage/:userType' element = { <CreateDynamicAccount /> } />
             <Route path='/editprofile/:userType' element = { <EditProfilePage /> } />
             <Route path='/rateandreview/:username/:agentname' element = { <RateAndReviewPage /> } />
+            <Route path='/reacreatelistingpage/:username' element={ <REACreateListingPage /> } />
+            <Route path='/viewlistingpage/:listingid' element={ <ViewListingPage /> } />
+            <Route path='/updatelistingpage/:listingid' element={ <UpdateListingPage /> } />
+            
           </Routes>
         </header>
       </div>

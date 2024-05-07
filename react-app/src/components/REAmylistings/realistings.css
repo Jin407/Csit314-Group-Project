@@ -1,0 +1,57 @@
+.createlistingarea{
+    width:70vw;
+    margin-left: auto;
+    margin-right:auto;
+    margin-bottom:3vw;
+}
+
+.mylistingarea{
+    width:70vw;
+    margin-left: auto;
+    margin-right:auto;
+    margin-bottom:3vw;
+    margin-top:3vw;
+    background-color:rgba(149,149,149,100);
+    padding:2vw;
+    border-radius:15px;
+}
+
+.listings-container{
+    display:flex;
+    flex-direction: row;
+    justify-content: space-between;
+}
+  
+.listing {
+    width: calc(25% - 10px); 
+    margin-bottom: 3vw; 
+    background-color: rgba(200,200,200,100);
+    border: 1px solid #ccc; 
+    box-sizing: border-box; 
+    margin-top:3vw;
+    padding: 1%;
+    font-size: 1vw;
+    border-radius: 10px;
+}
+
+.listingbuttons {
+    display: flex;
+    justify-content: center; /* Center items horizontally */
+    margin-bottom: 10px; /* Add some space between the buttons and the listing details */
+  }
+  
+.listing button {
+    /* Button styles */
+    margin-right: 5px; /* Add some space between the buttons */
+}
+
+.viewListingArea{
+    width:70vw;
+    margin-top:3vw;
+    margin-bottom:3vw;
+    margin-left:auto;
+    margin-right:auto;
+    background-color:rgba(149,149,149,100);
+    padding: 2vw;
+    border-radius:15px;
+}
