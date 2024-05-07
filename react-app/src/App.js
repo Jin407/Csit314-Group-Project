@@ -7,6 +7,8 @@ import ProfilePage from './pages/profilepage.js';
 import SAHomePage from './pages/sahomepage.js';
 import CreateDynamicAccount from './components/createdynamicaccount/createdynamicaccount.js';
 import EditProfilePage from './pages/editprofilepage.js';
+import SearchPage from './pages/searchpage.js';
+import RateAndReviewPage from './pages/rateandreviewpage.js';
 
 class App extends Component{
   render(){
@@ -21,6 +23,7 @@ class App extends Component{
             <Route path='/sahomepage' element={ <SAHomePage /> } />
             <Route path='/sacreateaccountpage/:userType' element = { <CreateDynamicAccount /> } />
             <Route path='/editprofile/:userType' element = { <EditProfilePage /> } />
+            <Route path='/rateandreview/:username/:agentname' element = { <RateAndReviewPage /> } />
           </Routes>
         </header>
       </div>
