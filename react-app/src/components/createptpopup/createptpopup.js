@@ -62,14 +62,28 @@ const PTPopup = () => {
   const [searchInput, setSearchInput] = useState('');
 
   useEffect(() => {
-    // Preload three tables with predefined profile names
-    setProfileTables([
-      <ProfileTable key="Buyer" userType="Buyers" />,
-      <ProfileTable key="Seller" userType="Sellers" />,
-      <ProfileTable key="REA" userType="Real Estate Agents" />
-    ]);
-  }, []); // Run only once on component mount  
+    fetchUserTypes(); // Fetch user types when component mounts
+  }, []); // Run only once on component mount   
 
+  const fetchUserTypes = async () => {
+    try {
+      // Make API call to fetch user types
+      const response = await fetch('http://127.0.0.1:5000/api/display-user-types');
+      if (!response.ok) {
+        throw new Error('Failed to fetch user types');
+      }
+      const userTypes = await response.json();
+      
+      // Create profile tables for each unique user type
+      const tables = userTypes.map((type, index) => (
+        <ProfileTable key={index} userType={type} />
+      ));
+      setProfileTables(tables);
+    } catch (error) {
+      console.error('Error fetching user types:', error);
+    }
+  };
+  
   const openPopup = () => {
     setShowPopup(true);
   };

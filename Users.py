@@ -105,6 +105,26 @@ class System_Admin(User):
         except mysql.connector.Error as err:
             print("Error:",err)
             return False
+        
+    #method for system admin to view user details
+    def displayUserTypes(self):
+        query = "SELECT * FROM csit314.user_types;"
+        try:
+            self.cursor.execute(query)
+            results = self.cursor.fetchall()
+            usertype_details = []
+            for result in results:
+                usertype = result[1]
+                usertype_details.append((usertype))
+            
+            print(usertype_details)
+
+            return usertype_details  # Return list of user details
+            #message = f"Username: {result[0][1]}\nCreated at: {result[0][4]}
+            
+        except mysql.connector.Error as err:
+            print("Error:",err)
+            return False
 
     #method for system admin to update user details
     def updateUserDetails(self,newPassword,username)->bool:
@@ -394,6 +414,6 @@ if __name__ == '__main__':
     admin = System_Admin("username","password")
     # Assuming you have an instance of the class containing the `displayUserDetails` method
     # For example, if your instance is named `instance`:
-    user_details = admin.viewUserActions("Leeroy")
+    user_details = admin.displayUserTypes()
     print(user_details)
 

@@ -117,6 +117,24 @@ class ViewUserDetailsController(BaseController):
                     return jsonify({'error': 'No user details found'})
             else:
                 return jsonify({'error': 'Method not allowed'}), 405
+            
+        #method to display usertypes in system admin page
+        @self.app.route('/api/display-user-types', methods=['POST'])
+        def displayUserTypes():
+            if request.method == 'POST':
+                data = request.json
+                # Assuming data contains username and password
+
+                admin = System_Admin("username","password")
+                usertype_details = admin.displayUserTypes()
+                print(usertype_details)
+
+                if usertype_details:
+                    return jsonify(usertype_details)
+                else:
+                    return jsonify({'error': 'No user details found'})
+            else:
+                return jsonify({'error': 'Method not allowed'}), 405
 
 
         #method to receive what user entered for username and password in frontend
