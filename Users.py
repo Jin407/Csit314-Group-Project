@@ -95,8 +95,8 @@ class System_Admin(User):
             user_details = []
             for result in results:
                 username = result[1]
-                status = result[4]
-                createdAt = result[5]
+                status = result[3]
+                createdAt = result[4]
                 user_details.append((username, createdAt, status))
 
             return user_details  # Return list of user details
@@ -140,22 +140,6 @@ class System_Admin(User):
             self.connection.rollback()
             return False  # Deletion failed due to an error
         
-    #method for system admin to delete user accounts
-    def deleteUserAccount(self,username)->bool:
-        query = "DELETE FROM csit314.users WHERE Username = %s;"
-        try:
-            self.cursor.execute(query, (username,))
-            self.connection.commit() # Ensure change is committed and reflected in database
-            # Check if any rows were affected by the delete operation
-            if self.cursor.rowcount > 0:
-                return True  # User successfully deleted
-            else:
-                return False  # No rows were affected, user not found
-        except Exception as e:
-            print("Error:", e)
-            self.connection.rollback()
-            return False  # Deletion failed due to an error
-        
     #method for system admin to reactivate user accounts
     def reactivateUserAccount(self,username)->bool:
         query = "UPDATE csit314.users SET Status='Active' WHERE Username = %s;"
@@ -181,6 +165,20 @@ class System_Admin(User):
         query = "INSERT INTO csit314.Users (Username, Password, UserType) VALUES (%s, %s, %s);"
         try:
             self.cursor.execute(query, (username, password,userType))
+            # Commit the transaction to apply changes to the database
+            self.connection.commit()
+            return True
+        except mysql.connector.Error as err:
+            print("Error:",err)
+            # If there was an error, rollback the transaction to avoid partial changes
+            self.connection.rollback()
+            return False
+
+     #method for system admin to create new user profile   
+    def createNewUserProfile(self,profileName) -> bool:
+        query = "INSERT INTO csit314.user_types (type) VALUES (%s);"
+        try:
+            self.cursor.execute(query, (profileName,))
             # Commit the transaction to apply changes to the database
             self.connection.commit()
             return True

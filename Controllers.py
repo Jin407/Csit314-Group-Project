@@ -61,12 +61,34 @@ class CreateAccountController(BaseController):
                 username = data.get('username')
                 password = data.get('password')
                 userType = data.get('userType')
-                cpassword = data.get('cpassword')
                 #user type is Buyer, Seller or REA only got 1 Admin
 
                 admin = System_Admin("username","password")
                             
                 createAccount_success = admin.createNewUserAccount(username,password,userType)
+                
+                return jsonify({'success': createAccount_success})
+                
+    
+            else:
+                return jsonify({'error': 'Method not allowed'}), 405
+            
+class CreateProfileController(BaseController):
+
+    def register_routes(self):
+        
+        #method to receive what user entered for username and password in frontend
+        @self.app.route('/api/create-profile', methods=['POST'])
+        def createProfile():
+            if request.method == 'POST':
+                data = request.json
+                # Assuming data contains username and password
+                profileName = data.get('profileName')
+                #user type is Buyer, Seller or REA only got 1 Admin
+
+                admin = System_Admin("username","password")
+                            
+                createAccount_success = admin.createNewUserProfile(profileName)
                 
                 return jsonify({'success': createAccount_success})
                 
@@ -196,28 +218,13 @@ class SuspendUserAccountController(BaseController):
             
             else:
                 return jsonify({'error': 'Method not allowed'}), 405
-        
-        @self.app.route('/api/delete-user-account', methods=['POST'])
-        def deleteUserAccount():
-            if request.method == 'POST':
-                data = request.json
-                # Assuming data contains username and password
-                username = data.get('username')
-
-                admin = System_Admin("username","password")
-
-                deleteAccount_success = admin.deleteUserAccount(username)
-                
-                return jsonify({'success': deleteAccount_success})
-            
-            else:
-                return jsonify({'error': 'Method not allowed'}), 405
     
 
 if __name__ == '__main__':
     app = Flask(__name__)
     LoginController(app)
     CreateAccountController(app)
+    CreateProfileController(app)
     ViewUserDetailsController(app)
     UpdateUserDetailsController(app)
     SuspendUserAccountController(app)

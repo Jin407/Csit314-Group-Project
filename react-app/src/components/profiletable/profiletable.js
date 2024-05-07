@@ -86,38 +86,6 @@ const ProfileTable = ({ userType }) => {
     }
   };
 
-  const deleteAccount = async (username) => {
-    try {
-      // Make API call to fetch user data
-      const response = await fetch('http://127.0.0.1:5000/api/delete-user-account', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json'
-        },
-        body: JSON.stringify({ username })
-      });
-  
-      if (!response.ok) {
-        throw new Error('Failed to fetch user data');
-      }
-  
-      const responseData = await response.json();
-      
-      if(responseData.success){
-        window.location.reload()
-
-        return responseData.success
-      }else{
-
-
-        return responseData.success
-      };
-
-    } catch (error) {
-      console.error('Error fetching user data:', error);
-    }
-  };
-
   const reactivateAccount = async (username) => {
     try {
       // Make API call to fetch user data
@@ -163,11 +131,6 @@ const ProfileTable = ({ userType }) => {
     suspendAccount(username); // Call the suspendAccount function
   };
 
-  const handleDeleteAccount = (e, username) => {
-    e.preventDefault(); // Prevent the default behavior of the anchor element
-    deleteAccount(username); // Call the deleteAccount function
-  };
-
   const handleReactivateAccount = (e, username) => {
     e.preventDefault(); // Prevent the default behavior of the anchor element
     reactivateAccount(username); // Call the reactivateAccount function
@@ -182,9 +145,6 @@ const ProfileTable = ({ userType }) => {
       </Menu.Item>
       <Menu.Item key={`reactivate-${username}`}>
       <a target="_blank" rel="noopener noreferrer" href="https://www.luohanacademy.com" onClick={(e) => handleReactivateAccount(e, username)}>Reactivate account</a>
-      </Menu.Item>
-      <Menu.Item key={`delete-${username}`} danger>
-        <a target="_blank" rel="noopener noreferrer" href="https://www.luohanacademy.com" onClick={(e) => handleDeleteAccount(e, username)}>Delete account</a>
       </Menu.Item>
     </Menu>
   );

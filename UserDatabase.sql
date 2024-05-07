@@ -5,7 +5,7 @@ CREATE TABLE csit314.users (
     Username VARCHAR(50) UNIQUE NOT NULL,
     Password VARCHAR(100) NOT NULL,
     UserType VARCHAR(50) NOT NULL,
-    Status ENUM('Active','Suspended') default 'Active',
-    ratings DECIMAL(15,2) default NULL,
+    Status ENUM('Active','Suspended') DEFAULT 'Active',
+    ratings DECIMAL(15,2) DEFAULT NULL,
     CreatedAt TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 );
