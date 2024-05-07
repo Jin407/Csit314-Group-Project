@@ -222,18 +222,6 @@ const ProfileTable = ({ userType }) => {
                 </td>
               </tr>
             ))}
-            {/*
-            <tr>
-                <td>
-                  <Dropdown overlay={renderMenu("userAcc1")}>
-                    <a className="ant-dropdown-link" onClick={e => e.preventDefault()}>
-                      Actions <DownOutlined />
-                    </a>
-                  </Dropdown>
-                </td>
-              </tr>
-          */}
-          
           </tbody>
         </table>
         

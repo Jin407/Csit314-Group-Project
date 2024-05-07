@@ -59,9 +59,11 @@ class Login extends Component{
         const { userType, username, password } = this.state;
         const success= await this.login(userType, username, password);
         //console.log("1) username: " + username + "    2) password: " + password + "    3) userType: " + userType)
-        if (success) {
+        if (success && (userType === "sysadmin")) {
             window.location.href = '/sahomepage';
-        }else{
+        } else if (success && (userType === "REA")) {
+            window.location.href = `/reahomepage/${username}`;
+        } else {
             this.setState({ errorMessage: "Login failed. Please try again." });
         }
     };
