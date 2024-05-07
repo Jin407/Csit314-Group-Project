@@ -7,6 +7,7 @@ import { useState, useEffect } from 'react';
 const ProfileTable = ({ userType }) => {
   const [submitType, setSubmitType] = useState('');
   const [users, setUsers] = useState([]);
+  const [searchInput, setSearchInput] = useState('');
 
   const handleInputChange = () => {
     
@@ -24,6 +25,14 @@ const ProfileTable = ({ userType }) => {
   useEffect(() => {
     fetchUsers(); // Fetch data when component mounts
   }, [submitType]);
+
+  const handleSearchChange = (e) => {
+    setSearchInput(e.target.value); // Update searchInput state with the typed value
+  };
+
+  const filteredUsers = users.filter(user =>
+    user.username.toLowerCase().includes(searchInput.toLowerCase())
+  );
 
   const fetchUsers = async () => {
     try {
@@ -63,6 +72,38 @@ const ProfileTable = ({ userType }) => {
           'Content-Type': 'application/json'
         },
         body: JSON.stringify({ username })
+      });
+  
+      if (!response.ok) {
+        throw new Error('Failed to fetch user data');
+      }
+  
+      const responseData = await response.json();
+      
+      if(responseData.success){
+        window.location.reload()
+
+        return responseData.success
+      }else{
+
+
+        return responseData.success
+      };
+
+    } catch (error) {
+      console.error('Error fetching user data:', error);
+    }
+  };
+
+  const suspendProfile = async (profileName) => {
+    try {
+      // Make API call to fetch user data
+      const response = await fetch('http://127.0.0.1:5000/api/suspend-user-profile', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({ profileName })
       });
   
       if (!response.ok) {
@@ -131,6 +172,11 @@ const ProfileTable = ({ userType }) => {
     suspendAccount(username); // Call the suspendAccount function
   };
 
+  const handleSuspendProfile = (e, profileName) => {
+    e.preventDefault(); // Prevent the default behavior of the anchor element
+    suspendProfile(profileName); // Call the suspendAccount function
+  };
+
   const handleReactivateAccount = (e, username) => {
     e.preventDefault(); // Prevent the default behavior of the anchor element
     reactivateAccount(username); // Call the reactivateAccount function
@@ -196,8 +242,18 @@ const ProfileTable = ({ userType }) => {
           <Link to={`/saupdateprofilepage/${submitType}`}>
             <button className="PTCreateAccButton">✎</button>
           </Link>
-
+          
+          <button className="PTCreateAccButton"  onClick={(e) => handleSuspendProfile(e, submitType)}>🗑️</button>
+          
         </h2>
+        <div className="searchBarContainer">
+        <input
+          type="text"
+          value={searchInput}
+          onChange={handleSearchChange}
+          placeholder="Search by username..."
+        />
+      </div>
         <table className="profilesTable">
           <thead>
             <tr>

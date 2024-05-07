@@ -157,6 +157,22 @@ class System_Admin(User):
             self.connection.rollback()
             return False  # Deletion failed due to an error
         
+    #method for system admin to suspend user accounts
+    def suspendUserProfile(self,profileName)->bool:
+        query = "UPDATE csit314.users SET Status='Suspended' WHERE UserType = %s;"
+        try:
+            self.cursor.execute(query, (profileName,))
+            self.connection.commit() # Ensure change is committed and reflected in database
+            # Check if any rows were affected by the delete operation
+            if self.cursor.rowcount > 0:
+                return True  # User successfully deleted
+            else:
+                return False  # No rows were affected, user not found
+        except Exception as e:
+            print("Error:", e)
+            self.connection.rollback()
+            return False  # Deletion failed due to an error
+        
     #method for system admin to reactivate user accounts
     def reactivateUserAccount(self,username)->bool:
         query = "UPDATE csit314.users SET Status='Active' WHERE Username = %s;"
@@ -174,8 +190,24 @@ class System_Admin(User):
             return False  # Deletion failed due to an error
 
     #method for system admin to search user accounts
-    def searchUserAccount():
-        pass#to be filled in later
+    def searchUserAccount(self,username):
+        query = "SELECT * FROM csit314.Users WHERE username = %s;"
+        try:
+            self.cursor.execute(query, (username,))
+            results = self.cursor.fetchall()
+            user_details = []
+            for result in results:
+                ratings = result[6]
+                createdAt = result[5]
+                userType = result[3]
+                user_details.append((ratings,userType,createdAt))
+        
+            return user_details
+           
+            
+        except mysql.connector.Error as err:
+            print("Error:",err)
+            return False
 
     #method for system admin to create user accounts
     def createNewUserAccount(self,username, password, userType) -> bool:

@@ -236,6 +236,25 @@ class SuspendUserAccountController(BaseController):
             
             else:
                 return jsonify({'error': 'Method not allowed'}), 405
+            
+class SuspendUserProfileController(BaseController):
+    def register_routes(self):    
+        #method to receive what user entered for username and password in frontend
+        @self.app.route('/api/suspend-user-profile', methods=['POST'])
+        def suspendUserProfile():
+            if request.method == 'POST':
+                data = request.json
+                # Assuming data contains username and password
+                profileName = data.get('profileName')
+
+                admin = System_Admin("username","password")
+
+                suspendProfile_success = admin.suspendUserProfile(profileName)
+                
+                return jsonify({'success': suspendProfile_success})
+            
+            else:
+                return jsonify({'error': 'Method not allowed'}), 405
     
 
 if __name__ == '__main__':
@@ -247,4 +266,5 @@ if __name__ == '__main__':
     UpdateUserDetailsController(app)
     UpdateUserProfileController(app)
     SuspendUserAccountController(app)
+    SuspendUserProfileController(app)
     app.run(debug=True)

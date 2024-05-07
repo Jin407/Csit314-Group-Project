@@ -13,6 +13,7 @@ import REAHomePage from './pages/reahomepage.js';
 import REACreateListingPage from './pages/reacreatelistingpage.js';
 import ViewListingPage from './pages/viewlistingpage.js';
 import UpdateListingPage from './pages/updatelistingpage.js';
+import BuyerHomePage from './pages/buyerhomepage.js';
 
 class App extends Component{
   render(){
@@ -26,6 +27,7 @@ class App extends Component{
             <Route path='/profilepage/:user' element={ <ProfilePage /> } />
             <Route path='/sahomepage' element={ <SAHomePage /> } />
             <Route path='/reahomepage/:username' element={ <REAHomePage /> } />
+            <Route path='/buyerhomepage/:username' element={ <BuyerHomePage /> } />
             <Route path='/sacreateaccountpage/:userType' element = { <CreateDynamicAccount /> } />
             <Route path='/saupdateprofilepage/:userType' element = { <UpdateProfile /> } />
             <Route path='/editprofile/:userType' element = { <EditProfilePage /> } />
@@ -33,7 +35,6 @@ class App extends Component{
             <Route path='/reacreatelistingpage/:username' element={ <REACreateListingPage /> } />
             <Route path='/viewlistingpage/:listingid' element={ <ViewListingPage /> } />
             <Route path='/updatelistingpage/:listingid' element={ <UpdateListingPage /> } />
-            
           </Routes>
         </header>
       </div>

@@ -59,6 +59,7 @@ const PTPopup = () => {
   const [showPopup, setShowPopup] = useState(false);
   const [userType, setUserType] = useState('');
   const [profileTables, setProfileTables] = useState([]);
+  const [searchInput, setSearchInput] = useState('');
 
   useEffect(() => {
     // Preload three tables with predefined profile names
@@ -83,11 +84,22 @@ const PTPopup = () => {
     closePopup();
   };
 
+  const handleSearchChange = (e) => {
+    setSearchInput(e.target.value); // Update searchInput state with the typed value
+  };
 
   return (
     <div>
+      {/* Render the search bar */}
+      <input
+        type="text"
+        value={searchInput}
+        onChange={handleSearchChange}
+        placeholder="Search profile tables..."
+      />
+
       {/* Render the ProfileTables */}
-      {profileTables.map((table, index) => (
+      {profileTables.filter(table => table.props.userType.toLowerCase().includes(searchInput.toLowerCase())).map((table, index) => (
         <div key={index}>{table}</div>
       ))}
 
