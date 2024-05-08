@@ -1,10 +1,11 @@
-from Users import User, System_Admin, Real_Estate_Agent, Buyer, Seller
+from Users import User, System_Admin, Real_Estate_Agent, Buyer, Seller,PropertyListing
 # install the connector in terminal: pip install mysql-connector-python
 import mysql.connector
 #pip install flask
 from flask import Flask,request,jsonify,make_response
 #pip install flask-cors
 from flask_cors import CORS
+import json
 
 #base class running flask app
 class BaseController:
@@ -41,6 +42,7 @@ class LoginController(BaseController):
                 user = User(username,password)
 
                 login_success = user.authLogin(username,password,userType)
+                print(username,password,login_success)
                 
                 return jsonify({'success': login_success})
             
@@ -61,12 +63,17 @@ class CreateAccountController(BaseController):
                 username = data.get('username')
                 password = data.get('password')
                 userType = data.get('userType')
-                #user type is Buyer, Seller or REA only got 1 Admin
-
-                admin = System_Admin("username","password")
-                            
-                createAccount_success = admin.createNewUserAccount(username,password,userType)
                 
+                #user type is Buyer, Seller or REA only got 1 Admin
+                if(userType == 'REA' or userType == "Real estate agent"):
+                    user = Real_Estate_Agent(username,password)
+                elif(userType == 'buyer' or userType == 'Buyer'):
+                    user = Buyer(username,password)
+                elif(userType == 'seller' or userType == 'Seller'):
+                    user = Seller(username,password)
+                
+                createAccount_success = user.insert_into_database()
+
                 return jsonify({'success': createAccount_success})
                 
     
@@ -302,7 +309,6 @@ class SuspendUserAccountController(BaseController):
             
 class SuspendUserProfileController(BaseController):
     def register_routes(self):    
-        #method to receive what user entered for username and password in frontend
         @self.app.route('/api/suspend-user-profile', methods=['POST'])
         def suspendUserProfile():
             if request.method == 'POST':
@@ -318,6 +324,112 @@ class SuspendUserProfileController(BaseController):
             
             else:
                 return jsonify({'error': 'Method not allowed'}), 405
+            
+class ViewPropertyListingsController(BaseController):
+    def register_routes(self):
+        @self.app.route('/api/display-property-listings', methods=['POST'])
+        def displayPropertyListing():
+            if request.method == 'POST':
+
+                data = request.json
+
+                username = data.get('username')
+                print("username",username)
+                
+                agent = Real_Estate_Agent(username,"password")
+                property_listing = agent.displayPropertyListings()
+                
+                 # Convert each property listing object to its dictionary representation
+                listings_data = [listing.__dict__ for listing in property_listing]
+                
+
+                if listings_data:
+                    return jsonify(listings_data)
+                else:
+                    return jsonify({'error': 'No user details found'})
+            
+            else:
+                 return jsonify({'error': 'Method not allowed'}), 405
+            
+class CreatePropertyListingController(BaseController):
+    def register_routes(self):
+        @self.app.route('/api/create-property-listing', methods=['POST'])
+        def createPropertyListing():
+            if request.method == 'POST':
+
+                data = request.json
+
+                username = data.get('reausername')
+                address = data.get('address')
+                price = data.get('price')
+                seller = data.get('sellerusername')
+
+                property_data = PropertyListing(address=address,price=price,agent=username,seller=seller)
+                property_data.createPropertyListing()
+
+                # Inside the route handler
+                return '', 200
+
+            
+            else:
+                 return jsonify({'error': 'Method not allowed'}), 405
+            
+class UpdatePropertyListingController(BaseController):
+    def register_routes(self):
+        @self.app.route('/api/update-property-listing', methods=['POST'])
+        def updatePropertyListing():
+            if request.method == 'POST':
+
+                data = request.json
+
+                id = data.get('listingid')
+                address = data.get('address')
+                price = data.get('price')
+                seller = data.get('sellerusername')
+                PropertyListing.updatePropertyListing(address,price,seller,id)
+                
+
+                return '', 200
+            
+            else:
+                 return jsonify({'error': 'Method not allowed'}), 405
+            
+class DeletePropertyListingController(BaseController):
+    def register_routes(self):
+        @self.app.route('/api/delete-property-listing', methods=['POST'])
+        def deletePropertyListing():
+            if request.method == 'POST':
+
+                data = request.json
+
+                id = data.get('listingid')
+                PropertyListing.deletePropertyListing(id)
+                
+
+                return '', 200
+            
+            else:
+                 return jsonify({'error': 'Method not allowed'}), 405
+            
+class ViewPropertyListingController(BaseController):
+    def register_routes(self):
+        @self.app.route('/api/view-property-listing', methods=['POST'])
+        def viewPropertyListing():
+            if request.method == 'POST':
+
+                data = request.json
+
+                id = data.get('listingid')
+                listing = PropertyListing.viewPropertyListing(id)
+                
+                if listing:
+                    return jsonify(listing)
+                else:
+                    return jsonify({'error': 'No user details found'})
+            
+            else:
+                 return jsonify({'error': 'Method not allowed'}), 405
+                
     
 
 if __name__ == '__main__':
@@ -332,4 +444,9 @@ if __name__ == '__main__':
     UpdateUserProfileController(app)
     SuspendUserAccountController(app)
     SuspendUserProfileController(app)
+    ViewPropertyListingsController(app)
+    CreatePropertyListingController(app)
+    UpdatePropertyListingController(app)
+    DeletePropertyListingController(app)
+    ViewPropertyListingController(app)
     app.run(debug=True)

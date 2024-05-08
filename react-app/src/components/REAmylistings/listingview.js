@@ -24,7 +24,7 @@ class ListingView extends Component{
 
     async viewListingDetails(listingid){
         try {
-            const response = await fetch('http://127.0.0.1:5000/api/view-user-actions', {
+            const response = await fetch('http://127.0.0.1:5000/api/view-property-listing', {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json'

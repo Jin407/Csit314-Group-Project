@@ -7,18 +7,29 @@ class User:
     def __init__(self, username, password):
         self.username = username
         self.password = password
+        self.userType = ''
         self.status = "active"
         self.connection = mysql.connector.connect(
-            host="127.0.0.1",
-            #host="darrenhkx",
-            user="username",
-            password="password",
-            database="csit314"
-        )
+                host="127.0.0.1",
+                user="username",
+                password="password",
+                database="csit314"
+            )
         self.cursor = self.connection.cursor()
 
     def __repr__(self) -> str:
         return self.username
+    
+    def insert_into_database(self):
+        try:
+            query = "INSERT INTO csit314.Users (Username, Password, UserType) VALUES (%s, %s, %s);"
+            self.cursor.execute(query, (self.username, self.password, self.userType))
+            self.connection.commit()
+            
+            return True
+        except mysql.connector.Error as err:
+            print("Error:", err)
+            return False
     
     #method to authenticate user login, user entity class will connect to database via this method
     #need to change to return bool
@@ -27,6 +38,9 @@ class User:
             #for admin login
             if(username == 'username' and password == "password"):
                 return True
+            
+            if(userType == "REA"):
+                userType = "Real estate agent"
 
             query = "SELECT * FROM csit314.Users WHERE username = %s AND password = %s AND UserType = %s;"
             self.cursor.execute(query, (username, password,userType))
@@ -44,6 +58,7 @@ class System_Admin(User):
     #default constructor for System admin class
     def __init__(self, username ,password):
         super().__init__(username,password)
+        self.userType = "Admin"
 
     #method for system admin to view user details
     def viewUserDetails(self,username) ->list:
@@ -278,13 +293,14 @@ class Real_Estate_Agent(User):
     #default constructor for Real Estate Agent
     def __init__(self, username,password):
         super().__init__(username,password)
+        self.userType = "Real estate agent"
         self.rating = 0
 
     #method for Real estate agent to create property listing
-    def createPropertyListings(self, propertyAddress, price)->bool:
-        query = "INSERT INTO csit314.PropertyListings (address, price, agentUser) VALUES (%s, %s, %s);"
+    def createPropertyListing(self, property)->bool:
+        query = "INSERT INTO csit314.PropertyListings (address, price, agentUser, sellerUser) VALUES (%s, %s, %s, %s);"
         try:
-            self.cursor.execute(query, (propertyAddress, price, self.username))
+            self.cursor.execute(query, (property.address, property.price, self.username, property.seller))
             # Commit the transaction to apply changes to the database
             self.connection.commit()
             return True
@@ -308,10 +324,10 @@ class Real_Estate_Agent(User):
             print("Error:", err)
     
     #method for Real estate agent to update property listing
-    def updatePropertyListings(self, newprice, id)->bool:
-        query = "UPDATE csit314.PropertyListings SET price = %s WHERE ListingId = %s;" # only updates price as of now
+    def updatePropertyListings(self,newAddress, newPrice,newSeller, id)->bool:
+        query = "UPDATE csit314.PropertyListings SET address = %s, price = %s, sellerUser= %s WHERE ListingId = %s;" # only updates price as of now
         try:
-            self.cursor.execute(query, (newprice, id))
+            self.cursor.execute(query, (newAddress, newPrice, newSeller, id))
             if self.cursor.rowcount == 0:
                 print("No listing found with ID:", id)
                 return False
@@ -336,10 +352,10 @@ class Real_Estate_Agent(User):
             return False
     
     #method for Real estate agent to view property listing
-    def viewPropertyListings(self):
-        query = "SELECT * FROM csit314.PropertyListings WHERE agentUser = %s;" # for now it returns a tuple of the entire row
+    def viewPropertyListings(self,id):
+        query = "SELECT * FROM csit314.PropertyListings WHERE listingID = %s;" # for now it returns a tuple of the entire row
         try:
-            self.cursor.execute(query, (self.username,))
+            self.cursor.execute(query, (id,))
             result = self.cursor.fetchall()
             if len(result) > 0:
                 return result 
@@ -347,6 +363,34 @@ class Real_Estate_Agent(User):
                 return "No listings found"  # No rows returned
         except mysql.connector.Error as err:
             print("Error:", err)
+
+    #method for Real estate agent to preview listings
+    def displayPropertyListings(self):
+        query = "SELECT * FROM csit314.PropertyListings Where agentUser = %s;"
+        try:
+            self.cursor.execute(query,(self.username,))
+            results = self.cursor.fetchall()
+            listings = []
+            for result in results:
+                id = result[0]
+                address = result[1]
+                price = result[2]
+                status = result[3]
+                agent = result[4]
+                seller = result[5]
+                buyer = result[6]
+                createdAt = result[7]
+                viewCount = result[8]
+                favCount = result[9]
+                listing = PropertyListing(id=id, address=address, price=price, status=status, agent=agent, seller=seller, buyer=buyer, createdAt=createdAt, viewCount=viewCount, favCount=favCount)
+                listings.append(listing)
+
+            return listings
+
+        except mysql.connector.Error as err:
+            print("Error:", err)
+        
+
 
     #method for Real estate agent to view their ratings
     def viewRatings(self):
@@ -364,11 +408,14 @@ class Real_Estate_Agent(User):
                 return "No reviews found"  # No rows returned
         except mysql.connector.Error as err:
             print("Error:", err)
+
+    
     
 class Buyer(User):
     #default constructor for Buyer
     def __init__(self, username,password):
         super().__init__(username,password)
+        self.userType = "Buyer"
 
     #method for Buyer to search for property listing
     def searchPropertyListings():
@@ -399,6 +446,7 @@ class Seller(User):
     #default constructor for Seller
     def __init__(self, username,password):
         super().__init__(username,password)
+        self.userType = "Seller"
 
     # view the number of times property has been shortlisted/viewed
     def viewPropertyListingsDetails():
@@ -411,6 +459,101 @@ class Seller(User):
     #method for Seller to review agent
     def reviewAgent():
         pass#to be filled in later
+
+class PropertyListing():
+    def __init__(self,id=None, address = None,price = None, status="Available", agent=None, seller=None, buyer=None,createdAt=None, viewCount=None, favCount=None):
+        self.id = id
+        self.address = address
+        self.price = price
+        self.status = status
+        self.agent = agent
+        self.seller = seller
+        self.buyer = buyer
+        self.createdAt = createdAt
+        self.viewCount = viewCount
+        self.favCount = favCount
+    
+    def createPropertyListing(self):
+        connection = mysql.connector.connect(
+                host="127.0.0.1",
+                user="username",
+                password="password",
+                database="csit314"
+            )
+        cursor = connection.cursor()
+        query = "INSERT INTO csit314.PropertyListings (address, price, agentUser, sellerUser) VALUES (%s, %s, %s, %s);"
+        try:
+            cursor.execute(query, (self.address, self.price, self.agent, self.seller))
+            # Commit the transaction to apply changes to the database
+            connection.commit()
+            
+        except mysql.connector.Error as err:
+            print("Error:",err)
+            # If there was an error, rollback the transaction to avoid partial changes
+            connection.rollback()
+    
+    @classmethod
+    def updatePropertyListing(cls, newAddress, newPrice, newSeller, id):
+        connection = mysql.connector.connect(
+                host="127.0.0.1",
+                user="username",
+                password="password",
+                database="csit314"
+            )
+        cursor = connection.cursor()
+        query = "UPDATE csit314.PropertyListings SET address = %s, price = %s, sellerUser= %s WHERE ListingId = %s;" # only updates price as of now
+        try:
+            cursor.execute(query, (newAddress, newPrice, newSeller, id))
+            connection.commit()
+            
+        except mysql.connector.Error as err:
+            print("Error:", err)
+
+    @classmethod
+    def deletePropertyListing(cls, id):
+        connection = mysql.connector.connect(
+                host="127.0.0.1",
+                user="username",
+                password="password",
+                database="csit314"
+            )
+        cursor = connection.cursor()
+        print(id)
+        query = "DELETE FROM csit314.PropertyListings WHERE ListingId = %s;"
+        try:
+            cursor.execute(query, (id,))
+            connection.commit()
+            
+        except mysql.connector.Error as err:
+            print("Error:", err)
+
+    @classmethod
+    def viewPropertyListing(cls, id)->list:
+        connection = mysql.connector.connect(
+                host="127.0.0.1",
+                user="username",
+                password="password",
+                database="csit314"
+            )
+        cursor = connection.cursor()
+        query = "SELECT address,price,status,sellerUser,createdAt FROM csit314.PropertyListings WHERE ListingId = %s;"
+        try:
+            cursor.execute(query, (id,))
+            results = cursor.fetchall()
+            listing = []
+            for result in results:
+                address = result[0]
+                price = result[1]
+                status = result[2]
+                seller = result[3]
+                createdAt = result[4]
+                listing.append((address,price,seller,status,createdAt))
+
+            return listing
+            
+        except mysql.connector.Error as err:
+            print("Error:", err)
+            
 
 ''' test
 rea = Real_Estate_Agent("REA1", "password")

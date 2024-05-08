@@ -19,20 +19,42 @@ class REAMyListings extends Component{
     };
 
     componentDidMount() {
-        this.setState({
-            username: window.location.href.split('/')[4]
+        const username = window.location.href.split('/')[4];
+
+        this.setState({ username }, () => {
+            this.displayListings(username);
         });
-    
-        fetch('http://127.0.0.1:5000/api/login')
-          .then(response => response.json())
-          .then(data => {
-              this.setState({ 
-                  listings: data || [], // Ensure data is an array or default to empty array
-                  filteredListings: data || [] // Ensure data is an array or default to empty array
-              });
-          })
-          .catch(error => console.error('Error fetching listings:', error));
     }
+
+    displayListings = async (username) => {
+        try {
+            const response = await fetch('http://127.0.0.1:5000/api/display-property-listings', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({username})
+            });
+            if (!response.ok) {
+                throw new Error('Network response was not ok');
+            }
+            const listingData = await response.json();
+            console.log('Received user data:', listingData);
+
+            if (listingData.error){
+                return;
+            }
+
+            // Update state with the received listing data
+            this.setState({ 
+                listings: listingData || [],
+                filteredListings: listingData || []
+            });
+        } catch (error) {
+            console.error('Error creating listing:', error);
+            return false;
+        }
+    };
 
     handleSearchChange = event => {
         const { value } = event.target;
@@ -48,7 +70,7 @@ class REAMyListings extends Component{
 
     handleDeleteListing = async (listingid) => {
         try {
-            const response = await fetch('http://127.0.0.1:5000/api/login', {
+            const response = await fetch('http://127.0.0.1:5000/api/delete-property-listing', {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json'
@@ -58,11 +80,10 @@ class REAMyListings extends Component{
             if (!response.ok) {
                 throw new Error('Network response was not ok');
             }
-            const jsonresponse = await response.json(); // Assuming the server returns a boolean value
-            return jsonresponse.success;
+            
         } catch (error) {
             console.error('Error creating listing:', error);
-            return false;
+            
         }
     };
 

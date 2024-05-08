@@ -26,19 +26,14 @@ class UpdateListing extends Component{
     handleSubmit = async (event) => {
         event.preventDefault();
         const { listingid, address, price, sellerusername } = this.state;
-        const success= await this.updateListing(listingid, address, price, sellerusername);
+        const success = await this.updateListing(listingid, address, price, sellerusername);
         console.log("1) address: " + address + "    2) price: " + price + "    3) sellerusername: " + sellerusername + "    4) listingid: " + listingid)
-        if (success) {
-            //window.location.href = '/sahomepage';
-            console.log("listing creation success!");
-        }else{
-            this.setState({ errorMessage: "Create Listing failed. Please try again." });
-        }
+        
     };
 
     updateListing = async (listingid, address, price, sellerusername) => {
         try {
-            const response = await fetch('http://127.0.0.1:5000/api/login', {
+            const response = await fetch('http://127.0.0.1:5000/api/update-property-listing', {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json'
@@ -48,11 +43,11 @@ class UpdateListing extends Component{
             if (!response.ok) {
                 throw new Error('Network response was not ok');
             }
-            const jsonresponse = await response.json(); // Assuming the server returns a boolean value
-            return jsonresponse.success;
+            
+
         } catch (error) {
             console.error('Error updating listing:', error);
-            return false;
+            
         }
     };
 
