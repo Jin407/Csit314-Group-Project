@@ -15,12 +15,6 @@ class User:
                 password="password",
                 database="csit314"
             )
-            #host="127.0.0.1",
-            host="darrenhkx",
-            user="username",
-            password="password",
-            database="csit314"
-        )
         self.cursor = self.connection.cursor()
 
     def __repr__(self) -> str:
@@ -427,9 +421,17 @@ class Buyer(User):
     def searchPropertyListings():
          pass#to be filled in later
     
-    #method for Buyer to save property listing
-    def savePropertyListings():
-        pass#to be filled in later
+    # Method for Buyer to save property listing
+    def savePropertyListings(self, id):
+        query = "INSERT INTO csit314.favourites (buyerUser, listing_id) VALUES (%s, %s);"
+        try:
+            self.cursor.execute(query, (self.username, id))
+            self.connection.commit()
+            return True
+        except mysql.connector.Error as err:
+            print("Error:",err)
+            self.connection.rollback()
+            return False
 
     #method for Buyer to view property listing
     def viewPropertyListings():
@@ -561,11 +563,9 @@ class PropertyListing():
             print("Error:", err)
             
 
-''' test
-rea = Real_Estate_Agent("REA1", "password")
-#rea.createPropertyListings("Hougang ave 9","9999999")
-results = rea.viewReviews()
-print(results)
+'''
+buyerTest = Buyer("buyer1", "password")
+buyerTest.savePropertyListings(1)
 
 if __name__ == '__main__':
  admin = System_Admin("username","password")
@@ -582,4 +582,3 @@ if __name__ == '__main__':
     # For example, if your instance is named `instance`:
     user_details = admin.viewUserProfile("Buyer")
     print(user_details)
-
