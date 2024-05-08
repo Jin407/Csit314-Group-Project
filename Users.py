@@ -38,8 +38,6 @@ class User:
             print("Error:", err)
             return False
 
-    def logout():
-        pass#to be filled in later
 
 #System admin class
 class System_Admin(User):
@@ -48,7 +46,7 @@ class System_Admin(User):
         super().__init__(username,password)
 
     #method for system admin to view user details
-    def viewUserDetails(self,username):
+    def viewUserDetails(self,username) ->list:
         query = "SELECT * FROM csit314.Users WHERE username = %s;"
         try:
             self.cursor.execute(query, (username,))
@@ -68,7 +66,7 @@ class System_Admin(User):
             return False
 
     #method for system admin to view user's recent actions    
-    def viewUserActions(self,username):
+    def viewUserActions(self,username) -> list:
         query = "SELECT *,CASE WHEN agentUser = %s THEN 'agentUser' WHEN buyerUser = %s Then 'buyerUser' WHEN sellerUser = %s THEN 'sellerUser' END AS retrieved_from FROM csit314.PropertyListings WHERE buyerUser = %s OR sellerUser = %s OR agentUser = %s;"
         try:
             self.cursor.execute(query, (username,username,username,username,username,username))
@@ -86,10 +84,9 @@ class System_Admin(User):
         except mysql.connector.Error as err:
             print("Error:",err)
             return False
-        
     
     #method for system admin to view user details
-    def viewUserProfile(self,profilename):
+    def viewUserProfile(self,profilename) -> list:
         query = "SELECT * FROM csit314.userProfiles WHERE userType = %s;"
         try:
             self.cursor.execute(query, (profilename,))
@@ -163,7 +160,7 @@ class System_Admin(User):
             self.connection.rollback()
             return False # Deletion failed due to an error
         
-    #method for system admin to update user details
+    #method for system admin to update user profile
     def updateUserProfile(self,newprofileName,requirements, profileName)->bool:
         query = "INSERT INTO csit314.userProfiles (UserType,Requirements) VALUES (%s,%s);"
         query1 = "UPDATE csit314.users SET userType = %s WHERE userType = %s;"

@@ -55,7 +55,7 @@ const ProfileTable = ({ userType }) => {
     }
   };
 
-
+  //For system admin suspend's account user story
   const suspendAccount = async (username) => {
     try {
       // Make API call to fetch user data
@@ -88,6 +88,7 @@ const ProfileTable = ({ userType }) => {
     }
   };
 
+  //For system admin suspends profile user story
   const suspendProfile = async (profileName) => {
     try {
       // Make API call to fetch user data

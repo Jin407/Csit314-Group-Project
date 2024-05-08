@@ -15,6 +15,7 @@ const ViewProfile = () => {
         viewProfile(userType);
     }, []);
 
+    //method for view user profile user story
     const viewProfile = async (userType) => {
         console.log(userType)
         try {

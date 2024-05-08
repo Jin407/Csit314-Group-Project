@@ -24,8 +24,8 @@ const SearchUserAccount = () => {
             setErrorMessage('Error searching for account');
         }
     }
-};
-
+  };
+  //For search for user account user story
   const searchAccount = async (username) => {
     try {
       // Make API call to fetch user data
