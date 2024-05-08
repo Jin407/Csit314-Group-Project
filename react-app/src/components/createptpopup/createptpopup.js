@@ -5,9 +5,30 @@ import './createptpopup.css';
 // Popup Form component
 const PopupForm = ({ onSubmit, onClose }) => {
   const [profileName, setProfileName] = useState('');
+  //for create user profile user story
+  const createProfile = async (profileName) => {
+    try {
+        const response = await fetch('http://127.0.0.1:5000/api/create-profile', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({profileName})
+        });
+        if (!response.ok) {
+            throw new Error('Network response was not ok');
+        }
+        const responseData = await response.json();
+        return responseData.success;
+    } catch (error) {
+        console.error('Error logging in:', error);
+        return false;
+    }
+  };
 
   const handleSubmit = (e) => {
     e.preventDefault();
+    createProfile(profileName)
     onSubmit(profileName);
     setProfileName(''); // Clear input after submission
   };
@@ -37,16 +58,32 @@ const PTPopup = () => {
   const [showPopup, setShowPopup] = useState(false);
   const [userType, setUserType] = useState('');
   const [profileTables, setProfileTables] = useState([]);
+  const [searchInput, setSearchInput] = useState('');
+  const [message, setMessage] = useState('');
 
   useEffect(() => {
-    // Preload three tables with predefined profile names
-    setProfileTables([
-      <ProfileTable key="Buyer" userType="Buyers" />,
-      <ProfileTable key="Seller" userType="Sellers" />,
-      <ProfileTable key="REA" userType="Real Estate Agents" />
-    ]);
-  }, []); // Run only once on component mount  
+    fetchUserTypes(); // Fetch user types when component mounts
+  }, []); // Run only once on component mount   
 
+  const fetchUserTypes = async () => {
+    try {
+      // Make API call to fetch user types
+      const response = await fetch('http://127.0.0.1:5000/api/display-user-types');
+      if (!response.ok) {
+        throw new Error('Failed to fetch user types');
+      }
+      const userTypes = await response.json();
+      
+      // Create profile tables for each unique user type
+      const tables = userTypes.map((type, index) => (
+        <ProfileTable key={index} userType={type} />
+      ));
+      setProfileTables(tables);
+    } catch (error) {
+      console.error('Error fetching user types:', error);
+    }
+  };
+  
   const openPopup = () => {
     setShowPopup(true);
   };
@@ -61,11 +98,25 @@ const PTPopup = () => {
     closePopup();
   };
 
+  const handleSearchChange = (e) => {
+    setSearchInput(e.target.value); // Update searchInput state with the typed value
+    setMessage(''); 
+  };
 
   return (
     <div>
+      <div className="searchWrapper">
+        <div className="searchBarContainer">
+          <input
+            type="text"
+            value={searchInput}
+            onChange={handleSearchChange}
+            placeholder="Search by profile..."
+          />
+        </div>
+      </div>
       {/* Render the ProfileTables */}
-      {profileTables.map((table, index) => (
+      {profileTables.filter(table => table.props.userType.toLowerCase().includes(searchInput.toLowerCase())).map((table, index) => (
         <div key={index}>{table}</div>
       ))}
 
@@ -74,6 +125,8 @@ const PTPopup = () => {
       
       {/* Button to open the popup form */}
       <button className="createProfileTableButton"onClick={openPopup}>Create Profile Table</button>
+      {/* Render the search bar */}
+      
     </div>
   );
 };

@@ -57,7 +57,7 @@ class AccountDetails extends Component{
 
         const { username,ratings, userType, createdAt } = this.state;
         let ratingDisplay;
-        if(userType == "REA"){
+        if(userType == "Real estate agent" && ratings != null){
             ratingDisplay = `${ratings}/5`
         }
         return(

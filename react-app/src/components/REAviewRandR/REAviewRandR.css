@@ -1,0 +1,29 @@
+.RandRDisplay{
+    width:70vw;
+    margin-top:3vw;
+    margin-bottom:3vw;
+    margin-left:auto;
+    margin-right:auto;
+    padding:2vw;
+    border-radius:15px;
+    background-color: rgba(149,149,149,100);
+}
+
+.randrdisplay{
+    margin:3%;
+}
+
+.randrdisplayName{
+    font-size: 1.5vw;
+    margin-bottom:0.5vw;
+}
+
+.randrdisplayRating{
+    font-size:1vw;
+    margin-bottom:0.5vw;
+}
+
+.randrdisplayReview{
+    font-size:1.3vw;
+    margin-bottom:0.5vw;
+}

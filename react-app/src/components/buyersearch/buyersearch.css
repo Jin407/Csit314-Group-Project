@@ -1,0 +1,20 @@
+.searchPageFlexBox{
+    display: flex;
+    flex-direction: row;
+    margin-bottom: 2vw;
+}
+
+.searchPageFlexItem{
+    flex-grow: 1;
+}
+
+.searchpagearea{
+    width:70vw;
+    margin-left:auto;
+    margin-right:auto;
+    background-color: rgba(149,149,149,100);
+    padding:2vw;
+    border-radius:15px;
+    margin-top:2vw;
+    margin-bottom:2vw;
+}

@@ -1,5 +1,6 @@
 import React, { Component } from "react";
 import './recentactions.css';
+import { Link } from "react-router-dom";
 
 class RecentActions extends Component {
 
@@ -9,7 +10,8 @@ class RecentActions extends Component {
             username: '',
             address: null,
             userType: '',
-            createdAt: ''
+            createdAt: '',
+            agentname:''
         };
     }
 
@@ -43,7 +45,8 @@ class RecentActions extends Component {
             this.setState({
                 address: userData[0][0], // First element of the first tuple
                 userType: userData[0][1], // Second element of the first tuple
-                createdAt: userData[0][2] // Third element of the first tuple
+                createdAt: userData[0][2], // Third element of the first tuple
+                agentname: userData[0][3] //Fourth element of the first tuple
             });
         } catch (error) {
             console.error('Error updating account:', error);
@@ -53,14 +56,27 @@ class RecentActions extends Component {
 
     render(){
 
-        const { address, userType, createdAt } = this.state;
+        const { username, address, userType, createdAt, agentname } = this.state;
         let recentAction;
+        let leaveReviewLink;
         if (userType === 'buyerUser') {
-            recentAction = 'Purchase';
+            recentAction = 'Purchased';
         } else if(userType == 'sellerUser'){
-            recentAction = 'Sold';
+            recentAction = 'Selling';
         }else if(userType == 'agentUser'){
-            recentAction = 'Managed';
+            recentAction = 'Managing';
+        }
+
+        if (userType === 'agentUser') {
+            // If userType is 'agentUser', set leaveReviewLink to null (no content)
+            leaveReviewLink = null;
+        } else {
+            // For other user types, set leaveReviewLink to the JSX for the link
+            leaveReviewLink = (
+                <Link to={`/rateandreview/${username}/${agentname}`} className="leavereviewlink">
+                    Leave Review
+                </Link>
+            );
         }
         return(
             <>
@@ -76,7 +92,8 @@ class RecentActions extends Component {
                             <td className="recentActionCol1">{address}</td>
                             <td className="recentActionCol2">{recentAction}</td>
                             <td className="recentActionCol3">{createdAt}</td>
-                            <td className="recentActionCol4">Leave Review</td>
+                            <td className="recentActionCol4">
+                            {leaveReviewLink}</td>
                         </tr>
                     </table>
                 </div>

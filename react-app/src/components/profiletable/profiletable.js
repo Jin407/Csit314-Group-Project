@@ -25,6 +25,7 @@ const ProfileTable = ({ userType }) => {
     fetchUsers(); // Fetch data when component mounts
   }, [submitType]);
 
+
   const fetchUsers = async () => {
     try {
       // Make API call to fetch user data
@@ -54,6 +55,7 @@ const ProfileTable = ({ userType }) => {
     }
   };
 
+  //For system admin suspend's account user story
   const suspendAccount = async (username) => {
     try {
       // Make API call to fetch user data
@@ -86,15 +88,16 @@ const ProfileTable = ({ userType }) => {
     }
   };
 
-  const deleteAccount = async (username) => {
+  //For system admin suspends profile user story
+  const suspendProfile = async (profileName) => {
     try {
       // Make API call to fetch user data
-      const response = await fetch('http://127.0.0.1:5000/api/delete-user-account', {
+      const response = await fetch('http://127.0.0.1:5000/api/suspend-user-profile', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json'
         },
-        body: JSON.stringify({ username })
+        body: JSON.stringify({ profileName })
       });
   
       if (!response.ok) {
@@ -163,9 +166,9 @@ const ProfileTable = ({ userType }) => {
     suspendAccount(username); // Call the suspendAccount function
   };
 
-  const handleDeleteAccount = (e, username) => {
+  const handleSuspendProfile = (e, profileName) => {
     e.preventDefault(); // Prevent the default behavior of the anchor element
-    deleteAccount(username); // Call the deleteAccount function
+    suspendProfile(profileName); // Call the suspendAccount function
   };
 
   const handleReactivateAccount = (e, username) => {
@@ -183,47 +186,9 @@ const ProfileTable = ({ userType }) => {
       <Menu.Item key={`reactivate-${username}`}>
       <a target="_blank" rel="noopener noreferrer" href="https://www.luohanacademy.com" onClick={(e) => handleReactivateAccount(e, username)}>Reactivate account</a>
       </Menu.Item>
-      <Menu.Item key={`delete-${username}`} danger>
-        <a target="_blank" rel="noopener noreferrer" href="https://www.luohanacademy.com" onClick={(e) => handleDeleteAccount(e, username)}>Delete account</a>
-      </Menu.Item>
     </Menu>
   );
 
-  const renderTable = (start, end) => {
-    return (
-      <table className="profilesTable">
-        <thead>
-          <tr>
-            <th className="profileTableColumn1">Username</th>
-            <th className="profileTableColumn2">Register Date</th>
-            <th className="profileTableColumn3">Status</th>
-            <th className="profileTableColumn4">Actions</th>
-          </tr>
-        </thead>
-        <tbody>
-          <tr>
-            <td colSpan={4}>
-              <hr className="hr2px" />
-            </td>
-          </tr>
-          {users.slice(start, end).map((user, index) => (
-            <tr key={index}>
-              <td>{user.username}</td>
-              <td>{user.createdAt}</td>
-              <td>{user.status}</td>
-              <td>
-                <Dropdown overlay={renderMenu(user.username)}>
-                  <a className="ant-dropdown-link" onClick={(e) => e.preventDefault()}>
-                    Actions <DownOutlined />
-                  </a>
-                </Dropdown>
-              </td>
-            </tr>
-          ))}
-        </tbody>
-      </table>
-    );
-  };
 
   return (
     <>
@@ -233,6 +198,15 @@ const ProfileTable = ({ userType }) => {
           <Link to={`/sacreateaccountpage/${submitType}`}>
             <button className="PTCreateAccButton">+</button>
           </Link>
+          <Link to={`/saupdateprofilepage/${submitType}`}>
+            <button className="PTCreateAccButton">✎</button>
+          </Link>
+          <Link to={`/saviewprofilepage/${submitType}`}>
+            <button className="PTCreateAccButton">👁️</button>
+          </Link>
+          
+          <button className="PTCreateAccButton"  onClick={(e) => handleSuspendProfile(e, submitType)}>🗑️</button>
+          
         </h2>
         <table className="profilesTable">
           <thead>
@@ -262,18 +236,6 @@ const ProfileTable = ({ userType }) => {
                 </td>
               </tr>
             ))}
-            {/*
-            <tr>
-                <td>
-                  <Dropdown overlay={renderMenu("userAcc1")}>
-                    <a className="ant-dropdown-link" onClick={e => e.preventDefault()}>
-                      Actions <DownOutlined />
-                    </a>
-                  </Dropdown>
-                </td>
-              </tr>
-          */}
-          
           </tbody>
         </table>
         
