@@ -15,6 +15,20 @@
     justify-content: space-between;
     flex-wrap:wrap;
 }
+
+.bs-filter-container{
+    display: flex;
+    flex-direction: row;
+    margin-bottom: 2vw;
+}
+
+.bs-filter-item{
+    flex-grow:1;
+}
+
+.searchPageFlexItem{
+    flex-grow: 1;
+}
   
 .listing {
     width: calc(25% - 10px); 
