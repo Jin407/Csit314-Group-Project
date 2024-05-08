@@ -18,7 +18,18 @@ class MortgageCalculator extends Component{
     handleCalculation = (event) => {
         event.preventDefault(); // Prevent form submission
         const { loanamnt, intrate, numOfYears } = this.state;
-    
+        let monthlyPayment = '';
+
+        if (loanamnt === ''){
+            monthlyPayment = "Please key in a loan amount"
+            this.setState({ monthlyPayment });;
+        } else if (numOfYears === ''){
+            monthlyPayment = "Please key in the number of years";
+            this.setState({ monthlyPayment });
+        } else if (intrate === ''){
+            monthlyPayment = "Please key in the interest rate";
+            this.setState({ monthlyPayment });
+        } else {
         // Convert interest rate to decimal and number of years to months
         const monthlyRate = parseFloat(intrate) / 100 / 12;
         const numOfMonths = parseFloat(numOfYears) * 12;
@@ -28,9 +39,9 @@ class MortgageCalculator extends Component{
     
         // Format monthly payment to display only two decimal places
         monthlyPayment = parseFloat(monthlyPayment.toFixed(2));
-    
-        // Update state with the calculated monthly payment
+        monthlyPayment = "$" + monthlyPayment;
         this.setState({ monthlyPayment });
+        }
     };
 
     handleInputChange = (event) => {
@@ -47,7 +58,7 @@ class MortgageCalculator extends Component{
                 <div className="morgagecalculatorinput"><label className="morgagecalculatorlabel">Loan Amount: </label><input type="text" name="loanamnt" value={this.state.loanamnt} onChange={this.handleInputChange} placeholder="Loan Amount"/></div>
                 <div className="morgagecalculatorinput"><label className="morgagecalculatorlabel">Number of Years: </label><input type="text" name="numOfYears" value={this.state.numOfYears} onChange={this.handleInputChange} placeholder="Number of years"/></div>
                 <div className="morgagecalculatorinput"><label className="morgagecalculatorlabel">Interest Rate: </label><input type="text" name="intrate"  value={this.state.intrate} onChange={this.handleInputChange} placeholder="Interest Rate in %"/></div>
-                <div className="morgagecalculatorinput"><label className="morgagecalculatorlabel">Monthly Payment:</label> ${this.state.monthlyPayment}</div>
+                <div className="morgagecalculatorinput"><label className="morgagecalculatorlabel">Monthly Payment:</label>{this.state.monthlyPayment}</div>
                 <input type="submit" value="Calculate Monthly Payment" className="morgagecalculatorbutton"/>
             </form>
             </div>
