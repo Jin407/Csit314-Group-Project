@@ -9,8 +9,8 @@ class User:
         self.password = password
         self.status = "active"
         self.connection = mysql.connector.connect(
-            host="127.0.0.1",
-            #host="darrenhkx",
+            #host="127.0.0.1",
+            host="darrenhkx",
             user="username",
             password="password",
             database="csit314"
@@ -270,7 +270,7 @@ class Real_Estate_Agent(User):
 
     #method for Real estate agent to view Reviews
     def viewReviews(self):
-        query = "SELECT  FROM csit314.reviews WHERE agentUser = %s;" # for now it returns a tuple of the entire row
+        query = "SELECT * FROM csit314.reviews WHERE agentUser = %s;" # for now it returns a tuple of the entire row
         try:
             self.cursor.execute(query, (self.username,))
             result = self.cursor.fetchall()
