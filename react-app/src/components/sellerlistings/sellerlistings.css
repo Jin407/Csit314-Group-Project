@@ -1,0 +1,80 @@
+.sellerlisting-area{
+    width:70vw;
+    margin-left: auto;
+    margin-right:auto;
+    margin-bottom:3vw;
+    margin-top:3vw;
+    background-color:rgba(149,149,149,100);
+    padding:2vw;
+    border-radius:15px;
+}
+
+.sellerlisting-container{
+    display:flex;
+    flex-direction: row;
+    justify-content: space-between;
+    flex-wrap:wrap;
+}
+  
+.listing {
+    width: calc(25% - 10px); 
+    margin-bottom: 3vw; 
+    background-color: rgba(200,200,200,100);
+    border: 1px solid #ccc; 
+    box-sizing: border-box; 
+    margin-top:3vw;
+    padding: 1%;
+    font-size: 1vw;
+    border-radius: 10px;
+}
+
+.listingbuttons {
+    display: flex;
+    justify-content: center; /* Center items horizontally */
+    margin-bottom: 10px; /* Add some space between the buttons and the listing details */
+  }
+  
+.listing button {
+    /* Button styles */
+    margin-right: 5px; /* Add some space between the buttons */
+}
+
+.sellerListingDetailsArea{
+    width:70vw;
+    margin-top:3vw;
+    margin-bottom:3vw;
+    margin-left:auto;
+    margin-right:auto;
+    background-color:rgba(149,149,149,100);
+    padding: 2vw;
+    border-radius:15px;
+}
+
+.sellerListingTable{
+    width:100%;
+    text-align: center;
+}
+
+.sellerListingTablethead{
+    width:100%;
+}
+
+.sellerListingTableCol1{
+    width:40%;
+}
+
+.sellerListingTableCol2{
+    width:15%;
+}
+
+.sellerListingTableCol3{
+    width:15%;
+}
+
+.sellerListingTableCol4{
+    width:15%;
+}
+
+.sellerListingTableCol5{
+    width:15%;
+}

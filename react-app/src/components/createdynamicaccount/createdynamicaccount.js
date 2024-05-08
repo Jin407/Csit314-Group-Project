@@ -55,7 +55,7 @@ const CreateDynamicAccount = () => {
             return;
         }
         const success = await createAccount(userType, username, password, cpassword);
-        console.log("1) username: " + username + "    2) password: " + password + "    3) cpassword: " + cpassword + "    4) userType: " + userType)
+        //console.log("1) username: " + username + "    2) password: " + password + "    3) cpassword: " + cpassword + "    4) userType: " + userType)
         if (success) {
             setCreateAccountMessage("Account successfully created");
         } else {
