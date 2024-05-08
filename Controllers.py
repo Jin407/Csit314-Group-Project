@@ -88,9 +88,9 @@ class CreateProfileController(BaseController):
 
                 admin = System_Admin("username","password")
                             
-                createAccount_success = admin.createNewUserProfile(profileName)
+                createProfile_success = admin.createNewUserProfile(profileName)
                 
-                return jsonify({'success': createAccount_success})
+                return jsonify({'success': createProfile_success})
                 
     
             else:
@@ -117,14 +117,32 @@ class ViewUserDetailsController(BaseController):
                     return jsonify({'error': 'No user details found'})
             else:
                 return jsonify({'error': 'Method not allowed'}), 405
+            
+        #method to display usertypes in system admin page
+        @self.app.route('/api/display-user-types', methods=['GET'])
+        def displayUserTypes():
+            if request.method == 'GET':
+                
+                # Assuming data contains username and password
+
+                admin = System_Admin("username","password")
+                usertype_details = admin.displayUserTypes()
+                print(usertype_details)
+
+                if usertype_details:
+                    return jsonify(usertype_details)
+                else:
+                    return jsonify({'error': 'No user details found'})
+            else:
+                return jsonify({'error': 'Method not allowed'}), 405
 
 
-        #method to receive what user entered for username and password in frontend
+        
         @self.app.route('/api/view-user-details', methods=['POST'])
         def viewUserDetails():
             if request.method == 'POST':
                 data = request.json
-                # Assuming data contains username and password
+                
                 username = data.get('username')
 
                 admin = System_Admin("username","password")
@@ -158,6 +176,50 @@ class ViewUserDetailsController(BaseController):
             else:
                 return jsonify({'error': 'Method not allowed'}), 405
             
+class ViewUserProfileController(BaseController):
+
+    def register_routes(self):
+        @self.app.route('/api/view-profile-details', methods=['POST'])
+        def viewProfileDetails():
+            if request.method == 'POST':
+                data = request.json
+                # Assuming data contains username and password
+                profilename = data.get('userType')
+                
+                admin = System_Admin("username","password")
+               
+                user_details = admin.viewUserProfile(profilename)
+
+                if user_details:
+                    return jsonify(user_details)
+                else:
+                    return jsonify({'error': 'No user details found'})
+            
+            else:
+                return jsonify({'error': 'Method not allowed'}), 405
+            
+
+class SearchUserAccountController(BaseController):
+    def register_routes(self):    
+        #method to receive what user entered for username and password in frontend
+        @self.app.route('/api/search-user-account', methods=['POST'])
+        def searchAccount():
+            if request.method == 'POST':
+                data = request.json
+                # Assuming data contains username and password
+                username = data.get('username')
+                
+                admin = System_Admin("username","password")
+                
+                searchAccount_success = admin.searchUserAccount(username)
+                
+                return jsonify({'success': searchAccount_success})
+                
+            
+            else:
+                return jsonify({'error': 'Method not allowed'}), 405
+
+
 
 class UpdateUserDetailsController(BaseController):
      def register_routes(self):    
@@ -169,13 +231,11 @@ class UpdateUserDetailsController(BaseController):
                 # Assuming data contains username and password
                 username = data.get('username')
                 newPassword = data.get('newPassword')
-                cnewPassword = data.get('cnewPassword')
-                newUsername = data.get('newUsername')
-                newUserType = data.get('newUserType')
+                
 
                 admin = System_Admin("username","password")
                 
-                updateAccount_success = admin.updateUserDetails(newUsername,newPassword,newUserType,username)
+                updateAccount_success = admin.updateUserDetails(newPassword,username)
                 
                 return jsonify({'success': updateAccount_success})
                 
@@ -198,7 +258,28 @@ class UpdateUserDetailsController(BaseController):
             
             else:
                 return jsonify({'error': 'Method not allowed'}), 405
+
+class UpdateUserProfileController(BaseController):
+     def register_routes(self):    
+        #method to receive what user entered for username and password in frontend
+        @self.app.route('/api/update-user-profile', methods=['POST'])
+        def updateUserProfile():
+            if request.method == 'POST':
+                data = request.json
+                # Assuming data contains username and password
+                profileName = data.get('userType')
+                requirements = data.get('requirements')
+                newprofileName = data.get('profileName')
+                
+                admin = System_Admin("username","password")
+                
+                updateProfile_success = admin.updateUserProfile(newprofileName,requirements,profileName)
+                
+                return jsonify({'success': updateProfile_success})
+                
             
+            else:
+                return jsonify({'error': 'Method not allowed'}), 405        
 
 class SuspendUserAccountController(BaseController):
     def register_routes(self):    
@@ -218,6 +299,25 @@ class SuspendUserAccountController(BaseController):
             
             else:
                 return jsonify({'error': 'Method not allowed'}), 405
+            
+class SuspendUserProfileController(BaseController):
+    def register_routes(self):    
+        #method to receive what user entered for username and password in frontend
+        @self.app.route('/api/suspend-user-profile', methods=['POST'])
+        def suspendUserProfile():
+            if request.method == 'POST':
+                data = request.json
+                # Assuming data contains username and password
+                profileName = data.get('profileName')
+
+                admin = System_Admin("username","password")
+
+                suspendProfile_success = admin.suspendUserProfile(profileName)
+                
+                return jsonify({'success': suspendProfile_success})
+            
+            else:
+                return jsonify({'error': 'Method not allowed'}), 405
     
 
 if __name__ == '__main__':
@@ -226,6 +326,10 @@ if __name__ == '__main__':
     CreateAccountController(app)
     CreateProfileController(app)
     ViewUserDetailsController(app)
+    ViewUserProfileController(app)
+    SearchUserAccountController(app)
     UpdateUserDetailsController(app)
+    UpdateUserProfileController(app)
     SuspendUserAccountController(app)
+    SuspendUserProfileController(app)
     app.run(debug=True)

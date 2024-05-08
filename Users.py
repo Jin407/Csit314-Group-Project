@@ -38,8 +38,6 @@ class User:
             print("Error:", err)
             return False
 
-    def logout():
-        pass#to be filled in later
 
 #System admin class
 class System_Admin(User):
@@ -48,16 +46,16 @@ class System_Admin(User):
         super().__init__(username,password)
 
     #method for system admin to view user details
-    def viewUserDetails(self,username):
+    def viewUserDetails(self,username) ->list:
         query = "SELECT * FROM csit314.Users WHERE username = %s;"
         try:
             self.cursor.execute(query, (username,))
             results = self.cursor.fetchall()
             user_details = []
             for result in results:
-                ratings = result[6]
-                createdAt = result[5]
-                userType = result[3]
+                ratings = result[5]
+                createdAt = result[4]
+                userType = result[6]
                 user_details.append((ratings,userType,createdAt))
         
             return user_details
@@ -66,8 +64,9 @@ class System_Admin(User):
         except mysql.connector.Error as err:
             print("Error:",err)
             return False
-        
-    def viewUserActions(self,username):
+
+    #method for system admin to view user's recent actions    
+    def viewUserActions(self,username) -> list:
         query = "SELECT *,CASE WHEN agentUser = %s THEN 'agentUser' WHEN buyerUser = %s Then 'buyerUser' WHEN sellerUser = %s THEN 'sellerUser' END AS retrieved_from FROM csit314.PropertyListings WHERE buyerUser = %s OR sellerUser = %s OR agentUser = %s;"
         try:
             self.cursor.execute(query, (username,username,username,username,username,username))
@@ -87,6 +86,26 @@ class System_Admin(User):
             return False
     
     #method for system admin to view user details
+    def viewUserProfile(self,profilename) -> list:
+        query = "SELECT * FROM csit314.userProfiles WHERE userType = %s;"
+        try:
+            self.cursor.execute(query, (profilename,))
+            results = self.cursor.fetchall()
+            user_details = []
+            for result in results:
+                profilename = result[1]
+                createdAt = result[3]
+                requirements = result[2]
+                user_details.append((profilename,requirements,createdAt))
+        
+            return user_details
+           
+            
+        except mysql.connector.Error as err:
+            print("Error:",err)
+            return False
+    
+    #method for system admin to display user details on home page
     def displayUserDetails(self,usertype):
         query = "SELECT * FROM csit314.Users WHERE userType = %s Limit 5;"
         try:
@@ -105,12 +124,51 @@ class System_Admin(User):
         except mysql.connector.Error as err:
             print("Error:",err)
             return False
+        
+    #method for system admin to display user types on home page
+    def displayUserTypes(self):
+        query = "SELECT * FROM csit314.userProfiles where UserType != 'admin' order by Profileid;"
+        try:
+            self.cursor.execute(query)
+            results = self.cursor.fetchall()
+            usertype_details = []
+            for result in results:
+                usertype = result[1]
+                usertype_details.append((usertype))
+
+            return usertype_details  # Return list of user details
+            #message = f"Username: {result[0][1]}\nCreated at: {result[0][4]}
+            
+        except mysql.connector.Error as err:
+            print("Error:",err)
+            return False
 
     #method for system admin to update user details
-    def updateUserDetails(self,newUsername, newPassword, newUserType,username)->bool:
-        query = "UPDATE csit314.users SET Username = %s, Password = %s,UserType=%s WHERE Username = %s;"
+    def updateUserDetails(self,newPassword,username)->bool:
+        query = "UPDATE csit314.users SET  Password = %s WHERE Username = %s;"
         try:
-            self.cursor.execute(query, (newUsername,newPassword,newUserType,username))
+            self.cursor.execute(query, (newPassword,username))
+            self.connection.commit() # Ensure change is committed and reflected in database
+            #check if any rows were affected by the update
+            if(self.cursor.rowcount > 0):
+                return True # User successfully updated
+            else:
+                return False # No rows were affected, user not found
+            
+        except mysql.connector.Error as err:
+            print("Error:",err)
+            self.connection.rollback()
+            return False # Deletion failed due to an error
+        
+    #method for system admin to update user profile
+    def updateUserProfile(self,newprofileName,requirements, profileName)->bool:
+        query = "INSERT INTO csit314.userProfiles (UserType,Requirements) VALUES (%s,%s);"
+        query1 = "UPDATE csit314.users SET userType = %s WHERE userType = %s;"
+        query2 = "DELETE FROM csit314.userProfiles WHERE UserType = %s;"
+        try:
+            self.cursor.execute(query, (newprofileName,requirements))
+            self.cursor.execute(query1, (newprofileName,profileName))
+            self.cursor.execute(query2, (profileName,))
             self.connection.commit() # Ensure change is committed and reflected in database
             #check if any rows were affected by the update
             if(self.cursor.rowcount > 0):
@@ -140,6 +198,22 @@ class System_Admin(User):
             self.connection.rollback()
             return False  # Deletion failed due to an error
         
+    #method for system admin to suspend user accounts
+    def suspendUserProfile(self,profileName)->bool:
+        query = "UPDATE csit314.users SET Status='Suspended' WHERE UserType = %s;"
+        try:
+            self.cursor.execute(query, (profileName,))
+            self.connection.commit() # Ensure change is committed and reflected in database
+            # Check if any rows were affected by the delete operation
+            if self.cursor.rowcount > 0:
+                return True  # User successfully deleted
+            else:
+                return False  # No rows were affected, user not found
+        except Exception as e:
+            print("Error:", e)
+            self.connection.rollback()
+            return False  # Deletion failed due to an error
+        
     #method for system admin to reactivate user accounts
     def reactivateUserAccount(self,username)->bool:
         query = "UPDATE csit314.users SET Status='Active' WHERE Username = %s;"
@@ -157,8 +231,20 @@ class System_Admin(User):
             return False  # Deletion failed due to an error
 
     #method for system admin to search user accounts
-    def searchUserAccount():
-        pass#to be filled in later
+    def searchUserAccount(self,username) -> bool:
+        query = "SELECT * FROM csit314.Users WHERE username = %s;"
+        try:
+            self.cursor.execute(query, (username,))
+            result = self.cursor.fetchall()
+            if(result):
+                return True
+            else:
+                return False
+           
+            
+        except mysql.connector.Error as err:
+            print("Error:",err)
+            return False
 
     #method for system admin to create user accounts
     def createNewUserAccount(self,username, password, userType) -> bool:
@@ -176,7 +262,7 @@ class System_Admin(User):
 
      #method for system admin to create new user profile   
     def createNewUserProfile(self,profileName) -> bool:
-        query = "INSERT INTO csit314.user_types (type) VALUES (%s);"
+        query = "INSERT INTO csit314.userProfiles (UserType) VALUES (%s);"
         try:
             self.cursor.execute(query, (profileName,))
             # Commit the transaction to apply changes to the database
@@ -345,6 +431,6 @@ if __name__ == '__main__':
     admin = System_Admin("username","password")
     # Assuming you have an instance of the class containing the `displayUserDetails` method
     # For example, if your instance is named `instance`:
-    user_details = admin.viewUserActions("Leeroy")
+    user_details = admin.viewUserProfile("Buyer")
     print(user_details)
 
