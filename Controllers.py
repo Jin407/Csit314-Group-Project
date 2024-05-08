@@ -137,18 +137,17 @@ class ViewUserDetailsController(BaseController):
                 return jsonify({'error': 'Method not allowed'}), 405
 
 
-        #method to receive what user entered for username and password in frontend
+        
         @self.app.route('/api/view-user-details', methods=['POST'])
         def viewUserDetails():
             if request.method == 'POST':
                 data = request.json
-                # Assuming data contains username and password
+                
                 username = data.get('username')
 
                 admin = System_Admin("username","password")
                
                 user_details = admin.viewUserDetails(username)
-                print(user_details)
 
                 if user_details:
                     return jsonify(user_details)
@@ -177,6 +176,29 @@ class ViewUserDetailsController(BaseController):
             else:
                 return jsonify({'error': 'Method not allowed'}), 405
             
+class ViewUserProfileController(BaseController):
+
+    def register_routes(self):
+        @self.app.route('/api/view-profile-details', methods=['POST'])
+        def viewProfileDetails():
+            if request.method == 'POST':
+                data = request.json
+                # Assuming data contains username and password
+                profilename = data.get('userType')
+                
+                admin = System_Admin("username","password")
+               
+                user_details = admin.viewUserProfile(profilename)
+
+                if user_details:
+                    return jsonify(user_details)
+                else:
+                    return jsonify({'error': 'No user details found'})
+            
+            else:
+                return jsonify({'error': 'Method not allowed'}), 405
+            
+
 class SearchUserAccountController(BaseController):
     def register_routes(self):    
         #method to receive what user entered for username and password in frontend
@@ -246,12 +268,12 @@ class UpdateUserProfileController(BaseController):
                 data = request.json
                 # Assuming data contains username and password
                 profileName = data.get('userType')
+                requirements = data.get('requirements')
                 newprofileName = data.get('profileName')
-                print(newprofileName)
                 
                 admin = System_Admin("username","password")
                 
-                updateProfile_success = admin.updateUserProfile(newprofileName,profileName)
+                updateProfile_success = admin.updateUserProfile(newprofileName,requirements,profileName)
                 
                 return jsonify({'success': updateProfile_success})
                 
@@ -304,6 +326,7 @@ if __name__ == '__main__':
     CreateAccountController(app)
     CreateProfileController(app)
     ViewUserDetailsController(app)
+    ViewUserProfileController(app)
     SearchUserAccountController(app)
     UpdateUserDetailsController(app)
     UpdateUserProfileController(app)

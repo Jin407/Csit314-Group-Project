@@ -7,6 +7,7 @@ const UpdateProfile = () => {
 
     const [data, setData] = useState('');
     const [profileName, setProfilename] = useState('');
+    const [requirements, setRequirements] = useState('');
     const [updateprofileMessage, setUpdateProfileMessage] = useState('');
 
     useEffect(() => {
@@ -26,7 +27,7 @@ const UpdateProfile = () => {
         }
     };
 
-    const updateProfile = async (profileName,userType) => {
+    const updateProfile = async (profileName,requirements,userType) => {
         try {
           // Make API call to fetch user data
           const response = await fetch('http://127.0.0.1:5000/api/update-user-profile', {
@@ -34,7 +35,7 @@ const UpdateProfile = () => {
             headers: {
               'Content-Type': 'application/json'
             },
-            body: JSON.stringify({ profileName,userType })
+            body: JSON.stringify({ profileName,requirements,userType })
           });
       
           if (!response.ok) {
@@ -52,7 +53,7 @@ const UpdateProfile = () => {
 
     const handleSubmit = async (event) => {
         event.preventDefault();
-        const success = await updateProfile(profileName,userType);
+        const success = await updateProfile(profileName,requirements,userType);
         if (success) {
             setUpdateProfileMessage("Profile successfully updated");
         } else {
@@ -63,7 +64,11 @@ const UpdateProfile = () => {
 
     const handleInputChange = (event) => {
         const { name, value } = event.target;
-        if (name === 'profileName') setProfilename(value);
+        if (name === 'profileName') {
+            setProfilename(value);
+        } else if (name === 'requirements') {
+            setRequirements(value);
+        }
     };
 
     return (
@@ -75,6 +80,10 @@ const UpdateProfile = () => {
                     <div className="caTextBoxes">
                         <p className="caText">New Profile name:</p>
                         <input type="text" value={profileName} onChange={handleInputChange} name="profileName" placeholder="profile name" className="caTextBox"/>
+                    </div>
+                    <div className="caTextBoxes">
+                        <p className="caText">Requirements:</p>
+                        <input type="text" value={requirements} onChange={handleInputChange} name="requirements" placeholder="requirements" className="caTextBox"/>
                     </div>
                     <div className="preLoginAdditionalFunctions">
                         <input type="submit" value="Update profile" className="caSubmit"/>

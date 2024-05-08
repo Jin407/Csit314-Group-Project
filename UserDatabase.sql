@@ -8,5 +8,5 @@ CREATE TABLE csit314.users (
     Status ENUM('Active','Suspended') DEFAULT 'Active',
     ratings DECIMAL(15,2) DEFAULT NULL,
     CreatedAt TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-    FOREIGN KEY (UserType) REFERENCES user_types(id)
+    FOREIGN KEY (UserType) REFERENCES userProfiles(UserType)
 );

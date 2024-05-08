@@ -7,6 +7,7 @@ import ProfilePage from './pages/profilepage.js';
 import SAHomePage from './pages/sahomepage.js';
 import CreateDynamicAccount from './components/createdynamicaccount/createdynamicaccount.js';
 import UpdateProfile from './components/updateprofile/updateprofile.js';
+import ViewProfile from './components/viewprofile/viewprofile.js';
 import EditProfilePage from './pages/editprofilepage.js';
 import RateAndReviewPage from './pages/rateandreviewpage.js';
 import REAHomePage from './pages/reahomepage.js';
@@ -30,6 +31,7 @@ class App extends Component{
             <Route path='/buyerhomepage/:username' element={ <BuyerHomePage /> } />
             <Route path='/sacreateaccountpage/:userType' element = { <CreateDynamicAccount /> } />
             <Route path='/saupdateprofilepage/:userType' element = { <UpdateProfile /> } />
+            <Route path='/saviewprofilepage/:userType' element = { <ViewProfile /> } />
             <Route path='/editprofile/:userType' element = { <EditProfilePage /> } />
             <Route path='/rateandreview/:username/:agentname' element = { <RateAndReviewPage /> } />
             <Route path='/reacreatelistingpage/:username' element={ <REACreateListingPage /> } />

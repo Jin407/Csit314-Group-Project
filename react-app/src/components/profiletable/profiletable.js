@@ -200,6 +200,9 @@ const ProfileTable = ({ userType }) => {
           <Link to={`/saupdateprofilepage/${submitType}`}>
             <button className="PTCreateAccButton">✎</button>
           </Link>
+          <Link to={`/saviewprofilepage/${submitType}`}>
+            <button className="PTCreateAccButton">👁️</button>
+          </Link>
           
           <button className="PTCreateAccButton"  onClick={(e) => handleSuspendProfile(e, submitType)}>🗑️</button>
           

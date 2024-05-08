@@ -66,7 +66,8 @@ class System_Admin(User):
         except mysql.connector.Error as err:
             print("Error:",err)
             return False
-        
+
+    #method for system admin to view user's recent actions    
     def viewUserActions(self,username):
         query = "SELECT *,CASE WHEN agentUser = %s THEN 'agentUser' WHEN buyerUser = %s Then 'buyerUser' WHEN sellerUser = %s THEN 'sellerUser' END AS retrieved_from FROM csit314.PropertyListings WHERE buyerUser = %s OR sellerUser = %s OR agentUser = %s;"
         try:
@@ -85,8 +86,29 @@ class System_Admin(User):
         except mysql.connector.Error as err:
             print("Error:",err)
             return False
+        
     
     #method for system admin to view user details
+    def viewUserProfile(self,profilename):
+        query = "SELECT * FROM csit314.userProfiles WHERE userType = %s;"
+        try:
+            self.cursor.execute(query, (profilename,))
+            results = self.cursor.fetchall()
+            user_details = []
+            for result in results:
+                profilename = result[1]
+                createdAt = result[3]
+                requirements = result[2]
+                user_details.append((profilename,requirements,createdAt))
+        
+            return user_details
+           
+            
+        except mysql.connector.Error as err:
+            print("Error:",err)
+            return False
+    
+    #method for system admin to display user details on home page
     def displayUserDetails(self,usertype):
         query = "SELECT * FROM csit314.Users WHERE userType = %s Limit 5;"
         try:
@@ -106,9 +128,9 @@ class System_Admin(User):
             print("Error:",err)
             return False
         
-    #method for system admin to view user details
+    #method for system admin to display user types on home page
     def displayUserTypes(self):
-        query = "SELECT * FROM csit314.user_types where type != 'admin' order by id;"
+        query = "SELECT * FROM csit314.userProfiles where UserType != 'admin' order by Profileid;"
         try:
             self.cursor.execute(query)
             results = self.cursor.fetchall()
@@ -142,12 +164,12 @@ class System_Admin(User):
             return False # Deletion failed due to an error
         
     #method for system admin to update user details
-    def updateUserProfile(self,newprofileName, profileName)->bool:
-        query = "INSERT INTO csit314.user_types (type) VALUES (%s);"
+    def updateUserProfile(self,newprofileName,requirements, profileName)->bool:
+        query = "INSERT INTO csit314.userProfiles (UserType,Requirements) VALUES (%s,%s);"
         query1 = "UPDATE csit314.users SET userType = %s WHERE userType = %s;"
-        query2 = "DELETE FROM csit314.user_types WHERE type = %s;"
+        query2 = "DELETE FROM csit314.userProfiles WHERE UserType = %s;"
         try:
-            self.cursor.execute(query, (newprofileName,))
+            self.cursor.execute(query, (newprofileName,requirements))
             self.cursor.execute(query1, (newprofileName,profileName))
             self.cursor.execute(query2, (profileName,))
             self.connection.commit() # Ensure change is committed and reflected in database
@@ -243,7 +265,7 @@ class System_Admin(User):
 
      #method for system admin to create new user profile   
     def createNewUserProfile(self,profileName) -> bool:
-        query = "INSERT INTO csit314.user_types (type) VALUES (%s);"
+        query = "INSERT INTO csit314.userProfiles (UserType) VALUES (%s);"
         try:
             self.cursor.execute(query, (profileName,))
             # Commit the transaction to apply changes to the database
@@ -412,6 +434,6 @@ if __name__ == '__main__':
     admin = System_Admin("username","password")
     # Assuming you have an instance of the class containing the `displayUserDetails` method
     # For example, if your instance is named `instance`:
-    user_details = admin.viewUserDetails("James")
+    user_details = admin.viewUserProfile("Buyer")
     print(user_details)
 
