@@ -13,6 +13,7 @@ import REACreateListingPage from './pages/reacreatelistingpage.js';
 import ViewListingPage from './pages/viewlistingpage.js';
 import UpdateListingPage from './pages/updatelistingpage.js';
 import BuyerHomePage from './pages/buyerhomepage.js';
+import MortgageCalculatorPage from './pages/mortgagecalculatorpage.js';
 
 class App extends Component{
   render(){
@@ -33,6 +34,7 @@ class App extends Component{
             <Route path='/reacreatelistingpage/:username' element={ <REACreateListingPage /> } />
             <Route path='/viewlistingpage/:listingid' element={ <ViewListingPage /> } />
             <Route path='/updatelistingpage/:listingid' element={ <UpdateListingPage /> } />
+            <Route path='/mortgagecalculatorpage' element={<MortgageCalculatorPage/>}/>
           </Routes>
         </header>
       </div>

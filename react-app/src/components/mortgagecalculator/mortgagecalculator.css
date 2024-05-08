@@ -1,0 +1,36 @@
+.mortgagecalculatorarea{
+    width: 70vw;
+    margin-left: auto;
+    margin-right: auto;
+    padding:2vw;
+    border-radius:15px;
+    background-color:rgba(149,149,149,100);
+    margin-top:3vw;
+    margin-bottom:3vw;
+}
+
+.morgagecalculatorinput {
+    font-size: 1.8vw;
+    width: 100%;
+    display: flex;
+    align-items: center; /* Center vertically */
+    justify-content: space-between; /* Space evenly */
+    margin-top:0.5vw;
+}
+
+.morgagecalculatorbutton{
+    height:1.5vw;
+}
+
+.morgagecalculatorinput > input {
+    height: 2vw;
+    font-size: 1.5vw; /* Adjust font size of input fields */
+    line-height: 2vw; /* Align text vertically within input fields */
+    flex: 1; /* Allow input fields to grow and fill remaining space */
+}
+
+.morgagecalculatorlabel {
+    min-width: 30%; /* Adjust minimum width of labels */
+    font-size: 1.5vw; /* Adjust font size of labels */
+    margin-right: 1vw; /* Add margin right for spacing between labels and input fields */
+}

@@ -1,5 +1,6 @@
 import { Component } from "react";
 import BSListing from "./buyersearchlisting";
+import './buyersearch.css';
 
 
 class BuyerSearch extends Component{
