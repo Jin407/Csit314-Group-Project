@@ -1,11 +1,14 @@
-import { Component } from "react"
-import { Link } from "react-router-dom"
+import { Component } from "react";
 
 class LogoutButton extends Component{
+    logout(){
+        window.location.href = `/`;
+    }
+
     render(){
         return(
             <>
-            <Link to="/"><button className="logoutbutton">LOGOUT</button></Link>
+            <button onClick={this.logout} className="logoutbutton">LOGOUT</button>
             </>
         )
     }
