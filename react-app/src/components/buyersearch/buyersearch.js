@@ -19,29 +19,74 @@ class BuyerSearch extends Component{
     componentDidMount(){
         this.setState({
             username: window.location.href.split('/')[4]
+        }, () => {
+            this.displayListings(); // Call displayListings after setting the username state
         });
     }
 
     handleInputChange = (event) => {
         const { name, value } = event.target;
-        this.setState({ [name]: value });
+        let filteredListings = this.state.listings;
+    
+        // Update state with the new value
+        this.setState({ [name]: value }, () => {
+            // Filter listings based on search input and status
+            filteredListings = filteredListings.filter(listing =>
+                listing.address.toLowerCase().includes(this.state.searchInput.toLowerCase()) &&
+                (this.state.status === 'Available' ? listing.status === 'Available' : listing.status === this.state.status)
+            );
+    
+            // Update state with filtered listings
+            this.setState({ filteredListings });
+        });
     };
+    
+    
 
-    handleSearchChange = event => {
-        const { value } = event.target;
-        const { listings, status } = this.state;
+    handleSearchChange = () => {
+        const { listings, status, searchInput } = this.state;
     
         // Filter listings based on search input and status
         const filteredListings = listings.filter(listing =>
-            listing.address.toLowerCase().includes(value.toLowerCase()) &&
-            listing.status === status
+            listing.address.toLowerCase().includes(searchInput.toLowerCase()) &&
+            (status === 'Available' ? listing.status === 'Available' : listing.status === status)
         );
     
-        this.setState({ searchInput: value, filteredListings });
+        this.setState({ filteredListings });
     };
 
     handleViewListing = (listingid) => {
         window.location.href = `/viewlistingpage/${listingid}`
+    };
+
+    displayListings = async () => {
+        try {
+            const response = await fetch('http://127.0.0.1:5000/api/display-all-property-listings', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({})
+            });
+            if (!response.ok) {
+                throw new Error('Network response was not ok');
+            }
+            const listingData = await response.json();
+            console.log('Received user data:', listingData);
+
+            if (listingData.error){
+                return;
+            }
+
+            // Update state with the received listing data
+            this.setState({ 
+                listings: listingData || [],
+                filteredListings: listingData || []
+            });
+        } catch (error) {
+            console.error('Error creating listing:', error);
+            return false;
+        }
     };
 
     handleFavouriting = async (listingId, username) => {
@@ -56,8 +101,9 @@ class BuyerSearch extends Component{
             if (!response.ok) {
                 throw new Error('Network response was not ok');
             }
-            const jsonresponse = await response.json(); // Assuming the server returns a boolean value
-            return jsonresponse.success;
+
+            return true;
+
         } catch (error) {
             console.error('Error favouriting listing:', error);
             return false;
@@ -71,7 +117,7 @@ class BuyerSearch extends Component{
                 <h2>Search for Listing</h2>
                 <div className="searchPageFlexBox">
                     <label className="searchPageFlexItem">
-                    <input type="radio" name="status" value="Unsold" checked={this.state.status === 'Unsold'} onChange={this.handleInputChange}/>Unsold</label>
+                    <input type="radio" name="status" value="Available" checked={this.state.status === 'Available'} onChange={this.handleInputChange}/>Available</label>
                     <label className="searchPageFlexItem">
                     <input type="radio" name="status" value="Sold" checked={this.state.status === 'Sold'} onChange={this.handleInputChange}/>Sold</label> 
                 </div>

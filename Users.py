@@ -62,16 +62,15 @@ class System_Admin(User):
 
     #method for system admin to view user details
     def viewUserDetails(self,username) ->list:
-        query = "SELECT * FROM csit314.Users WHERE username = %s;"
+        query = "SELECT createdAt,userType FROM csit314.Users WHERE username = %s;"
         try:
             self.cursor.execute(query, (username,))
             results = self.cursor.fetchall()
             user_details = []
             for result in results:
-                ratings = result[5]
-                createdAt = result[4]
-                userType = result[6]
-                user_details.append((ratings,userType,createdAt))
+                createdAt = result[0]
+                userType = result[1]
+                user_details.append((userType,createdAt))
         
             return user_details
            
@@ -82,15 +81,15 @@ class System_Admin(User):
 
     #method for system admin to view user's recent actions    
     def viewUserActions(self,username) -> list:
-        query = "SELECT *,CASE WHEN agentUser = %s THEN 'agentUser' WHEN buyerUser = %s Then 'buyerUser' WHEN sellerUser = %s THEN 'sellerUser' END AS retrieved_from FROM csit314.PropertyListings WHERE buyerUser = %s OR sellerUser = %s OR agentUser = %s;"
+        query = "SELECT address,CreatedAt,CASE WHEN agentUser = %s THEN 'agentUser' WHEN buyerUser = %s Then 'buyerUser' WHEN sellerUser = %s THEN 'sellerUser' END AS retrieved_from FROM csit314.PropertyListings WHERE buyerUser = %s OR sellerUser = %s OR agentUser = %s;"
         try:
             self.cursor.execute(query, (username,username,username,username,username,username))
             results = self.cursor.fetchall()
             user_details = []
             for result in results:
-                address = result[1]
-                createdAt = result[7]
-                userType = result[8]
+                address = result[0]
+                createdAt = result[1]
+                userType = result[2]
                 user_details.append((address,userType,createdAt))
         
             return user_details
@@ -398,6 +397,7 @@ class Real_Estate_Agent(User):
 
     #method for Real estate agent to view Reviews
     def viewReviews(self):
+        
         query = "SELECT * FROM csit314.reviews WHERE agentUser = %s;" # for now it returns a tuple of the entire row
         try:
             self.cursor.execute(query, (self.username,))
@@ -561,6 +561,98 @@ class PropertyListing():
             
         except mysql.connector.Error as err:
             print("Error:", err)
+
+    @classmethod
+    def displayAllPropertyListings(cls):
+        connection = mysql.connector.connect(
+                host="127.0.0.1",
+                user="username",
+                password="password",
+                database="csit314"
+            )
+        cursor = connection.cursor()
+        query = "SELECT * FROM csit314.PropertyListings;"
+        try:
+            cursor.execute(query)
+            results = cursor.fetchall()
+            listings = []
+            for result in results:
+                id = result[0]
+                address = result[1]
+                price = result[2]
+                status = result[3]
+                agent = result[4]
+                seller = result[5]
+                buyer = result[6]
+                createdAt = result[7]
+                viewCount = result[8]
+                favCount = result[9]
+                listing = PropertyListing(id=id, address=address, price=price, status=status, agent=agent, seller=seller, buyer=buyer, createdAt=createdAt, viewCount=viewCount, favCount=favCount)
+                listings.append(listing)
+
+            return listings
+
+        except mysql.connector.Error as err:
+            print("Error:", err)
+
+class Review():
+    def __init__(self,reviewerUser,agentUser,review,rating):
+        self.reviewerUser = reviewerUser
+        self.agentUser = agentUser
+        self.review = review
+        self.rating = rating
+
+    @classmethod
+    def viewReviews(cls,agentUser)->list:
+        connection = mysql.connector.connect(
+                host="127.0.0.1",
+                user="username",
+                password="password",
+                database="csit314"
+            )
+        cursor = connection.cursor()
+        query = "SELECT * FROM csit314.reviews WHERE agentUser = %s;" 
+        try:
+            cursor.execute(query, (agentUser,))
+            results = cursor.fetchall()
+            reviews = []
+            for result in results:
+                reviewer = result[1]
+                agent = result [2]
+                review = result[3]
+                rating = result[5]
+                reviews.append((reviewer,agent,review,rating))
+
+            return reviews
+            
+        except mysql.connector.Error as err:
+            print("Error:", err)
+
+    @classmethod
+    def viewRating(cls,agentUser)->float:
+        connection = mysql.connector.connect(
+                host="127.0.0.1",
+                user="username",
+                password="password",
+                database="csit314"
+            )
+        cursor = connection.cursor()
+        query = "SELECT AVG(ratings) FROM csit314.reviews WHERE agentUser = %s;" 
+        try:
+            cursor.execute(query, (agentUser,))
+            result = cursor.fetchone()
+            if result:
+                final_rating = float(result[0])
+                return final_rating
+            else:
+                return None
+            
+        except mysql.connector.Error as err:
+            print("Error:", err)
+
+
+
+
             
 
 '''
@@ -580,5 +672,5 @@ if __name__ == '__main__':
     admin = System_Admin("username","password")
     # Assuming you have an instance of the class containing the `displayUserDetails` method
     # For example, if your instance is named `instance`:
-    user_details = admin.viewUserProfile("Buyer")
-    print(user_details)
+    
+    print(Reviews.viewReviews("James"))

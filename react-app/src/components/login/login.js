@@ -58,12 +58,13 @@ class Login extends Component{
         event.preventDefault();
         const { userType, username, password } = this.state;
         const success= await this.login(userType, username, password);
+        console.log(userType)
         //console.log("1) username: " + username + "    2) password: " + password + "    3) userType: " + userType)
         if (success && (userType === "sysadmin")) {
             window.location.href = '/sahomepage';
         } else if (success && (userType === "REA")) {
             window.location.href = `/reahomepage/${username}`;
-        }  else if (success && (userType === "buyer")) {
+        }  else if (success && (userType === "Buyer")) {
             window.location.href = `/buyerhomepage/${username}`;
         } else {
             this.setState({ errorMessage: "Login failed. Please try again." });

@@ -1,4 +1,4 @@
-from Users import User, System_Admin, Real_Estate_Agent, Buyer, Seller,PropertyListing
+from Users import User, System_Admin, Real_Estate_Agent, Buyer, Seller,PropertyListing, Review
 # install the connector in terminal: pip install mysql-connector-python
 import mysql.connector
 #pip install flask
@@ -324,32 +324,7 @@ class SuspendUserProfileController(BaseController):
             
             else:
                 return jsonify({'error': 'Method not allowed'}), 405
-            
-class ViewPropertyListingsController(BaseController):
-    def register_routes(self):
-        @self.app.route('/api/display-property-listings', methods=['POST'])
-        def displayPropertyListing():
-            if request.method == 'POST':
-
-                data = request.json
-
-                username = data.get('username')
-                print("username",username)
-                
-                agent = Real_Estate_Agent(username,"password")
-                property_listing = agent.displayPropertyListings()
-                
-                 # Convert each property listing object to its dictionary representation
-                listings_data = [listing.__dict__ for listing in property_listing]
-                
-
-                if listings_data:
-                    return jsonify(listings_data)
-                else:
-                    return jsonify({'error': 'No user details found'})
-            
-            else:
-                 return jsonify({'error': 'Method not allowed'}), 405
+        
             
 class CreatePropertyListingController(BaseController):
     def register_routes(self):
@@ -425,10 +400,105 @@ class ViewPropertyListingController(BaseController):
                 if listing:
                     return jsonify(listing)
                 else:
-                    return jsonify({'error': 'No user details found'})
+                    return jsonify({'error': 'No listings found'})
             
             else:
                  return jsonify({'error': 'Method not allowed'}), 405
+            
+class ViewReviewsController(BaseController):
+    def register_routes(self):
+        @self.app.route('/api/view-reviews', methods=['POST'])
+        def viewReviews():
+            if request.method == 'POST':
+                data = request.json
+                agent = data.get('username')
+                reviews_data = Review.viewReviews(agent)
+                reviews = []
+
+                for review in reviews_data:
+                    # Create a review object for each review data
+                    reviewerUser, agent, reviewText, rating = review
+                    review_object = Review(reviewerUser, agent, reviewText, rating)
+                    reviews.append(review_object.__dict__)
+
+
+                if(reviews):
+                    
+                    return jsonify(reviews)
+                else:
+                    return jsonify({'error': 'No reviews found'})
+            
+            else:
+                 return jsonify({'error': 'Method not allowed'}), 405
+            
+class ViewRatingController(BaseController):
+    def register_routes(self):
+        @self.app.route('/api/view-rating', methods=['POST'])
+        def viewRating():
+            if request.method == 'POST':
+                data = request.json
+                agent = data.get('username')
+                rating = Review.viewRating(agent)
+                print(rating, type(rating))
+
+                if(rating):
+                    
+                    return jsonify(rating)
+                else:
+                    return jsonify({'error': 'No rating found'})
+            
+            else:
+                 return jsonify({'error': 'Method not allowed'}), 405
+            
+class DisplayPropertyListingsController(BaseController):
+     def register_routes(self):        
+        @self.app.route('/api/display-property-listings', methods=['POST'])
+        def displayPropertyListings():
+            if request.method == 'POST':
+
+                data = request.json
+
+                username = data.get('username')
+                print("username",username)
+                
+                agent = Real_Estate_Agent(username,"password")
+                property_listing = agent.displayPropertyListings()
+                
+                 # Convert each property listing object to its dictionary representation
+                listings_data = [listing.__dict__ for listing in property_listing]
+                
+
+                if listings_data:
+                    return jsonify(listings_data)
+                else:
+                    return jsonify({'error': 'No property listings found'})
+            
+            else:
+                 return jsonify({'error': 'Method not allowed'}), 405
+            
+        @self.app.route('/api/display-all-property-listings', methods=['POST'])
+        def displayAllPropertyListings():
+            if request.method == 'POST':
+
+                data = request.json
+
+                username = data.get('username')
+                print("username",username)
+                
+                property_listing = PropertyListing.displayAllPropertyListings()
+                
+                 # Convert each property listing object to its dictionary representation
+                listings_data = [listing.__dict__ for listing in property_listing]
+                
+
+                if listings_data:
+                    return jsonify(listings_data)
+                else:
+                    return jsonify({'error': 'No property listings found'})
+            
+            else:
+                 return jsonify({'error': 'Method not allowed'}), 405
+
                 
     
 
@@ -444,9 +514,11 @@ if __name__ == '__main__':
     UpdateUserProfileController(app)
     SuspendUserAccountController(app)
     SuspendUserProfileController(app)
-    ViewPropertyListingsController(app)
+    ViewPropertyListingController(app)
     CreatePropertyListingController(app)
     UpdatePropertyListingController(app)
     DeletePropertyListingController(app)
-    ViewPropertyListingController(app)
+    ViewReviewsController(app)
+    ViewRatingController(app)
+    DisplayPropertyListingsController(app)
     app.run(debug=True)

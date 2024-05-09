@@ -74,8 +74,8 @@ class RecentActions extends Component {
             // For other user types, set leaveReviewLink to the JSX for the link
             leaveReviewLink = (
                 <Link to={`/rateandreview/${username}/${agentname}`} className="leavereviewlink">
-                    Leave Review
-                </Link>
+                  <p>Leave Review</p>  
+               </Link>
             );
         }
         return(

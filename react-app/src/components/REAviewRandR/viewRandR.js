@@ -6,24 +6,83 @@ import Testrr from "./@@testrr";
 class ViewRandR extends Component{
     state = {
         ratings: [], // Initially an empty array, will be populated with data
+        final_rating: 0
     };
 
     componentDidMount() {
-        this.setState({
-            username: window.location.href.split('/')[4]
+        const username = window.location.href.split('/')[4];
+
+        this.setState({}, () => {
+            this.viewReviews(username);
+            this.viewRating(username)
         });
-        fetch('http://127.0.0.1:5000/api/login')//http://127.0.0.1:5000/api/ratingsAndReviews?username=${username}
-          .then(response => response.json())
-          .then(data => this.setState({ ratings: data, reviews: data }))
-          .catch(error => console.error('Error fetching listings:', error));
     }
 
+    viewReviews = async (username) => {
+        try {
+            const response = await fetch('http://127.0.0.1:5000/api/view-reviews', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({username })
+            });
+            if (!response.ok) {
+                throw new Error('Network response was not ok');
+            }
+            const reviewData = await response.json();
+            console.log('Received user data:', reviewData);
+
+            if (reviewData.error){
+                console.log(reviewData.error)
+                return;
+            }
+
+            this.setState({ ratings: reviewData, reviews: reviewData })
+            
+
+        } catch (error) {
+            console.error('Error viewing reviews:', error);
+            
+        }
+    };
+
+    viewRating = async (username) => {
+        try {
+            const response = await fetch('http://127.0.0.1:5000/api/view-rating', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({username })
+            });
+            if (!response.ok) {
+                throw new Error('Network response was not ok');
+            }
+            const ratingData = await response.json();
+            console.log('Received data:', ratingData);
+
+            if (ratingData.error){
+                console.log(ratingData.error)
+                return;
+            }
+
+            this.setState({ final_rating: ratingData })
+            
+
+        } catch (error) {
+            console.error('Error viewing rating:', error);
+            
+        }
+    };
+
     render(){
-        const {ratings} = this.state;
+        const {ratings, final_rating} = this.state;
         return(
             <>
             <div className = "RandRDisplay">
             <h2>My Ratings and Reviews</h2>
+            <p>Rating: {final_rating}/5</p>
             {/*<Testrr/><Testrr/><Testrr/>*/}
             {ratings && ratings.map(rating => (
               <RatingsAndReviews key={rating.id} rating={rating}/>

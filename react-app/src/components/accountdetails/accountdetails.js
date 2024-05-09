@@ -7,7 +7,6 @@ class AccountDetails extends Component{
         super(props);
         this.state = {
             username: '',
-            ratings: null,
             userType: '',
             createdAt: ''
         };
@@ -42,9 +41,8 @@ class AccountDetails extends Component{
             console.log('Received user data:', userData);
             // Update state with user details
             this.setState({
-                ratings: userData[0][0], // First element of the first tuple
-                userType: userData[0][1], // Second element of the first tuple
-                createdAt: userData[0][2] // Third element of the first tuple
+                userType: userData[0][0],
+                createdAt: userData[0][1]
             });
         } catch (error) {
             console.error('Error updating account:', error);
@@ -55,11 +53,8 @@ class AccountDetails extends Component{
 
     render(){
 
-        const { username,ratings, userType, createdAt } = this.state;
-        let ratingDisplay;
-        if(userType == "Real estate agent" && ratings != null){
-            ratingDisplay = `${ratings}/5`
-        }
+        const { username, userType, createdAt } = this.state;
+
         return(
             <>
             <div className="accountdetails">
@@ -67,10 +62,6 @@ class AccountDetails extends Component{
                     <tr className="accountdetailline">
                         <td className="accountdetailcolumn1">Username: </td>
                         <td className="accountdetailcolumn2">{username}</td>
-                    </tr>
-                    <tr className="accountdetailline">
-                        <td className="accountdetailcolumn1">Ratings: </td>
-                        <td className="accountdetailcolumn2">{ratingDisplay}</td>
                     </tr>
                     <tr className="accountdetailline">
                         <td className="accountdetailcolumn1">Account Type: </td>
