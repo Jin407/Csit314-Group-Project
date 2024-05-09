@@ -316,10 +316,7 @@ class Real_Estate_Agent(User):
         try:
             self.cursor.execute(query, (f"%{searched}%",))  # Wrap the search string with % and pass it as a tuple
             result = self.cursor.fetchall()
-            if len(result) > 0:
-                return result  # Return tuples of all matches (can extract them as strings into a list but idk if thats ok)
-            else:
-                return "No listings match"  # No rows returned
+            return result if result else []  # Return an empty list if no listings match
         except mysql.connector.Error as err:
             print("Error:", err)
     
@@ -391,14 +388,12 @@ class Real_Estate_Agent(User):
             print("Error:", err)
         
 
-
     #method for Real estate agent to view their ratings
     def viewRatings(self):
         return self.rating
 
     #method for Real estate agent to view Reviews
     def viewReviews(self):
-        
         query = "SELECT * FROM csit314.reviews WHERE agentUser = %s;" # for now it returns a tuple of the entire row
         try:
             self.cursor.execute(query, (self.username,))
@@ -410,17 +405,31 @@ class Real_Estate_Agent(User):
         except mysql.connector.Error as err:
             print("Error:", err)
 
-    
-    
 class Buyer(User):
     #default constructor for Buyer
     def __init__(self, username,password):
         super().__init__(username,password)
         self.userType = "Buyer"
 
-    #method for Buyer to search for property listing
-    def searchPropertyListings():
-         pass#to be filled in later
+    # method for Buyer to search for property listing (search bar)
+    def searchPropertyListings(self, searched):
+        query = "SELECT address FROM csit314.PropertyListings WHERE address LIKE %s;"
+        try:
+            self.cursor.execute(query, (f"%{searched}%",))  # Wrap the search string with % and pass it as a tuple
+            result = self.cursor.fetchall()
+            return result if result else []  # Return an empty list if no listings match
+        except mysql.connector.Error as err:
+            print("Error:", err)
+
+    # Method for Buyer to search for property listing (based on status)
+    def searchPropertyListingsByStatus(self, status):
+        query = "SELECT * FROM csit314.PropertyListings WHERE status = %s;"
+        try:
+            self.cursor.execute(query, (status,))
+            result = self.cursor.fetchall()
+            return result if result else []  # Return an empty list if no listings match
+        except mysql.connector.Error as err:
+            print("Error:", err)
     
     # Method for Buyer to save property listing
     def savePropertyListings(self, id):
@@ -435,20 +444,38 @@ class Buyer(User):
             return False
 
     #method for Buyer to view property listing
-    def viewPropertyListings():
-        pass#to be filled in later
+    def viewPropertyListings(self, id):
+        query = "SELECT * FROM csit314.PropertyListings WHERE listingID = %s;" # for now it returns a tuple of the entire row
+        try:
+            self.cursor.execute(query, (id,))
+            result = self.cursor.fetchall()
+            if len(result) > 0:
+                return result 
+            else:
+                return "No listings found"  # No rows returned
+        except mysql.connector.Error as err:
+            print("Error:", err)
 
     #method for Buyer to calculate Mortgage
     def calculateMortgage():
         pass#to be filled in later
 
     #method for Buyer to rate their agent
+    # for ratings i think it might be better to either make another table or put it with reviews else it wont be touching database
     def rateAgent():
         pass#to be filled in later
 
     #method for Buyer to review their agent
-    def reviewAgent():
-        pass#to be filled in later
+    def reviewAgent(self,agent,review):
+        query = "INSERT INTO reviews (reviewerUser, agentUser, reviewText) VALUES (%s, %s, %s);"
+        try:
+            self.cursor.execute(query, (self.username, agent, review))
+            self.connection.commit()
+            return True
+        except mysql.connector.Error as err:
+            print("Error:",err)
+            self.connection.rollback()
+            return False
 
 
 class Seller(User):
@@ -710,7 +737,8 @@ class Review():
 
 '''
 buyerTest = Buyer("buyer1", "password")
-buyerTest.savePropertyListings(1)
+x = buyerTest.searchPropertyListings("lol")
+print(x)
 
 if __name__ == '__main__':
  admin = System_Admin("username","password")
