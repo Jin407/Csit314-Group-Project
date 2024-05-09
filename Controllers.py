@@ -459,10 +459,8 @@ class DisplayPropertyListingsController(BaseController):
                 data = request.json
 
                 username = data.get('username')
-                print("username",username)
-                
-                agent = Real_Estate_Agent(username,"password")
-                property_listing = agent.displayPropertyListings()
+
+                property_listing = PropertyListing.displayPropertyListings(username)
                 
                  # Convert each property listing object to its dictionary representation
                 listings_data = [listing.__dict__ for listing in property_listing]

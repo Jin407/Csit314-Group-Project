@@ -43,16 +43,16 @@ class BuyerSearch extends Component{
     
     
 
-    handleSearchChange = () => {
-        const { listings, status, searchInput } = this.state;
+    handleSearchChange = event => {
+        const { value } = event.target;
+        const { listings } = this.state;
     
-        // Filter listings based on search input and status
+        // Filter listings based on search input
         const filteredListings = listings.filter(listing =>
-            listing.address.toLowerCase().includes(searchInput.toLowerCase()) &&
-            (status === 'Available' ? listing.status === 'Available' : listing.status === status)
+          listing.address.toLowerCase().includes(value.toLowerCase())
         );
     
-        this.setState({ filteredListings });
+        this.setState({ searchInput: value, filteredListings });
     };
 
     handleViewListing = (listingid) => {

@@ -563,6 +563,41 @@ class PropertyListing():
             print("Error:", err)
 
     @classmethod
+    def displayPropertyListings(cls,username):
+        connection = mysql.connector.connect(
+                host="127.0.0.1",
+                user="username",
+                password="password",
+                database="csit314"
+            )
+        cursor = connection.cursor()
+        query = "SELECT * FROM csit314.PropertyListings WHERE agentUser = %s;"
+        try:
+            cursor.execute(query,(username,))
+            results = cursor.fetchall()
+            listings = []
+            for result in results:
+                id = result[0]
+                address = result[1]
+                price = result[2]
+                status = result[3]
+                agent = result[4]
+                seller = result[5]
+                buyer = result[6]
+                createdAt = result[7]
+                viewCount = result[8]
+                favCount = result[9]
+                listing = PropertyListing(id=id, address=address, price=price, status=status, agent=agent, seller=seller, buyer=buyer, createdAt=createdAt, viewCount=viewCount, favCount=favCount)
+                listings.append(listing)
+
+            return listings
+
+        except mysql.connector.Error as err:
+            print("Error:", err)
+
+
+
+    @classmethod
     def displayAllPropertyListings(cls):
         connection = mysql.connector.connect(
                 host="127.0.0.1",
