@@ -171,7 +171,7 @@ class ViewUserDetailsController(BaseController):
                 # Assuming data contains username and password
                 username = data.get('username')
 
-                admin = System_Admin("username","password")
+                admin = System_Admin(username,"password")
                
                 user_details = admin.viewUserActions(username)
 
@@ -459,11 +459,14 @@ class DisplayPropertyListingsController(BaseController):
                 data = request.json
 
                 username = data.get('username')
+                print("username",username)
 
                 property_listing = PropertyListing.displayPropertyListings(username)
+                listings_data = ''
                 
+                if(property_listing):
                  # Convert each property listing object to its dictionary representation
-                listings_data = [listing.__dict__ for listing in property_listing]
+                    listings_data = [listing.__dict__ for listing in property_listing]
                 
 
                 if listings_data:
@@ -497,7 +500,26 @@ class DisplayPropertyListingsController(BaseController):
             else:
                  return jsonify({'error': 'Method not allowed'}), 405
 
+class SubmitRatingAndReviewController(BaseController):
+    def register_routes(self):
+        @self.app.route('/api/submit-rating-review', methods=['POST'])
+        def submitRatingAndReview():
+            if request.method == 'POST':
+                data = request.json
+                reviewerUser = data.get('username1')
+                agentUser = data.get('username2')
+                reviewText = data.get('review')
+                ratingText = data.get('rating')
+
+                review = Review(reviewerUser,agentUser,reviewText,ratingText)
+
+                review.createRatingAndReview()
                 
+                return '', 200
+                
+            
+            else:
+                 return jsonify({'error': 'Method not allowed'}), 405         
     
 
 if __name__ == '__main__':
@@ -519,4 +541,5 @@ if __name__ == '__main__':
     ViewReviewsController(app)
     ViewRatingController(app)
     DisplayPropertyListingsController(app)
+    SubmitRatingAndReviewController(app)
     app.run(debug=True)

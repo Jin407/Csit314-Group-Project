@@ -18,7 +18,7 @@ class RecentActions extends Component {
     componentDidMount() {
         const username = window.location.href.split('/')[4];
         
-        this.setState({ username }, () => {
+        this.setState({ username, agentname:username }, () => {
             this.viewUserActions(username);
         });
     }

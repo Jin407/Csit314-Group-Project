@@ -66,6 +66,8 @@ class Login extends Component{
             window.location.href = `/reahomepage/${username}`;
         }  else if (success && (userType === "Buyer")) {
             window.location.href = `/buyerhomepage/${username}`;
+        } else if (success && (userType === "Seller")) {
+            window.location.href = `/sellerhomepage/${username}`;
         } else {
             this.setState({ errorMessage: "Login failed. Please try again." });
         }

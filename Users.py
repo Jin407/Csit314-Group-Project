@@ -81,7 +81,7 @@ class System_Admin(User):
 
     #method for system admin to view user's recent actions    
     def viewUserActions(self,username) -> list:
-        query = "SELECT address,CreatedAt,CASE WHEN agentUser = %s THEN 'agentUser' WHEN buyerUser = %s Then 'buyerUser' WHEN sellerUser = %s THEN 'sellerUser' END AS retrieved_from FROM csit314.PropertyListings WHERE buyerUser = %s OR sellerUser = %s OR agentUser = %s;"
+        query = "SELECT address,CreatedAt,agentUser, CASE WHEN agentUser = %s THEN 'agentUser' WHEN buyerUser = %s Then 'buyerUser' WHEN sellerUser = %s THEN 'sellerUser' END AS retrieved_from FROM csit314.PropertyListings WHERE buyerUser = %s OR sellerUser = %s OR agentUser = %s;"
         try:
             self.cursor.execute(query, (username,username,username,username,username,username))
             results = self.cursor.fetchall()
@@ -89,8 +89,9 @@ class System_Admin(User):
             for result in results:
                 address = result[0]
                 createdAt = result[1]
-                userType = result[2]
-                user_details.append((address,userType,createdAt))
+                agent = result[2]
+                userType = result[3]
+                user_details.append((address,userType,createdAt,agent))
         
             return user_details
            
@@ -563,7 +564,7 @@ class PropertyListing():
             print("Error:", err)
 
     @classmethod
-    def displayPropertyListings(cls,username):
+    def displayPropertyListings(cls,username)->list:
         connection = mysql.connector.connect(
                 host="127.0.0.1",
                 user="username",
@@ -571,9 +572,9 @@ class PropertyListing():
                 database="csit314"
             )
         cursor = connection.cursor()
-        query = "SELECT * FROM csit314.PropertyListings WHERE agentUser = %s;"
+        query = "SELECT * FROM csit314.PropertyListings WHERE agentUser = %s or sellerUser = %s;"
         try:
-            cursor.execute(query,(username,))
+            cursor.execute(query,(username,username))
             results = cursor.fetchall()
             listings = []
             for result in results:
@@ -685,6 +686,23 @@ class Review():
         except mysql.connector.Error as err:
             print("Error:", err)
 
+    def createRatingAndReview(self):
+        connection = mysql.connector.connect(
+                host="127.0.0.1",
+                user="username",
+                password="password",
+                database="csit314"
+            )
+        cursor = connection.cursor()
+        query = "INSERT into csit314.reviews(reviewerUser,agentUser,reviewText,ratings) VALUES (%s,%s,%s,%s);"
+        try:
+            cursor.execute(query, (self.reviewerUser,self.agentUser,self.review,self.rating))
+            connection.commit()
+            
+            return None
+        except mysql.connector.Error as err:
+            print("Error:", err)
+            return err
 
 
 

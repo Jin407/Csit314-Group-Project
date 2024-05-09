@@ -27,49 +27,28 @@ class RateAndReview extends Component {
     handleSubmit = async (event) => {
         event.preventDefault();
         const { username1, username2, review, rating } = this.state;
-        const success1 = await this.submitReview( username1, username2, review);
-        const success2 = await this.submitRating( username1, username2, rating);
+        await this.submitRatingAndReview( username1, username2, review, rating);
     };
 
-    submitRating = async (username1, username2, rating) => {
+    submitRatingAndReview = async (username1, username2, review, rating) => {
         try {
-            const response = await fetch('http://127.0.0.1:5000/api/login', {
+            const response = await fetch('http://127.0.0.1:5000/api/submit-rating-review', {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json'
                 },
-                body: JSON.stringify({ username1, username2, rating })
+                body: JSON.stringify({ username1, username2, review, rating })
             });
             if (!response.ok) {
                 throw new Error('Network response was not ok');
             }
-            const jsonresponse = await response.json(); // Assuming the server returns a boolean value
-            return jsonresponse.success1;
+            
         } catch (error) {
             console.error('Error submitting rating:', error);
             return false;
         }
     };
 
-    submitReview = async (username1, username2, review) => {
-        try {
-            const response = await fetch('http://127.0.0.1:5000/api/login', {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json'
-                },
-                body: JSON.stringify({ username1, username2, review })
-            });
-            if (!response.ok) {
-                throw new Error('Network response was not ok');
-            }
-            const jsonresponse = await response.json(); // Assuming the server returns a boolean value
-            return jsonresponse.success2;
-        } catch (error) {
-            console.error('Error submitting review:', error);
-            return false;
-        }
-    };
 
     render(){
         const { username1 , username2 } = this.state;

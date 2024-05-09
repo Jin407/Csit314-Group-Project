@@ -11,16 +11,16 @@ class SellerListings extends Component {
     }
 
     componentDidMount() {
-        this.setState({
-            username: window.location.href.split('/')[4]
+        const username = window.location.href.split('/')[4];
+
+        this.setState({ username }, () => {
+            this.getListings(username);
         });
-    
-        this.getListings();
     }
 
     getListings = async (username) => {
         try {
-            const response = await fetch('http://127.0.0.1:5000/api/favourite-listings', {
+            const response = await fetch('http://127.0.0.1:5000/api/display-property-listings', {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json'
@@ -30,9 +30,18 @@ class SellerListings extends Component {
             if (!response.ok) {
                 throw new Error('Network response was not ok');
             }
-            const jsonresponse = await response.json();
-            // Assuming the server returns an array of listings
-            return jsonresponse.listings || []; // Return the listings array or an empty array if not present
+            const listingData = await response.json();
+            console.log('Received user data:', listingData);
+
+            if (listingData.error){
+                return;
+            }
+
+            // Update state with the received listing data
+            this.setState({ 
+                listings: listingData || []
+            });
+             // Return the listings array or an empty array if not present
         } catch (error) {
             console.error('Error fetching listings:', error);
             return []; // Return an empty array if there's an error
@@ -61,7 +70,7 @@ class SellerListings extends Component {
                                 </td>
                                 <tr>
                                     <td className="sellerListingTableCol1">{listing.address}</td>
-                                    <td className="sellerListingTableCol2">{listing.agentUsername}</td>
+                                    <td className="sellerListingTableCol2">{listing.agent}</td>
                                     <td className="sellerListingTableCol3">{listing.status}</td>
                                     <td className="sellerListingTableCol4">{listing.viewCount}</td>
                                     <td className="sellerListingTableCol5">{listing.favCount}</td>
