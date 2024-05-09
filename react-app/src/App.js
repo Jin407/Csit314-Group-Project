@@ -8,7 +8,7 @@ import SAHomePage from './pages/sahomepage.js';
 import CreateDynamicAccount from './components/createdynamicaccount/createdynamicaccount.js';
 import UpdateProfile from './components/updateprofile/updateprofile.js';
 import ViewProfile from './components/viewprofile/viewprofile.js';
-import EditProfilePage from './pages/editprofilepage.js';
+import EditProfilePage from './pages/editaccountpage.js';
 import RateAndReviewPage from './pages/rateandreviewpage.js';
 import REAHomePage from './pages/reahomepage.js';
 import REACreateListingPage from './pages/reacreatelistingpage.js';
