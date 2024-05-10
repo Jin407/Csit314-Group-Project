@@ -41,8 +41,6 @@ class BuyerSearch extends Component{
         });
     };
     
-    
-
     handleSearchChange = event => {
         const { value } = event.target;
         const { listings } = this.state;
@@ -77,7 +75,6 @@ class BuyerSearch extends Component{
             if (listingData.error){
                 return;
             }
-
             // Update state with the received listing data
             this.setState({ 
                 listings: listingData || [],
@@ -102,7 +99,7 @@ class BuyerSearch extends Component{
                 throw new Error('Network response was not ok');
             }
 
-            return true;
+            return;
 
         } catch (error) {
             console.error('Error favouriting listing:', error);

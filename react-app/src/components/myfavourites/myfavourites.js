@@ -9,6 +9,7 @@ class MyFavourites extends Component{
         this.state = {
             username:"",
             favouriteListings: [], // Initially an empty array, will be populated with data
+            filteredListings: [],
             filterStatus: "All" // Initial filter status, can be "All", "Sold", or "Unsold"
         };
     };
@@ -19,37 +20,57 @@ class MyFavourites extends Component{
     };
 
     componentDidMount() { //use this to get array of Favourited Listing's IDs
-        this.setState({username: window.location.href.split('/')[4]});
-        this.fetchFavouriteListings(); // Fetch favourite listings when component mounts
+        const username = window.location.href.split('/')[4];
+         
+        this.displayFavouriteListings(username);
     }
 
-    fetchFavouriteListings = () => {
-        fetch('http://127.0.0.1:5000/api/favourite-listing')
-            .then(response => response.json())
-            .then(listings => {
-                this.setState({ 
-                    favouriteListings: listings || [] // Ensure data is an array or default to empty array
-                });
-            })
-            .catch(error => console.error('Error fetching listings:', error));
-    }
+    displayFavouriteListings = async (username) => {
+        try {
+            const response = await fetch('http://127.0.0.1:5000/api/display-favourite-listings', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({username})
+            });
+            if (!response.ok) {
+                throw new Error('Network response was not ok');
+            }
+            const listingData = await response.json();
+            console.log('Received user data:', listingData);
 
-    // Function to handle radio button change
+            if (listingData.error){
+                return;
+            }
+            // Update state with the received listing data
+            this.setState({ 
+                favouriteListings: listingData || [],
+                filteredListings: listingData || []
+            });
+        } catch (error) {
+            console.error('Error creating listing:', error);
+            return false;
+        }
+    };
+
     handleRadioChange = (event) => {
-        this.setState({ filterStatus: event.target.value }, () => {
+        const filterStatus = event.target.value;
+        this.setState({ filterStatus }, () => {
             this.filterListings(); // Filter listings based on the selected status
         });
     };
-
-    // Function to filter listings based on the selected status
+    
     filterListings = () => {
         const { favouriteListings, filterStatus } = this.state;
         let filteredListings = favouriteListings;
-
+    
+        // Filter listings based on status
         if (filterStatus !== "All") {
-            filteredListings = favouriteListings.filter(listing => listing.status === filterStatus);
+            filteredListings = filteredListings.filter(listing => listing.status === filterStatus);
         }
-
+    
+        // Update state with filtered listings
         this.setState({ filteredListings });
     };
 
@@ -58,7 +79,7 @@ class MyFavourites extends Component{
     };
 
     render(){
-        const { favouriteListings , filterStatus } = this.state;
+        const { filteredListings , filterStatus } = this.state;
         return(
             <>
             <div className="myfavouritesarea">
@@ -76,11 +97,11 @@ class MyFavourites extends Component{
                     <label className="bs-filter-item">
                         <input 
                             type="radio" 
-                            value="Unsold" 
-                            checked={filterStatus === "Unsold"} 
+                            value="Available" 
+                            checked={filterStatus === "Available"} 
                             onChange={this.handleRadioChange} 
                         />
-                        Unsold
+                        Available
                     </label>
                     <label className="bs-filter-item">
                         <input 
@@ -93,7 +114,7 @@ class MyFavourites extends Component{
                     </label>
                 </div>
                 <div className="listings-container">
-                {favouriteListings && favouriteListings.map(listing => (
+                {filteredListings && filteredListings.map(listing => (
                     <MFListing key={listing.id} 
                       listing={listing} 
                       onView={() => this.handleViewListing(listing.id)}

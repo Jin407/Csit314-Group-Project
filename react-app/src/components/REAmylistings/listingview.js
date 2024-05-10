@@ -11,15 +11,14 @@ class ListingView extends Component{
             sellerUsername:"",
             status:"",
             uploadTime:"",
+            isMounted: false
         };
     }
 
     componentDidMount(){
         const listingid = window.location.href.split('/')[4];
-
-        this.setState({ listingid }, () => {
-            this.viewListingDetails(listingid);
-        });
+         
+        this.viewListingDetails(listingid);
     }
 
     async viewListingDetails(listingid){
@@ -45,7 +44,7 @@ class ListingView extends Component{
                 price: listing[0][1], // Second element of the first tuple
                 sellerUsername: listing[0][2], // Third element of the first tuple
                 status: listing[0][3], //Fourth element of the first tuple
-                uploadTime: listing[0][4]//Fourth element of the first tuple
+                uploadTime: listing[0][4]
             });
         } catch (error) {
             console.error('Error showing listing:', error);
@@ -55,6 +54,7 @@ class ListingView extends Component{
 
     render(){
         const { address, price, sellerUsername, status, uploadTime } = this.state;
+        
         return(
             <>
             <div className="viewListingArea">

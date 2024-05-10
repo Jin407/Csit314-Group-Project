@@ -459,7 +459,6 @@ class DisplayPropertyListingsController(BaseController):
                 data = request.json
 
                 username = data.get('username')
-                print("username",username)
 
                 property_listing = PropertyListing.displayPropertyListings(username)
                 listings_data = ''
@@ -484,7 +483,6 @@ class DisplayPropertyListingsController(BaseController):
                 data = request.json
 
                 username = data.get('username')
-                print("username",username)
                 
                 property_listing = PropertyListing.displayAllPropertyListings()
                 
@@ -519,7 +517,49 @@ class SubmitRatingAndReviewController(BaseController):
                 
             
             else:
-                 return jsonify({'error': 'Method not allowed'}), 405         
+                 return jsonify({'error': 'Method not allowed'}), 405 
+
+class FavouritePropertyListingController(BaseController):
+        def register_routes(self):
+            @self.app.route('/api/favourite-listing', methods=['POST'])
+            def favouriteListing():
+                if request.method == 'POST':
+                    data = request.json
+                    username = data.get('username')
+                    listingId = data.get('listingId')
+
+                    PropertyListing.favouritePropertyListing(username,listingId)
+
+                   
+                    return '', 200
+                    
+                
+                else:
+                    return jsonify({'error': 'Method not allowed'}), 405
+
+            @self.app.route('/api/display-favourite-listings', methods=['POST'])
+            def displayFavouriteListings():
+                if request.method == 'POST':
+                    data = request.json
+                    username = data.get('username')
+                    print("username",username)
+
+                    property_listing = PropertyListing.displayFavouritePropertyListings(username)
+                    listings_data = ''
+                    
+                    if(property_listing):
+                    # Convert each property listing object to its dictionary representation
+                        listings_data = [listing.__dict__ for listing in property_listing]
+                    
+
+                    if listings_data:
+                        return jsonify(listings_data)
+                    else:
+                        return jsonify({'error': 'No property listings found'})
+                                  
+                else:
+                    return jsonify({'error': 'Method not allowed'}), 405
+
     
 
 if __name__ == '__main__':
@@ -542,4 +582,5 @@ if __name__ == '__main__':
     ViewRatingController(app)
     DisplayPropertyListingsController(app)
     SubmitRatingAndReviewController(app)
+    FavouritePropertyListingController(app)
     app.run(debug=True)

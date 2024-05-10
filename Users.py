@@ -573,9 +573,13 @@ class PropertyListing():
             )
         cursor = connection.cursor()
         query = "SELECT address,price,status,sellerUser,createdAt FROM csit314.PropertyListings WHERE ListingId = %s;"
+        query2 = "UPDATE csit314.propertylistings SET viewcount = viewcount + 1 WHERE ListingId = %s;"
         try:
             cursor.execute(query, (id,))
             results = cursor.fetchall()
+            print("called")
+            cursor.execute(query2, (id,))
+            connection.commit()
             listing = []
             for result in results:
                 address = result[0]
@@ -623,10 +627,8 @@ class PropertyListing():
         except mysql.connector.Error as err:
             print("Error:", err)
 
-
-
     @classmethod
-    def displayAllPropertyListings(cls):
+    def displayAllPropertyListings(cls)->list:
         connection = mysql.connector.connect(
                 host="127.0.0.1",
                 user="username",
@@ -657,6 +659,63 @@ class PropertyListing():
 
         except mysql.connector.Error as err:
             print("Error:", err)
+
+    @classmethod
+    def favouritePropertyListing(cls, username, listingId):
+        connection = mysql.connector.connect(
+                host="127.0.0.1",
+                user="username",
+                password="password",
+                database="csit314"
+            )
+        cursor = connection.cursor()
+        query = "Insert into csit314.favourites (buyerUser,listing_id) VALUES (%s,%s)"
+        query2 = "UPDATE csit314.propertylistings SET favcount = favcount + 1 WHERE ListingId = %s;"
+        try:
+            cursor.execute(query, (username, listingId))
+            # Commit the transaction to apply changes to the database
+            connection.commit()
+            cursor.execute(query2,(listingId,))
+            connection.commit()
+            
+        except mysql.connector.Error as err:
+            print("Error:",err)
+            # If there was an error, rollback the transaction to avoid partial changes
+            connection.rollback()
+
+    @classmethod
+    def displayFavouritePropertyListings(cls, username)->list:
+        connection = mysql.connector.connect(
+                host="127.0.0.1",
+                user="username",
+                password="password",
+                database="csit314"
+            )
+        cursor = connection.cursor()
+        query = "SELECT PropertyListings.* FROM PropertyListings INNER JOIN Favourites ON PropertyListings.ListingID = Favourites.Listing_ID INNER JOIN users ON Favourites.buyerUser = users.username WHERE users.username = %s;"
+        try:
+            cursor.execute(query,(username,))
+            results = cursor.fetchall()
+            listings = []
+            for result in results:
+                id = result[0]
+                address = result[1]
+                price = result[2]
+                status = result[3]
+                agent = result[4]
+                seller = result[5]
+                buyer = result[6]
+                createdAt = result[7]
+                viewCount = result[8]
+                favCount = result[9]
+                listing = PropertyListing(id=id, address=address, price=price, status=status, agent=agent, seller=seller, buyer=buyer, createdAt=createdAt, viewCount=viewCount, favCount=favCount)
+                listings.append(listing)
+
+            return listings
+
+        except mysql.connector.Error as err:
+            print("Error:", err)
+
 
 class Review():
     def __init__(self,reviewerUser,agentUser,review,rating):
