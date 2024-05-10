@@ -725,5 +725,4 @@ if __name__ == '__main__':
     admin = System_Admin("username","password")
     # Assuming you have an instance of the class containing the `displayUserDetails` method
     # For example, if your instance is named `instance`:
-    
-    print(Reviews.viewReviews("James"))
+
