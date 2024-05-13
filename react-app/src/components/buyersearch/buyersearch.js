@@ -20,7 +20,7 @@ class BuyerSearch extends Component{
         this.setState({
             username: window.location.href.split('/')[4]
         }, () => {
-            this.displayListings(); // Call displayListings after setting the username state
+            this.displayUnsoldListings(); // Call displayListings after setting the username state
         });
     }
 
@@ -32,9 +32,14 @@ class BuyerSearch extends Component{
         this.setState({ [name]: value }, () => {
             // Filter listings based on search input and status
             filteredListings = filteredListings.filter(listing =>
-                listing.address.toLowerCase().includes(this.state.searchInput.toLowerCase()) &&
-                (this.state.status === 'Available' ? listing.status === 'Available' : listing.status === this.state.status)
+                listing.address.toLowerCase().includes(this.state.searchInput.toLowerCase()) 
             );
+
+            if(this.state.status === 'Available'){
+                this.displayUnsoldListings();
+            } else {
+                this.displaySoldListings();
+            }
     
             // Update state with filtered listings
             this.setState({ filteredListings });
@@ -57,7 +62,36 @@ class BuyerSearch extends Component{
         window.location.href = `/viewlistingpage/${listingid}`
     };
 
-    displayListings = async () => {
+    displaySoldListings = async () => {
+        try {
+            const response = await fetch('http://127.0.0.1:5000/api/display-all-property-listings', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({})
+            });
+            if (!response.ok) {
+                throw new Error('Network response was not ok');
+            }
+            const listingData = await response.json();
+            console.log('Received user data:', listingData);
+
+            if (listingData.error){
+                return;
+            }
+            // Update state with the received listing data
+            this.setState({ 
+                listings: listingData || [],
+                filteredListings: listingData || []
+            });
+        } catch (error) {
+            console.error('Error creating listing:', error);
+            return false;
+        }
+    };
+
+    displayUnsoldListings = async () => {
         try {
             const response = await fetch('http://127.0.0.1:5000/api/display-all-property-listings', {
                 method: 'POST',
@@ -106,6 +140,7 @@ class BuyerSearch extends Component{
             return false;
         }
     };
+    
     render(){
         const { searchInput, filteredListings } = this.state;
         return(
