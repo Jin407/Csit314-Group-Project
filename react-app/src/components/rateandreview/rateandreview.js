@@ -32,12 +32,29 @@ class RateAndReview extends Component {
 
     submitRatingAndReview = async (username1, username2, review, rating) => {
         try {
-            const response = await fetch('http://127.0.0.1:5000/api/submit-rating-review', {
+            const response = await fetch('http://127.0.0.1:5000/api/submit-review', {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json'
                 },
-                body: JSON.stringify({ username1, username2, review, rating })
+                body: JSON.stringify({ username1, username2, review })
+            });
+            if (!response.ok) {
+                throw new Error('Network response was not ok');
+            }
+            
+        } catch (error) {
+            console.error('Error submitting rating:', error);
+            return false;
+        }
+        
+        try {
+            const response = await fetch('http://127.0.0.1:5000/api/submit-rating', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({ username1, username2, rating })
             });
             if (!response.ok) {
                 throw new Error('Network response was not ok');
