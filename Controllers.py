@@ -124,24 +124,6 @@ class ViewUserDetailsController(BaseController):
                     return jsonify({'error': 'No user details found'})
             else:
                 return jsonify({'error': 'Method not allowed'}), 405
-            
-        #method to display usertypes in system admin page
-        @self.app.route('/api/display-user-types', methods=['GET'])
-        def displayUserTypes():
-            if request.method == 'GET':
-                
-                # Assuming data contains username and password
-
-                admin = System_Admin("username","password")
-                usertype_details = admin.displayUserTypes()
-                print(usertype_details)
-
-                if usertype_details:
-                    return jsonify(usertype_details)
-                else:
-                    return jsonify({'error': 'No user details found'})
-            else:
-                return jsonify({'error': 'Method not allowed'}), 405
 
 
         
@@ -223,6 +205,25 @@ class SearchUserAccountController(BaseController):
                 return jsonify({'success': searchAccount_success})
                 
             
+            else:
+                return jsonify({'error': 'Method not allowed'}), 405
+
+class DisplayUserProfileController(BaseController):
+    def register_routes(self):
+         #method to display usertypes in system admin page
+        @self.app.route('/api/display-user-types', methods=['GET'])
+        def displayUserTypes():
+            if request.method == 'GET':
+                
+                # Assuming data contains username and password
+
+                admin = System_Admin("username","password")
+                usertype_details = admin.displayUserTypes()
+
+                if usertype_details:
+                    return jsonify(usertype_details)
+                else:
+                    return jsonify({'error': 'No user details found'})
             else:
                 return jsonify({'error': 'Method not allowed'}), 405
 
@@ -476,17 +477,19 @@ class DisplayPropertyListingsController(BaseController):
             else:
                  return jsonify({'error': 'Method not allowed'}), 405
             
-        @self.app.route('/api/display-all-property-listings', methods=['POST'])
-        def displayAllPropertyListings():
+        
+            
+class DisplaySoldPropertyListingsController(BaseController):
+    def register_routes(self):  
+        @self.app.route('/api/display-sold-property-listings', methods=['POST'])
+        def displaySoldPropertyListings():
             if request.method == 'POST':
 
                 data = request.json
-
-                username = data.get('username')
                 
-                property_listing = PropertyListing.displayAllPropertyListings()
+                property_listing = PropertyListing.displaySoldPropertyListings()
                 
-                 # Convert each property listing object to its dictionary representation
+                    # Convert each property listing object to its dictionary representation
                 listings_data = [listing.__dict__ for listing in property_listing]
                 
 
@@ -496,7 +499,29 @@ class DisplayPropertyListingsController(BaseController):
                     return jsonify({'error': 'No property listings found'})
             
             else:
-                 return jsonify({'error': 'Method not allowed'}), 405
+                    return jsonify({'error': 'Method not allowed'}), 405
+            
+class DisplayUnsoldPropertyListingsController(BaseController):
+    def register_routes(self):  
+        @self.app.route('/api/display-unsold-property-listings', methods=['POST'])
+        def displayUnsoldPropertyListings():
+            if request.method == 'POST':
+
+                data = request.json
+                
+                property_listing = PropertyListing.displayUnsoldPropertyListings()
+                
+                    # Convert each property listing object to its dictionary representation
+                listings_data = [listing.__dict__ for listing in property_listing]
+                
+
+                if listings_data:
+                    return jsonify(listings_data)
+                else:
+                    return jsonify({'error': 'No property listings found'})
+            
+            else:
+                    return jsonify({'error': 'Method not allowed'}), 405
 
 class SubmitRatingAndReviewController(BaseController):
     def register_routes(self):
@@ -536,15 +561,42 @@ class FavouritePropertyListingController(BaseController):
                 
                 else:
                     return jsonify({'error': 'Method not allowed'}), 405
-
-            @self.app.route('/api/display-favourite-listings', methods=['POST'])
-            def displayFavouriteListings():
+                
+class DisplaySoldFavouritePropertyListingController(BaseController):
+        def register_routes(self):
+            @self.app.route('/api/display-sold-favourite-listings', methods=['POST'])
+            def displaySoldFavouriteListings():
                 if request.method == 'POST':
                     data = request.json
                     username = data.get('username')
                     print("username",username)
 
-                    property_listing = PropertyListing.displayFavouritePropertyListings(username)
+                    property_listing = PropertyListing.displaySoldFavouritePropertyListings(username)
+                    listings_data = ''
+                    
+                    if(property_listing):
+                    # Convert each property listing object to its dictionary representation
+                        listings_data = [listing.__dict__ for listing in property_listing]
+                    
+
+                    if listings_data:
+                        return jsonify(listings_data)
+                    else:
+                        return jsonify({'error': 'No property listings found'})
+                                  
+                else:
+                    return jsonify({'error': 'Method not allowed'}), 405
+                
+class DisplayUnsoldFavouritePropertyListingController(BaseController):
+        def register_routes(self):
+            @self.app.route('/api/display-unsold-favourite-listings', methods=['POST'])
+            def displayUnsoldFavouriteListings():
+                if request.method == 'POST':
+                    data = request.json
+                    username = data.get('username')
+                    print("username",username)
+
+                    property_listing = PropertyListing.displayUnsoldFavouritePropertyListings(username)
                     listings_data = ''
                     
                     if(property_listing):
@@ -569,6 +621,7 @@ if __name__ == '__main__':
     CreateProfileController(app)
     ViewUserDetailsController(app)
     ViewUserProfileController(app)
+    DisplayUserProfileController(app)
     SearchUserAccountController(app)
     UpdateUserDetailsController(app)
     UpdateUserProfileController(app)
@@ -581,6 +634,10 @@ if __name__ == '__main__':
     ViewReviewsController(app)
     ViewRatingController(app)
     DisplayPropertyListingsController(app)
+    DisplaySoldPropertyListingsController(app)
+    DisplayUnsoldPropertyListingsController(app)
     SubmitRatingAndReviewController(app)
     FavouritePropertyListingController(app)
+    DisplayUnsoldFavouritePropertyListingController(app)
+    DisplaySoldFavouritePropertyListingController(app)
     app.run(debug=True)
