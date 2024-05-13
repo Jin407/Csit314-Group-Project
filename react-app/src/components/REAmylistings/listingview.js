@@ -11,17 +11,18 @@ class ListingView extends Component{
             sellerUsername:"",
             status:"",
             uploadTime:"",
+            viewerUsername:"",
             isMounted: false
         };
     }
 
     componentDidMount(){
         const listingid = window.location.href.split('/')[4];
-         
-        this.viewListingDetails(listingid);
+        const viewerUsername = window.location.href.split('/')[5];
+        this.viewListingDetails(listingid, viewerUsername);
     }
 
-    async viewListingDetails(listingid){
+    async viewListingDetails(listingid, viewerUsername){
         try {
             const response = await fetch('http://127.0.0.1:5000/api/view-property-listing', {
                 method: 'POST',
@@ -29,7 +30,7 @@ class ListingView extends Component{
                     'Content-Type': 'application/json'
                 },
                 
-                body: JSON.stringify({listingid})
+                body: JSON.stringify({listingid, viewerUsername})
             });
 
             
