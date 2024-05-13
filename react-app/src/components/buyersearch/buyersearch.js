@@ -20,7 +20,7 @@ class BuyerSearch extends Component{
         this.setState({
             username: window.location.href.split('/')[4]
         }, () => {
-            this.displayUnsoldListings(); // Call displayListings after setting the username state
+            this.displayUnsoldListings();
         });
     }
 
@@ -64,7 +64,7 @@ class BuyerSearch extends Component{
 
     displaySoldListings = async () => {
         try {
-            const response = await fetch('http://127.0.0.1:5000/api/display-all-property-listings', {
+            const response = await fetch('http://127.0.0.1:5000/api/display-sold-property-listings', {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json'
@@ -75,7 +75,7 @@ class BuyerSearch extends Component{
                 throw new Error('Network response was not ok');
             }
             const listingData = await response.json();
-            console.log('Received user data:', listingData);
+            console.log('Received sold listing:', listingData);
 
             if (listingData.error){
                 return;
@@ -93,7 +93,7 @@ class BuyerSearch extends Component{
 
     displayUnsoldListings = async () => {
         try {
-            const response = await fetch('http://127.0.0.1:5000/api/display-all-property-listings', {
+            const response = await fetch('http://127.0.0.1:5000/api/display-unsold-property-listings', {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json'
@@ -104,7 +104,7 @@ class BuyerSearch extends Component{
                 throw new Error('Network response was not ok');
             }
             const listingData = await response.json();
-            console.log('Received user data:', listingData);
+            console.log('Received unsold listings:', listingData);
 
             if (listingData.error){
                 return;

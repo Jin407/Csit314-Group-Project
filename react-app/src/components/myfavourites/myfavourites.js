@@ -27,7 +27,7 @@ class MyFavourites extends Component{
 
     displaySoldFavouriteListings = async (username) => {
         try {
-            const response = await fetch('http://127.0.0.1:5000/api/display-favourite-listings', {
+            const response = await fetch('http://127.0.0.1:5000/api/display-sold-favourite-listings', {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json'
@@ -56,7 +56,7 @@ class MyFavourites extends Component{
 
     displayUnsoldFavouriteListings = async (username) => {
         try {
-            const response = await fetch('http://127.0.0.1:5000/api/display-favourite-listings', {
+            const response = await fetch('http://127.0.0.1:5000/api/display-unsold-favourite-listings', {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json'
@@ -88,10 +88,11 @@ class MyFavourites extends Component{
         /*this.setState({ filterStatus }, () => {
             this.filterListings(); // Filter listings based on the selected status
         });*/
+        const username  = window.location.href.split('/')[4]; // Get the username from state
         if (filterStatus === "Available"){
-            this.displayUnsoldFavouriteListings();
+            this.displayUnsoldFavouriteListings(username);
         } else {
-            this.displaySoldFavouriteListings();
+            this.displaySoldFavouriteListings(username);
         }
     };
     

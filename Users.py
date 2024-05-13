@@ -628,7 +628,7 @@ class PropertyListing():
             print("Error:", err)
 
     @classmethod
-    def displayAllPropertyListings(cls)->list:
+    def displaySoldPropertyListings(cls)->list:
         connection = mysql.connector.connect(
                 host="127.0.0.1",
                 user="username",
@@ -636,7 +636,40 @@ class PropertyListing():
                 database="csit314"
             )
         cursor = connection.cursor()
-        query = "SELECT * FROM csit314.PropertyListings;"
+        query = "SELECT * FROM csit314.PropertyListings WHERE status = 'Sold';"
+        try:
+            cursor.execute(query)
+            results = cursor.fetchall()
+            listings = []
+            for result in results:
+                id = result[0]
+                address = result[1]
+                price = result[2]
+                status = result[3]
+                agent = result[4]
+                seller = result[5]
+                buyer = result[6]
+                createdAt = result[7]
+                viewCount = result[8]
+                favCount = result[9]
+                listing = PropertyListing(id=id, address=address, price=price, status=status, agent=agent, seller=seller, buyer=buyer, createdAt=createdAt, viewCount=viewCount, favCount=favCount)
+                listings.append(listing)
+
+            return listings
+
+        except mysql.connector.Error as err:
+            print("Error:", err)
+
+    @classmethod
+    def displayUnsoldPropertyListings(cls)->list:
+        connection = mysql.connector.connect(
+                host="127.0.0.1",
+                user="username",
+                password="password",
+                database="csit314"
+            )
+        cursor = connection.cursor()
+        query = "SELECT * FROM csit314.PropertyListings WHERE status = 'Available';"
         try:
             cursor.execute(query)
             results = cursor.fetchall()
@@ -684,7 +717,7 @@ class PropertyListing():
             connection.rollback()
 
     @classmethod
-    def displayFavouritePropertyListings(cls, username)->list:
+    def displaySoldFavouritePropertyListings(cls, username)->list:
         connection = mysql.connector.connect(
                 host="127.0.0.1",
                 user="username",
@@ -692,7 +725,40 @@ class PropertyListing():
                 database="csit314"
             )
         cursor = connection.cursor()
-        query = "SELECT PropertyListings.* FROM PropertyListings INNER JOIN Favourites ON PropertyListings.ListingID = Favourites.Listing_ID INNER JOIN users ON Favourites.buyerUser = users.username WHERE users.username = %s;"
+        query = "SELECT PropertyListings.* FROM PropertyListings INNER JOIN Favourites ON PropertyListings.ListingID = Favourites.Listing_ID INNER JOIN users ON Favourites.buyerUser = users.username WHERE users.username = %s AND PropertyListings.status = 'sold';"
+        try:
+            cursor.execute(query,(username,))
+            results = cursor.fetchall()
+            listings = []
+            for result in results:
+                id = result[0]
+                address = result[1]
+                price = result[2]
+                status = result[3]
+                agent = result[4]
+                seller = result[5]
+                buyer = result[6]
+                createdAt = result[7]
+                viewCount = result[8]
+                favCount = result[9]
+                listing = PropertyListing(id=id, address=address, price=price, status=status, agent=agent, seller=seller, buyer=buyer, createdAt=createdAt, viewCount=viewCount, favCount=favCount)
+                listings.append(listing)
+
+            return listings
+
+        except mysql.connector.Error as err:
+            print("Error:", err)
+
+    @classmethod
+    def displayUnsoldFavouritePropertyListings(cls, username)->list:
+        connection = mysql.connector.connect(
+                host="127.0.0.1",
+                user="username",
+                password="password",
+                database="csit314"
+            )
+        cursor = connection.cursor()
+        query = "SELECT PropertyListings.* FROM PropertyListings INNER JOIN Favourites ON PropertyListings.ListingID = Favourites.Listing_ID INNER JOIN users ON Favourites.buyerUser = users.username WHERE users.username = %s AND PropertyListings.status = 'Available';"
         try:
             cursor.execute(query,(username,))
             results = cursor.fetchall()
