@@ -1,7 +1,7 @@
 import React from 'react';
 import './realistings.css'
 
-const Listing = ({ listing, onDelete, onView, onUpdate }) => {
+const Listings = ({ listing, onDelete, onView, onUpdate }) => {
   return (
     <div className="listing">
         <div className="listingbuttons">
@@ -17,4 +17,4 @@ const Listing = ({ listing, onDelete, onView, onUpdate }) => {
   );
 };
 
-export default Listing;
+export default Listings;

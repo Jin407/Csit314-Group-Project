@@ -13,6 +13,7 @@ class BuyerSearch extends Component{
             filteredListings: [], // For filtered listings based on search and status
             searchInput: '', // State to hold search input
             username:'',
+            userType:"buyerUnsold",
         };
     }
 
@@ -36,8 +37,10 @@ class BuyerSearch extends Component{
             );
 
             if(this.state.status === 'Available'){
+                this.setState({ userType : "buyerUnsold" });
                 this.displayUnsoldListings();
             } else {
+                this.setState({ userType : "buyerSold" });
                 this.displaySoldListings();
             }
     
@@ -58,8 +61,8 @@ class BuyerSearch extends Component{
         this.setState({ searchInput: value, filteredListings });
     };
 
-    handleViewListing = (listingid, username) => {
-        window.location.href = `/viewlistingpage/${listingid}/${username}`
+    handleViewListing = (listingid, userType) => {
+        window.location.href = `/viewlistingpage/${userType}/${listingid}`
     };
 
     displaySoldListings = async () => {
@@ -159,7 +162,7 @@ class BuyerSearch extends Component{
                   <BSListing
                   key={listing.id} 
                   listing={listing} 
-                  onView={() => this.handleViewListing(listing.id, this.state.username)}
+                  onView={() => this.handleViewListing(listing.id, this.state.userType)}
                   onFavourite={() => this.handleFavouriting(listing.id, this.state.username)} // Access username from state
                 />
                 ))}

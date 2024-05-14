@@ -1,7 +1,7 @@
 import { Component } from "react";
 import { Link } from "react-router-dom";
 import Listing from "./realisting";
-//import ListingTestbox from "./@@testlistingtbox";
+//import Listings from "./testlistingtbox.js";
 import './realistings.css';
 
 class REAMyListings extends Component{
@@ -9,6 +9,7 @@ class REAMyListings extends Component{
         super(props);
         this.state = {
             username:"",
+            userType:"agent"
         };
     }
 
@@ -87,8 +88,8 @@ class REAMyListings extends Component{
         }
     };
 
-    handleViewListing = (listingid,username) => {
-        window.location.href = `/viewlistingpage/${listingid}/${username}`
+    handleViewListing = (listingid,userType) => {
+        window.location.href = `/viewlistingpage/${userType}/${listingid}`
     };
 
     handleUpdateListing = (listingid) => {
@@ -104,14 +105,14 @@ class REAMyListings extends Component{
                 <input type="text" value={searchInput} onChange={this.handleSearchChange} placeholder="Search by address..."/>
                 <Link to={`/reacreatelistingpage/${username}`}><button>Create Listing</button></Link>
                 <div className="listings-container">
-                {/* TESTING BOXES
-                <ListingTestbox/><ListingTestbox/><ListingTestbox/><ListingTestbox/>
-                */}
+                 TESTING BOXES
+                {/*<Listings/><Listings/><Listings/><Listings/>*/}
+                
                     {filteredListings && filteredListings.map(listing => (
                         <Listing key={listing.id} 
                           listing={listing} 
                           onDelete={() => this.handleDeleteListing(listing.id)}
-                          onView={() => this.handleViewListing(listing.id, this.state.username)}
+                          onView={() => this.handleViewListing(listing.id, this.state.userType)}
                           onUpdate={() => this.handleUpdateListing(listing.id)}
                         />
                     ))}

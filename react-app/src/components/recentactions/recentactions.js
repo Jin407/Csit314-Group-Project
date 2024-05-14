@@ -61,9 +61,9 @@ class RecentActions extends Component {
         let leaveReviewLink;
         if (userType === 'buyerUser') {
             recentAction = 'Purchased';
-        } else if(userType == 'sellerUser'){
+        } else if(userType === 'sellerUser'){
             recentAction = 'Selling';
-        }else if(userType == 'agentUser'){
+        }else if(userType === 'agentUser'){
             recentAction = 'Managing';
         }
 
@@ -73,7 +73,7 @@ class RecentActions extends Component {
         } else {
             // For other user types, set leaveReviewLink to the JSX for the link
             leaveReviewLink = (
-                <Link to={`/rateandreview/${username}/${agentname}`} className="leavereviewlink">
+                <Link to={`/rateandreview/${userType}/${username}/${agentname}`} className="leavereviewlink">
                   <p>Leave Review</p>  
                </Link>
             );

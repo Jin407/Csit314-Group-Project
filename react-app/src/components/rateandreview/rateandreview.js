@@ -9,13 +9,15 @@ class RateAndReview extends Component {
             review:"",
             username1:"",
             username2:"",
+            userType:"",
         };
     }
 
     componentDidMount() {
         this.setState({
-            username1: window.location.href.split('/')[4],
-            username2: window.location.href.split('/')[5]
+            username1: window.location.href.split('/')[5],
+            username2: window.location.href.split('/')[6],
+            userType: window.location.href.split('/')[4]
         });
     }
 
@@ -26,13 +28,17 @@ class RateAndReview extends Component {
 
     handleSubmit = async (event) => {
         event.preventDefault();
-        const { username1, username2, review, rating } = this.state;
-        await this.submitRatingAndReview( username1, username2, review, rating);
+        const { username1, username2, review, rating, userType } = this.state;
+        if (userType === "buyerUser"){
+            await this.submitRatingAndReviewBuyer( username1, username2, review, rating);
+        } else if (userType === "sellerUser") {
+            await this.submitRatingAndReviewSeller( username1, username2, review, rating);
+        }
     };
 
-    submitRatingAndReview = async (username1, username2, review, rating) => {
+    submitRatingAndReviewBuyer = async (username1, username2, review, rating) => {
         try {
-            const response = await fetch('http://127.0.0.1:5000/api/submit-review', {
+            const response = await fetch('http://127.0.0.1:5000/api/submit-review-buyer', {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json'
@@ -49,7 +55,7 @@ class RateAndReview extends Component {
         }
         
         try {
-            const response = await fetch('http://127.0.0.1:5000/api/submit-rating', {
+            const response = await fetch('http://127.0.0.1:5000/api/submit-rating-buyer', {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json'
@@ -66,6 +72,41 @@ class RateAndReview extends Component {
         }
     };
 
+    submitRatingAndReviewSeller = async (username1, username2, review, rating) => {
+        try {
+            const response = await fetch('http://127.0.0.1:5000/api/submit-review-seller', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({ username1, username2, review })
+            });
+            if (!response.ok) {
+                throw new Error('Network response was not ok');
+            }
+            
+        } catch (error) {
+            console.error('Error submitting rating:', error);
+            return false;
+        }
+        
+        try {
+            const response = await fetch('http://127.0.0.1:5000/api/submit-rating-seller', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({ username1, username2, rating })
+            });
+            if (!response.ok) {
+                throw new Error('Network response was not ok');
+            }
+            
+        } catch (error) {
+            console.error('Error submitting rating:', error);
+            return false;
+        }
+    };
 
     render(){
         const { username1 , username2 } = this.state;
