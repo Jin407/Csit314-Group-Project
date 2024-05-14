@@ -105,7 +105,6 @@ class REAMyListings extends Component{
                 <input type="text" value={searchInput} onChange={this.handleSearchChange} placeholder="Search by address..."/>
                 <Link to={`/reacreatelistingpage/${username}`}><button>Create Listing</button></Link>
                 <div className="listings-container">
-                 TESTING BOXES
                 {/*<Listings/><Listings/><Listings/><Listings/>*/}
                 
                     {filteredListings && filteredListings.map(listing => (

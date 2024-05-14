@@ -626,6 +626,8 @@ class PropertyListing():
 
         except mysql.connector.Error as err:
             print("Error:", err)
+     
+    
 
     @classmethod
     def displaySoldPropertyListings(cls)->list:
@@ -782,13 +784,45 @@ class PropertyListing():
         except mysql.connector.Error as err:
             print("Error:", err)
 
+    @classmethod
+    def displayPropertyListingsForSeller(cls,username)->list:
+        connection = mysql.connector.connect(
+                host="127.0.0.1",
+                user="username",
+                password="password",
+                database="csit314"
+            )
+        cursor = connection.cursor()
+        query = "SELECT * FROM csit314.PropertyListings WHERE agentUser = %s or sellerUser = %s;"
+        try:
+            cursor.execute(query,(username,username))
+            results = cursor.fetchall()
+            listings = []
+            for result in results:
+                id = result[0]
+                address = result[1]
+                price = result[2]
+                status = result[3]
+                agent = result[4]
+                seller = result[5]
+                buyer = result[6]
+                createdAt = result[7]
+                viewCount = result[8]
+                favCount = result[9]
+                listing = PropertyListing(id=id, address=address, price=price, status=status, agent=agent, seller=seller, buyer=buyer, createdAt=createdAt, viewCount=viewCount, favCount=favCount)
+                listings.append(listing)
+
+            return listings
+
+        except mysql.connector.Error as err:
+            print("Error:", err)
+
 
 class Review():
-    def __init__(self,reviewerUser,agentUser,review,rating):
+    def __init__(self,reviewerUser,agentUser,review):
         self.reviewerUser = reviewerUser
         self.agentUser = agentUser
         self.review = review
-        self.rating = rating
 
     @classmethod
     def viewReviews(cls,agentUser)->list:
@@ -808,13 +842,37 @@ class Review():
                 reviewer = result[1]
                 agent = result [2]
                 review = result[3]
-                rating = result[5]
-                reviews.append((reviewer,agent,review,rating))
+                reviews.append((reviewer,agent,review))
 
             return reviews
             
         except mysql.connector.Error as err:
             print("Error:", err)
+
+    def createReview(self):
+        connection = mysql.connector.connect(
+                host="127.0.0.1",
+                user="username",
+                password="password",
+                database="csit314"
+            )
+        cursor = connection.cursor()
+        query = "INSERT into csit314.reviews(reviewerUser,agentUser,reviewText) VALUES (%s,%s,%s);"
+        try:
+            cursor.execute(query, (self.reviewerUser,self.agentUser,self.review))
+            connection.commit()
+            
+            return None
+        except mysql.connector.Error as err:
+            print("Error:", err)
+            return err
+
+class Rating():
+    def __init__(self,ratingUser,agentUser,rating):
+        self.ratingUser = ratingUser
+        self.agentUser = agentUser
+        self.rating = rating
+
 
     @classmethod
     def viewRating(cls,agentUser)->float:
@@ -825,7 +883,7 @@ class Review():
                 database="csit314"
             )
         cursor = connection.cursor()
-        query = "SELECT AVG(ratings) FROM csit314.reviews WHERE agentUser = %s;" 
+        query = "SELECT AVG(ratings) FROM csit314.ratings WHERE agentUser = %s;" 
         try:
             cursor.execute(query, (agentUser,))
             result = cursor.fetchone()
@@ -838,7 +896,7 @@ class Review():
         except mysql.connector.Error as err:
             print("Error:", err)
 
-    def createRatingAndReview(self):
+    def createRating(self):
         connection = mysql.connector.connect(
                 host="127.0.0.1",
                 user="username",
@@ -846,9 +904,9 @@ class Review():
                 database="csit314"
             )
         cursor = connection.cursor()
-        query = "INSERT into csit314.reviews(reviewerUser,agentUser,reviewText,ratings) VALUES (%s,%s,%s,%s);"
+        query = "INSERT into csit314.ratings(ratingUser,agentUser,ratings) VALUES (%s,%s,%s);"
         try:
-            cursor.execute(query, (self.reviewerUser,self.agentUser,self.review,self.rating))
+            cursor.execute(query, (self.ratingUser,self.agentUser,self.rating))
             connection.commit()
             
             return None

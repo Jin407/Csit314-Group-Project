@@ -1,4 +1,4 @@
-from Users import User, System_Admin, Real_Estate_Agent, Buyer, Seller,PropertyListing, Review
+from Users import User, System_Admin, Real_Estate_Agent, Buyer, Seller,PropertyListing, Review, Rating
 # install the connector in terminal: pip install mysql-connector-python
 import mysql.connector
 #pip install flask
@@ -418,8 +418,8 @@ class ViewReviewsController(BaseController):
 
                 for review in reviews_data:
                     # Create a review object for each review data
-                    reviewerUser, agent, reviewText, rating = review
-                    review_object = Review(reviewerUser, agent, reviewText, rating)
+                    reviewerUser, agent, reviewText = review
+                    review_object = Review(reviewerUser, agent, reviewText)
                     reviews.append(review_object.__dict__)
 
 
@@ -439,8 +439,7 @@ class ViewRatingController(BaseController):
             if request.method == 'POST':
                 data = request.json
                 agent = data.get('username')
-                rating = Review.viewRating(agent)
-                print(rating, type(rating))
+                rating = Rating.viewRating(agent)
 
                 if(rating):
                     
@@ -523,20 +522,39 @@ class DisplayUnsoldPropertyListingsController(BaseController):
             else:
                     return jsonify({'error': 'Method not allowed'}), 405
 
-class SubmitRatingAndReviewController(BaseController):
+class SubmitReviewController(BaseController):
     def register_routes(self):
-        @self.app.route('/api/submit-rating-review', methods=['POST'])
-        def submitRatingAndReview():
+        @self.app.route('/api/submit-review', methods=['POST'])
+        def submitReview():
             if request.method == 'POST':
                 data = request.json
                 reviewerUser = data.get('username1')
                 agentUser = data.get('username2')
                 reviewText = data.get('review')
-                ratingText = data.get('rating')
 
-                review = Review(reviewerUser,agentUser,reviewText,ratingText)
+                review = Review(reviewerUser,agentUser,reviewText)
 
-                review.createRatingAndReview()
+                review.createReview()
+                
+                return '', 200
+                
+            
+            else:
+                 return jsonify({'error': 'Method not allowed'}), 405 
+
+class SubmitRatingController(BaseController):
+    def register_routes(self):
+        @self.app.route('/api/submit-rating', methods=['POST'])
+        def submitRating():
+            if request.method == 'POST':
+                data = request.json
+                ratingUser = data.get('username1')
+                agentUser = data.get('username2')
+                rating = data.get('rating')
+
+                ratingObj = Rating(ratingUser,agentUser,rating)
+
+                ratingObj.createRating()
                 
                 return '', 200
                 
@@ -612,6 +630,33 @@ class DisplayUnsoldFavouritePropertyListingController(BaseController):
                 else:
                     return jsonify({'error': 'Method not allowed'}), 405
 
+class DisplayPropertyListingsForSellerController(BaseController):
+     def register_routes(self):        
+        @self.app.route('/api/display-property-listings-seller', methods=['POST'])
+        def displayPropertyListingsForSeller():
+            if request.method == 'POST':
+
+                data = request.json
+
+                username = data.get('username')
+
+                property_listing = PropertyListing.displayPropertyListingsForSeller(username)
+                listings_data = ''
+                
+                if(property_listing):
+                 # Convert each property listing object to its dictionary representation
+                    listings_data = [listing.__dict__ for listing in property_listing]
+                
+
+                if listings_data:
+                    return jsonify(listings_data)
+                else:
+                    return jsonify({'error': 'No property listings found'})
+            
+            else:
+                 return jsonify({'error': 'Method not allowed'}), 405      
+            
+
     
 
 if __name__ == '__main__':
@@ -636,8 +681,10 @@ if __name__ == '__main__':
     DisplayPropertyListingsController(app)
     DisplaySoldPropertyListingsController(app)
     DisplayUnsoldPropertyListingsController(app)
-    SubmitRatingAndReviewController(app)
+    SubmitReviewController(app)
+    SubmitRatingController(app)
     FavouritePropertyListingController(app)
     DisplayUnsoldFavouritePropertyListingController(app)
     DisplaySoldFavouritePropertyListingController(app)
+    DisplayPropertyListingsForSellerController(app)
     app.run(debug=True)
