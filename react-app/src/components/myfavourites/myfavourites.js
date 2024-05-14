@@ -88,6 +88,8 @@ class MyFavourites extends Component{
         /*this.setState({ filterStatus }, () => {
             this.filterListings(); // Filter listings based on the selected status
         });*/
+        const { name, value } = event.target;
+        this.setState({ [name]: value });
         const username  = window.location.href.split('/')[4]; // Get the username from state
         if (filterStatus === "Available"){
             this.displayUnsoldFavouriteListings(username);
