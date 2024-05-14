@@ -39,7 +39,7 @@ class MyFavourites extends Component{
                 throw new Error('Network response was not ok');
             }
             const listingData = await response.json();
-            console.log('Received user data:', listingData);
+            console.log('Received user data:', username);
 
             if (listingData.error){
                 return;
