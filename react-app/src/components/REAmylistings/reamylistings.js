@@ -89,7 +89,7 @@ class REAMyListings extends Component{
     };
 
     handleViewListing = (listingid,userType) => {
-        window.location.href = `/viewlistingpage/${listingid}/${userType}`
+        window.location.href = `/viewlistingpage/${userType}/${listingid}`
     };
 
     handleUpdateListing = (listingid) => {

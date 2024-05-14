@@ -36,7 +36,7 @@ class App extends Component{
             <Route path='/saupdateprofilepage/:userType' element = { <UpdateProfile /> } />
             <Route path='/saviewprofilepage/:userType' element = { <ViewProfile /> } />
             <Route path='/editprofile/:userType' element = { <EditProfilePage /> } />
-            <Route path='/rateandreview/:username/:agentname' element = { <RateAndReviewPage /> } />
+            <Route path='/rateandreview/:userType/:username/:agentname' element = { <RateAndReviewPage /> } />
             <Route path='/reacreatelistingpage/:username' element={ <REACreateListingPage /> } />
             <Route path='/viewlistingpage/:userType/:listingid' element={ <ViewListingPage /> } />
             <Route path='/updatelistingpage/:listingid' element={ <UpdateListingPage /> } />
