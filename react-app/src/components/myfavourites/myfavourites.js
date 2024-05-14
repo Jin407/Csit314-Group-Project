@@ -10,7 +10,8 @@ class MyFavourites extends Component{
             username:"",
             favouriteListings: [], // Initially an empty array, will be populated with data
             filteredListings: [],
-            filterStatus: "All" // Initial filter status, can be "All", "Sold", or "Unsold"
+            filterStatus: "Unsold", // Initial filter status, can be "All", "Sold", or "Unsold"
+            userType:"buyerUnsold",
         };
     };
     
@@ -91,17 +92,18 @@ class MyFavourites extends Component{
         const { name, value } = event.target;
         this.setState({ [name]: value });
         const username  = window.location.href.split('/')[4]; // Get the username from state
-        if (filterStatus === "Available"){
+        if (filterStatus === "Unsold"){
             this.displayUnsoldFavouriteListings(username);
+            this.setState({ userType : "buyerUnsold" });
         } else {
             this.displaySoldFavouriteListings(username);
+            this.setState({ userType : "buyerSold" });
         }
     };
     
     filterListings = () => {
         const { favouriteListings, filterStatus } = this.state;
         let filteredListings = favouriteListings;
-    
         // Filter listings based on status
         if (filterStatus !== "All") {
             filteredListings = filteredListings.filter(listing => listing.status === filterStatus);
@@ -111,12 +113,12 @@ class MyFavourites extends Component{
         this.setState({ filteredListings });
     };
 
-    handleViewListing = (listingid) => {
-        window.location.href = `/viewlistingpage/${listingid}`
+    handleViewListing = (userType, listingid) => {
+        window.location.href = `/viewlistingpage/${userType}/${listingid}`
     };
 
     render(){
-        const { filteredListings , filterStatus } = this.state;
+        const { filteredListings } = this.state;
         return(
             <>
             <div className="myfavouritesarea">
@@ -125,8 +127,9 @@ class MyFavourites extends Component{
                     <label className="bs-filter-item">
                         <input 
                             type="radio" 
-                            value="Available" 
-                            checked={filterStatus === "Available"} 
+                            value="Unsold" 
+                            name="filterStatus"
+                            checked={this.state.filterStatus === "Unsold"} 
                             onChange={this.handleRadioChange} 
                         />
                         Available
@@ -135,7 +138,8 @@ class MyFavourites extends Component{
                         <input 
                             type="radio" 
                             value="Sold" 
-                            checked={filterStatus === "Sold"} 
+                            name="filterStatus"
+                            checked={this.state.filterStatus === "Sold"} 
                             onChange={this.handleRadioChange} 
                         />
                         Sold
@@ -145,7 +149,7 @@ class MyFavourites extends Component{
                 {filteredListings && filteredListings.map(listing => (
                     <MFListing key={listing.id} 
                       listing={listing} 
-                      onView={() => this.handleViewListing(listing.id)}
+                      onView={() => this.handleViewListing(this.state.userType, listing.id)}
                     />
                 ))}
                 </div>

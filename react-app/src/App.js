@@ -38,7 +38,7 @@ class App extends Component{
             <Route path='/editprofile/:userType' element = { <EditProfilePage /> } />
             <Route path='/rateandreview/:username/:agentname' element = { <RateAndReviewPage /> } />
             <Route path='/reacreatelistingpage/:username' element={ <REACreateListingPage /> } />
-            <Route path='/viewlistingpage/:listingid/:username' element={ <ViewListingPage /> } />
+            <Route path='/viewlistingpage/:userType/:listingid' element={ <ViewListingPage /> } />
             <Route path='/updatelistingpage/:listingid' element={ <UpdateListingPage /> } />
             <Route path='/mortgagecalculatorpage' element={<MortgageCalculatorPage/>}/>
             
