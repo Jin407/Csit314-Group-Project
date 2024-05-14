@@ -55,7 +55,7 @@ class RateAndReview extends Component {
         }
         
         try {
-            const response = await fetch('http://127.0.0.1:5000/api/submit-rating', {
+            const response = await fetch('http://127.0.0.1:5000/api/submit-rating-buyer', {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json'
@@ -91,7 +91,7 @@ class RateAndReview extends Component {
         }
         
         try {
-            const response = await fetch('http://127.0.0.1:5000/api/submit-rating', {
+            const response = await fetch('http://127.0.0.1:5000/api/submit-rating-seller', {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json'
