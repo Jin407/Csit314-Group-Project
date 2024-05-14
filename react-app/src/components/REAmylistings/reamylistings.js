@@ -87,8 +87,8 @@ class REAMyListings extends Component{
         }
     };
 
-    handleViewListing = (listingid) => {
-        window.location.href = `/viewlistingpage/${listingid}`
+    handleViewListing = (listingid,username) => {
+        window.location.href = `/viewlistingpage/${listingid}/${username}`
     };
 
     handleUpdateListing = (listingid) => {
@@ -111,7 +111,7 @@ class REAMyListings extends Component{
                         <Listing key={listing.id} 
                           listing={listing} 
                           onDelete={() => this.handleDeleteListing(listing.id)}
-                          onView={() => this.handleViewListing(listing.id)}
+                          onView={() => this.handleViewListing(listing.id, this.state.username)}
                           onUpdate={() => this.handleUpdateListing(listing.id)}
                         />
                     ))}

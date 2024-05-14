@@ -58,8 +58,8 @@ class BuyerSearch extends Component{
         this.setState({ searchInput: value, filteredListings });
     };
 
-    handleViewListing = (listingid) => {
-        window.location.href = `/viewlistingpage/${listingid}`
+    handleViewListing = (listingid, username) => {
+        window.location.href = `/viewlistingpage/${listingid}/${username}`
     };
 
     displaySoldListings = async () => {
@@ -159,7 +159,7 @@ class BuyerSearch extends Component{
                   <BSListing
                   key={listing.id} 
                   listing={listing} 
-                  onView={() => this.handleViewListing(listing.id)}
+                  onView={() => this.handleViewListing(listing.id, this.state.username)}
                   onFavourite={() => this.handleFavouriting(listing.id, this.state.username)} // Access username from state
                 />
                 ))}
