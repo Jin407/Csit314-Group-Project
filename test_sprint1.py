@@ -7,10 +7,6 @@ from Users import System_Admin, Real_Estate_Agent, Buyer, Seller
 # MagicMock uses a mock database to isolate functions from dependencies so the tests dont actually touch the sql database
 # This test file tests all the methods used in sprint 1 user stories
 
-#########################################################
-#                     authLogin()                       #
-#########################################################
-
 # fixtures for each user type, acts as default user for tests
 @pytest.fixture
 def admin_user():
@@ -35,6 +31,10 @@ def seller_user():
     user = Seller("seller1", "password")
     user.cursor = MagicMock()  # Mock the cursor
     return user
+
+#########################################################
+#                     authLogin()                       #
+#########################################################
 
 # Tests admin login
 @patch('Users.mysql.connector.connect')
