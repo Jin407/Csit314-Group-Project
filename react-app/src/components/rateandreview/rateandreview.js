@@ -28,11 +28,7 @@ class RateAndReview extends Component {
 
     handleSubmit = async (event) => {
         event.preventDefault();
-<<<<<<< HEAD
-        const { username1, username2, review, rating, userType } = this.state;
-=======
-        const { username1, username2, review, rating } = this.state;
->>>>>>> 2528e4c5352600c4245da91a58988df35ef05439
+        const { username1, username2, review, rating} = this.state;
         await this.submitRatingAndReview( username1, username2, review, rating);
     };
 

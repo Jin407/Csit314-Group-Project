@@ -72,7 +72,7 @@ class CreateAccountController(BaseController):
                 elif(userType == 'seller' or userType == 'Seller'):
                     user = Seller(username,password)
                 
-                createAccount_success = user.insert_into_database()
+                createAccount_success = user.createNewUserAccount()
 
                 return jsonify({'success': createAccount_success})
                 

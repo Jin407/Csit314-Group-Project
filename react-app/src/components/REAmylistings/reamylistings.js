@@ -78,10 +78,8 @@ class REAMyListings extends Component{
                 },
                 body: JSON.stringify({ listingid })
             });
-            if (!response.ok) {
-                throw new Error('Network response was not ok');
-            }
             
+            window.location.reload()
         } catch (error) {
             console.error('Error creating listing:', error);
             

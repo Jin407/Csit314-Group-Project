@@ -20,7 +20,7 @@ class User:
     def __repr__(self) -> str:
         return self.username
     
-    def insert_into_database(self):
+    def createNewUserAccount(self) -> bool:
         try:
             query = "INSERT INTO csit314.Users (Username, Password, UserType) VALUES (%s, %s, %s);"
             self.cursor.execute(query, (self.username, self.password, self.userType))
@@ -32,17 +32,23 @@ class User:
             return False
     
     #method to authenticate user login, user entity class will connect to database via this method
-    #need to change to return bool
     def authLogin(self,username, password,userType) -> bool:
         try:
+            query1 =  "SELECT username,password FROM csit314.Users WHERE UserType = 'Admin';"
+            self.cursor.execute(query1)
+            result1 = self.cursor.fetchone()
+            if result1:
+                admin_username = result1[0]
+                admin_password = result1[1]
+
             #for admin login
-            if(username == 'username' and password == "password"):
+            if(username == admin_username and password == admin_password):
                 return True
             
             if(userType == "REA"):
                 userType = "Real estate agent"
 
-            query = "SELECT * FROM csit314.Users WHERE username = %s AND password = %s AND UserType = %s;"
+            query = "SELECT * FROM csit314.Users WHERE username = %s AND password = %s AND UserType = %s AND status = 'Active';"
             self.cursor.execute(query, (username, password,userType))
             result = self.cursor.fetchall()
 
@@ -296,114 +302,8 @@ class Real_Estate_Agent(User):
         self.userType = "Real estate agent"
         self.rating = 0
 
-    #method for Real estate agent to create property listing
-    def createPropertyListing(self, property)->bool:
-        query = "INSERT INTO csit314.PropertyListings (address, price, agentUser, sellerUser) VALUES (%s, %s, %s, %s);"
-        try:
-            self.cursor.execute(query, (property.address, property.price, self.username, property.seller))
-            # Commit the transaction to apply changes to the database
-            self.connection.commit()
-            return True
-        except mysql.connector.Error as err:
-            print("Error:",err)
-            # If there was an error, rollback the transaction to avoid partial changes
-            self.connection.rollback()
-            return False
     
-    # Method to search for property listings 
-    def searchPropertyListings(self, searched):
-        query = "SELECT address FROM csit314.PropertyListings WHERE address LIKE %s;"
-        try:
-            self.cursor.execute(query, (f"%{searched}%",))  # Wrap the search string with % and pass it as a tuple
-            result = self.cursor.fetchall()
-            return result if result else []  # Return an empty list if no listings match
-        except mysql.connector.Error as err:
-            print("Error:", err)
     
-    #method for Real estate agent to update property listing
-    def updatePropertyListings(self,newAddress, newPrice,newSeller, id)->bool:
-        query = "UPDATE csit314.PropertyListings SET address = %s, price = %s, sellerUser= %s WHERE ListingId = %s;" # only updates price as of now
-        try:
-            self.cursor.execute(query, (newAddress, newPrice, newSeller, id))
-            if self.cursor.rowcount == 0:
-                print("No listing found with ID:", id)
-                return False
-            self.connection.commit()
-            return True
-        except mysql.connector.Error as err:
-            print("Error:", err)
-            return False
-    
-    #method for Real estate agent to remove property listing
-    def removePropertyListings(self, id):
-        query = "DELETE FROM csit314.PropertyListings WHERE ListingId = %s;"
-        try:
-            self.cursor.execute(query, (id,))
-            if self.cursor.rowcount == 0:
-                print("No listing found with ID:", id)
-                return False
-            self.connection.commit()
-            return True 
-        except mysql.connector.Error as err:
-            print("Error:", err)
-            return False
-    
-    #method for Real estate agent to view property listing
-    def viewPropertyListings(self,id):
-        query = "SELECT * FROM csit314.PropertyListings WHERE listingID = %s;" # for now it returns a tuple of the entire row
-        try:
-            self.cursor.execute(query, (id,))
-            result = self.cursor.fetchall()
-            if len(result) > 0:
-                return result 
-            else:
-                return "No listings found"  # No rows returned
-        except mysql.connector.Error as err:
-            print("Error:", err)
-
-    #method for Real estate agent to preview listings
-    def displayPropertyListings(self):
-        query = "SELECT * FROM csit314.PropertyListings Where agentUser = %s;"
-        try:
-            self.cursor.execute(query,(self.username,))
-            results = self.cursor.fetchall()
-            listings = []
-            for result in results:
-                id = result[0]
-                address = result[1]
-                price = result[2]
-                status = result[3]
-                agent = result[4]
-                seller = result[5]
-                buyer = result[6]
-                createdAt = result[7]
-                viewCount = result[8]
-                favCount = result[9]
-                listing = PropertyListing(id=id, address=address, price=price, status=status, agent=agent, seller=seller, buyer=buyer, createdAt=createdAt, viewCount=viewCount, favCount=favCount)
-                listings.append(listing)
-
-            return listings
-
-        except mysql.connector.Error as err:
-            print("Error:", err)
-        
-
-    #method for Real estate agent to view their ratings
-    def viewRatings(self):
-        return self.rating
-
-    #method for Real estate agent to view Reviews
-    def viewReviews(self):
-        query = "SELECT * FROM csit314.reviews WHERE agentUser = %s;" # for now it returns a tuple of the entire row
-        try:
-            self.cursor.execute(query, (self.username,))
-            result = self.cursor.fetchall()
-            if len(result) > 0:
-                return result 
-            else:
-                return "No reviews found"  # No rows returned
-        except mysql.connector.Error as err:
-            print("Error:", err)
 
 class Buyer(User):
     #default constructor for Buyer
@@ -411,71 +311,6 @@ class Buyer(User):
         super().__init__(username,password)
         self.userType = "Buyer"
 
-    # method for Buyer to search for property listing (search bar)
-    def searchPropertyListings(self, searched):
-        query = "SELECT address FROM csit314.PropertyListings WHERE address LIKE %s;"
-        try:
-            self.cursor.execute(query, (f"%{searched}%",))  # Wrap the search string with % and pass it as a tuple
-            result = self.cursor.fetchall()
-            return result if result else []  # Return an empty list if no listings match
-        except mysql.connector.Error as err:
-            print("Error:", err)
-
-    # Method for Buyer to search for property listing (based on status)
-    def searchPropertyListingsByStatus(self, status):
-        query = "SELECT * FROM csit314.PropertyListings WHERE status = %s;"
-        try:
-            self.cursor.execute(query, (status,))
-            result = self.cursor.fetchall()
-            return result if result else []  # Return an empty list if no listings match
-        except mysql.connector.Error as err:
-            print("Error:", err)
-    
-    # Method for Buyer to save property listing
-    def savePropertyListings(self, id):
-        query = "INSERT INTO csit314.favourites (buyerUser, listing_id) VALUES (%s, %s);"
-        try:
-            self.cursor.execute(query, (self.username, id))
-            self.connection.commit()
-            return True
-        except mysql.connector.Error as err:
-            print("Error:",err)
-            self.connection.rollback()
-            return False
-
-    #method for Buyer to view property listing
-    def viewPropertyListings(self, id):
-        query = "SELECT * FROM csit314.PropertyListings WHERE listingID = %s;" # for now it returns a tuple of the entire row
-        try:
-            self.cursor.execute(query, (id,))
-            result = self.cursor.fetchall()
-            if len(result) > 0:
-                return result 
-            else:
-                return "No listings found"  # No rows returned
-        except mysql.connector.Error as err:
-            print("Error:", err)
-
-    #method for Buyer to calculate Mortgage
-    def calculateMortgage():
-        pass#to be filled in later
-
-    #method for Buyer to rate their agent
-    # for ratings i think it might be better to either make another table or put it with reviews else it wont be touching database
-    def rateAgent():
-        pass#to be filled in later
-
-    #method for Buyer to review their agent
-    def reviewAgent(self,agent,review):
-        query = "INSERT INTO reviews (reviewerUser, agentUser, reviewText) VALUES (%s, %s, %s);"
-        try:
-            self.cursor.execute(query, (self.username, agent, review))
-            self.connection.commit()
-            return True
-        except mysql.connector.Error as err:
-            print("Error:",err)
-            self.connection.rollback()
-            return False
 
 
 class Seller(User):
@@ -484,17 +319,6 @@ class Seller(User):
         super().__init__(username,password)
         self.userType = "Seller"
 
-    # view the number of times property has been shortlisted/viewed
-    def viewPropertyListingsDetails():
-         pass#to be filled in later
-
-    #method for Seller to rate their agent
-    def rateAgent():
-        pass#to be filled in later
-
-    #method for Seller to review agent
-    def reviewAgent():
-        pass#to be filled in later
 
 class PropertyListing():
     def __init__(self,id=None, address = None,price = None, status="Available", agent=None, seller=None, buyer=None,createdAt=None, viewCount=None, favCount=None):
@@ -919,9 +743,6 @@ class Rating():
             
 
 '''
-buyerTest = Buyer("buyer1", "password")
-x = buyerTest.searchPropertyListings("lol")
-print(x)
 
 if __name__ == '__main__':
  admin = System_Admin("username","password")
@@ -932,8 +753,4 @@ if __name__ == '__main__':
      admin.createNewUserAccount(username,password,"seller")
      count += 1
 '''
-if __name__ == '__main__':
-    admin = System_Admin("username","password")
-    # Assuming you have an instance of the class containing the `displayUserDetails` method
-    # For example, if your instance is named `instance`:
 

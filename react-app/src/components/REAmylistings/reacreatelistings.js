@@ -40,9 +40,6 @@ class CreateListing extends Component{
                 },
                 body: JSON.stringify({ address, price, sellerusername, reausername })
             });
-            if (!response.ok) {
-                throw new Error('Network response was not ok');
-            }
             
         } catch (error) {
             console.error('Error creating listing:', error);
@@ -60,7 +57,6 @@ class CreateListing extends Component{
                     <label>Enter Price: </label><input type="text" name="price" value={this.state.price} placeholder="Price" className="loginTextBox" onChange={this.handleInputChange}></input>
                     <label>Enter Seller Username: </label><input type="text" name="sellerusername" value={this.state.sellerusername} placeholder="Seller Username" className="loginTextBox" onChange={this.handleInputChange}></input>
                     <input type="submit" value="Create Listing"/>
-                    <p className="Message">{this.state.Message}</p>
                 </form>
             </div>
             </>
