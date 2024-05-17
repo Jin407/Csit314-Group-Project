@@ -709,7 +709,7 @@ class Rating():
             cursor.execute(query, (agentUser,))
             result = cursor.fetchone()
             if result:
-                final_rating = float(result[0])
+                final_rating = round(float(result[0]),2)
                 return final_rating
             else:
                 return None
