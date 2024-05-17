@@ -16,9 +16,6 @@ class User:
                 database="csit314"
             )
         self.cursor = self.connection.cursor()
-
-    def __repr__(self) -> str:
-        return self.username
     
     def createNewUserAccount(self) -> bool:
         try:
@@ -127,7 +124,7 @@ class System_Admin(User):
             return False
     
     #method for system admin to display user details on home page
-    def displayUserDetails(self,usertype):
+    def displayUserDetails(self,usertype)->list:
         query = "SELECT * FROM csit314.Users WHERE userType = %s Limit 5;"
         try:
             self.cursor.execute(query,(usertype,))
@@ -147,7 +144,7 @@ class System_Admin(User):
             return False
         
     #method for system admin to display user types on home page
-    def displayUserTypes(self):
+    def displayUserTypes(self)->list:
         query = "SELECT * FROM csit314.userProfiles where UserType != 'admin' order by Profileid;"
         try:
             self.cursor.execute(query)
@@ -737,20 +734,4 @@ class Rating():
         except mysql.connector.Error as err:
             print("Error:", err)
             return err
-
-
-
-            
-
-'''
-
-if __name__ == '__main__':
- admin = System_Admin("username","password")
- count = 0
- for x in range(10):
-     username = "seller" + str(count)
-     password = "sellerpass" + str(count)
-     admin.createNewUserAccount(username,password,"seller")
-     count += 1
-'''
 
